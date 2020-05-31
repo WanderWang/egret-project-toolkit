@@ -1,0 +1,17 @@
+{
+  "name": "@egret/egret-webpack-bundler",
+  "entries": [
+    {
+      "version": "1.0.1",
+      "tag": "@egret/egret-webpack-bundler_v1.0.1",
+      "date": "Sun, 31 May 2020 13:11:52 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "初始提交，封装 webpack"
+          }
+        ]
+      }
+    }
+  ]
+}
