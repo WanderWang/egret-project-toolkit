@@ -44,6 +44,34 @@ function generateConfig(context: string, env: any): webpack.Configuration {
     // var reflectTransformer = require('./ts-transformers/index');
     var needSourceMap = env.dev;
     const mode = env.dev ? 'development' : "production";
+    const plugins = [
+        new ForkTsCheckerPlugin(),
+        new HtmlWebpackPlugin({
+            inject: false,
+            template: 'scripts/plugins/templates/index.ejs',
+            libScripts: [
+                "libs/modules/egret/egret.js",
+                "libs/modules/egret/egret.web.js",
+                "libs/modules/eui/eui.js",
+                "libs/modules/game/game.js",
+                "libs/modules/tween/tween.js",
+                "libs/modules/assetsmanager/assetsmanager.js",
+                "libs/modules/promise/promise.js",
+            ],
+            bundleScripts: [
+                "bundle.js"
+            ]
+        })
+    ];
+
+    if (mode == 'production') {
+        plugins.push(
+            new CopyPlugin([
+                { from: 'libs', to: './libs' },
+            ]),
+        )
+    }
+
     return {
         stats: "minimal",
         entry: './src/Main',
@@ -77,28 +105,7 @@ function generateConfig(context: string, env: any): webpack.Configuration {
         resolve: {
             extensions: [".ts", ".js", ".json"]
         },
-        plugins: [
-            new CopyPlugin([
-                { from: 'libs', to: './libs' },
-            ]),
-            new ForkTsCheckerPlugin(),
-            new HtmlWebpackPlugin({
-                inject: false,
-                template: 'scripts/plugins/templates/index.ejs',
-                libScripts: [
-                    "libs/modules/egret/egret.js",
-                    "libs/modules/egret/egret.web.js",
-                    "libs/modules/eui/eui.js",
-                    "libs/modules/game/game.js",
-                    "libs/modules/tween/tween.js",
-                    "libs/modules/assetsmanager/assetsmanager.js",
-                    "libs/modules/promise/promise.js",
-                ],
-                bundleScripts: [
-                    "bundle.js"
-                ]
-            })
-        ]
+        plugins
     };
 }
 
