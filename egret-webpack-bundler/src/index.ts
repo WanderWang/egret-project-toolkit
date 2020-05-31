@@ -1,7 +1,6 @@
 import express from 'express';
 import * as path from 'path';
 import webpack from 'webpack';
-import { TcpSocketConnectOpts } from 'net';
 const middleware = require("webpack-dev-middleware");
 export class EgretWebpackBundler {
 
@@ -29,7 +28,19 @@ export class EgretWebpackBundler {
 
     }
 
-    build() {
+    build(context: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const webpackStatsOptions = { colors: true, modules: false };
+
+            const webpackConfig = generateConfig(context, { dev: false, release: true })
+
+            const handler: webpack.Compiler.Handler = (error, status) => {
+                console.log(status.toString(webpackStatsOptions));
+                resolve();
+            };
+            const compiler = webpack(webpackConfig);
+            compiler.run(handler)
+        })
 
     }
 
