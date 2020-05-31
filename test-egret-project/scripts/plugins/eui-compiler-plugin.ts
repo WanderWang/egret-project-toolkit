@@ -12,7 +12,6 @@ export class EuiCompilerPlugin implements plugins.Command {
     }
 
     async onFinish(commandContext: plugins.CommandContext) {
-        console.log('eui')
         const compiler = new eui.EuiCompiler(commandContext.projectRoot);
         compiler.setCustomTransformers([
             transformer
