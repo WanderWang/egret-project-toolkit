@@ -12,6 +12,10 @@ export function installDependencies(dependencies: string[]) {
 
 function install(cwd: string, dependencies: string[]) {
 
+    if (fs.existsSync(path.join(cwd, 'node_modules', dependencies[0]))) {
+        return;
+    }
+
     const cmd = process.platform === "win32" ? "npm.cmd" : "npm";
     const args = [
         'install',
@@ -21,9 +25,7 @@ function install(cwd: string, dependencies: string[]) {
     ]);
     console.log(`正在安装依赖'${cwd}`)
     console.log(`您也可以在${cwd}目录下手动执行 npm ${args.join(" ")}`)
-    if (fs.existsSync(path.join(cwd, 'node_modules', dependencies[0]))) {
-        return;
-    }
+
     const result = cp.spawnSync(cmd, args, { cwd });
     if (result.error) {
         console.error('未找到 npm , 请安装最新版 NodeJS')

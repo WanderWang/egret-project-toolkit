@@ -2,7 +2,7 @@
 ///<reference path="api.d.ts"/>
 import { CompilePlugin, ExmlPlugin, ManifestPlugin, RenamePlugin, UglifyPlugin } from 'built-in';
 import { EuiCompilerPlugin } from './plugins/eui-compiler-plugin';
-import { WebpackPlugin } from './plugins/webpack-plugin';
+import { WebpackDevServerPlugin, WebpackBundlePlugin } from './plugins/webpack-plugin';
 
 
 
@@ -29,7 +29,8 @@ const config: ResourceManagerConfig = {
                     // new IncrementCompilePlugin(),
                     // new WebpackPlugin(),
                     new EuiCompilerPlugin(),
-                    new WebpackPlugin()
+                    // new WebpackDevServerPlugin()
+                    new WebpackBundlePlugin()
                 ]
             }
         }
