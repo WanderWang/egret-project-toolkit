@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/egret-webpack-bundler",
+      "comment": "初始提交，封装 webpack",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/egret-webpack-bundler",
+  "email": "185713114@qq.com"
+}

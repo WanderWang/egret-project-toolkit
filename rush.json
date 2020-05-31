@@ -378,12 +378,14 @@
     {
       "packageName": "@egret/egret-webpack-bundler",
       "projectFolder": "egret-webpack-bundler",
-      "reviewCategory": "production"
+      "reviewCategory": "production",
+      "shouldPublish": true
     },
     {
       "packageName": "@egret/eui-compiler",
       "projectFolder": "eui-compiler",
-      "reviewCategory": "production"
+      "reviewCategory": "production",
+      "shouldPublish": true
     }
   ]
 }
