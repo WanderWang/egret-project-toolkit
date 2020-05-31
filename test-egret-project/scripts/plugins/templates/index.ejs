@@ -1,4 +1,3 @@
-
 <!DOCTYPE HTML>
 <html>
 
@@ -32,12 +31,12 @@
         data-show-fps-style="x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9">
     </div>
 
-    <% htmlWebpackPlugin.options.scripts.forEach(function(script){%>
+    <% htmlWebpackPlugin.options.libScripts.forEach(function(script){%>
     <script src="<%=script %>"></script>
     <% }) %>
-    <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-    <script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
-    <% } %>
+    <% htmlWebpackPlugin.options.bundleScripts.forEach(function(script){%>
+    <script src="<%=script %>"></script>
+    <% }) %>
     <script>
         egret.runEgret({
             renderMode: "webgl", audioType: 0, calculateCanvasScaleFactor: function (context) {

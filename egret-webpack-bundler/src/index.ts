@@ -1,6 +1,7 @@
 import express from 'express';
 import * as path from 'path';
 import webpack from 'webpack';
+import { TcpSocketConnectOpts } from 'net';
 const middleware = require("webpack-dev-middleware");
 export class EgretWebpackBundler {
 
@@ -65,7 +66,7 @@ function generateConfig(context: string, env: any): webpack.Configuration {
                         getCustomTransformers: function () {
                             return ({
                                 before: [
-                                    // reflectTransformer.emitClassName()
+                                    emitClassName()
                                 ]
                             });
                         }
@@ -84,13 +85,16 @@ function generateConfig(context: string, env: any): webpack.Configuration {
             new HtmlWebpackPlugin({
                 inject: false,
                 template: 'scripts/plugins/templates/index.ejs',
-                scripts: [
+                libScripts: [
                     "libs/modules/egret/egret.js",
                     "libs/modules/egret/egret.web.js",
+                    "libs/modules/eui/eui.js",
                     "libs/modules/game/game.js",
                     "libs/modules/tween/tween.js",
                     "libs/modules/assetsmanager/assetsmanager.js",
                     "libs/modules/promise/promise.js",
+                ],
+                bundleScripts: [
                     "bundle.js"
                 ]
             })
@@ -113,4 +117,31 @@ function startExpressServer(compilerApp: express.Express, port: number) {
                 reject();
             });
     });
+}
+
+
+function emitClassName() {
+    var ts = require('typescript');
+    return function (ctx: any) {
+        function visitClassDeclaration(node: any) {
+            // const isExport = node.modifiers ? node.modifiers.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) : false;
+            var clzNameNode = node.name;
+            var clzName = clzNameNode.getText();
+            var binaryExpression = ts.createIdentifier("window[\"" + clzName + "\"] = " + clzName + ";");
+            var arrays = [
+                node,
+                binaryExpression,
+            ];
+            return ts.createNodeArray(arrays);
+        }
+        var visitor = function (node: any) {
+            if (node.kind === ts.SyntaxKind.ClassDeclaration) {
+                return visitClassDeclaration(node);
+            }
+            else {
+                return ts.visitEachChild(node, visitor, ctx);
+            }
+        };
+        return function (sf: any) { return ts.visitNode(sf, visitor); };
+    };
 }
