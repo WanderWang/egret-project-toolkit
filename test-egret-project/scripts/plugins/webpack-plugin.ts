@@ -1,3 +1,5 @@
+require('./npm').installDependencies(["@egret/egret-webpack-bundler"]);
+
 import { EgretWebpackBundler } from '@egret/egret-webpack-bundler'
 
 export class WebpackPlugin implements plugins.Command {

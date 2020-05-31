@@ -1,4 +1,4 @@
-require('./npm').installDependencies();
+require('./npm').installDependencies(["@egret/eui-compiler"]);
 
 import * as eui from '@egret/eui-compiler';
 

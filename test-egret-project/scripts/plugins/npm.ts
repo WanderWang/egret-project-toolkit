@@ -4,24 +4,26 @@ import * as path from 'path';
 
 
 
-export function installDependencies() {
+export function installDependencies(dependencies: string[]) {
 
-    install("./scripts/plugins")
+    install("./scripts/plugins", dependencies)
 }
 
 
-function install(cwd: string) {
-    if (fs.existsSync(path.join(cwd, 'node_modules'))) {
-        return;
-    }
+function install(cwd: string, dependencies: string[]) {
+
     const cmd = process.platform === "win32" ? "npm.cmd" : "npm";
     const args = [
         'install',
+    ].concat(dependencies).concat([
         '--registry',
         'http://registry.npmjs.org'
-    ]
+    ]);
     console.log(`正在安装依赖'${cwd}`)
     console.log(`您也可以在${cwd}目录下手动执行 npm ${args.join(" ")}`)
+    if (fs.existsSync(path.join(cwd, 'node_modules', dependencies[0]))) {
+        return;
+    }
     const result = cp.spawnSync(cmd, args, { cwd });
     if (result.error) {
         console.error('未找到 npm , 请安装最新版 NodeJS')
