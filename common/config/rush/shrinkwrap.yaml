@@ -3,8 +3,10 @@ dependencies:
   '@rush-temp/egret-webpack-bundler': 'file:projects/egret-webpack-bundler.tgz'
   '@rush-temp/eui-compiler': 'file:projects/eui-compiler.tgz'
   '@types/ajv': 1.0.0
+  '@types/express': 4.17.6
   '@types/mocha': 7.0.2
   '@types/node': 11.15.14
+  '@types/webpack': 4.41.16
   ajv: 6.12.2
   ajv-i18n: 3.5.0
   args: 5.0.1
@@ -12,6 +14,7 @@ dependencies:
   egret-node-utils: 0.0.7
   escodegen: 1.14.1
   esprima: 4.0.1
+  express: 4.17.1
   fork-ts-checker-webpack-plugin: 4.1.6
   html-webpack-plugin: 4.3.0
   mocha: 6.2.3
@@ -20,6 +23,7 @@ dependencies:
   ts-loader: 7.0.5
   typescript: 3.9.3
   webpack: 4.43.0
+  webpack-dev-middleware: 3.7.2
   webpack-dev-server: 3.11.0
   xml-js: 1.6.11
 packages:
@@ -52,10 +56,40 @@ packages:
     dev: false
     resolution:
       integrity: sha512-/+CRPXpBDpo2RK9C68N3b2cOvO0Cf5B9aPijHsoDQTHivnGSObdOF2BRQOYjojWTDy6nQvMjmqRXIxH55VjxxA==
+  /@types/body-parser/1.19.0:
+    dependencies:
+      '@types/connect': 3.4.33
+      '@types/node': 11.15.14
+    dev: false
+    resolution:
+      integrity: sha512-W98JrE0j2K78swW4ukqMleo8R7h/pFETjM2DQ90MF6XK2i4LO4W3gQ71Lt4w3bfm2EvVSyWHplECvB5sK22yFQ==
+  /@types/connect/3.4.33:
+    dependencies:
+      '@types/node': 11.15.14
+    dev: false
+    resolution:
+      integrity: sha512-2+FrkXY4zllzTNfJth7jOqEHC+enpLeGslEhpnTAkg21GkRrWV4SsAtqchtT4YS9/nODBU2/ZfsBY2X4J/dX7A==
   /@types/events/3.0.0:
     dev: false
     resolution:
       integrity: sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g==
+  /@types/express-serve-static-core/4.17.7:
+    dependencies:
+      '@types/node': 11.15.14
+      '@types/qs': 6.9.3
+      '@types/range-parser': 1.2.3
+    dev: false
+    resolution:
+      integrity: sha512-EMgTj/DF9qpgLXyc+Btimg+XoH7A2liE8uKul8qSmMTHCeNYzydDKFdsJskDvw42UsesCnhO63dO0Grbj8J4Dw==
+  /@types/express/4.17.6:
+    dependencies:
+      '@types/body-parser': 1.19.0
+      '@types/express-serve-static-core': 4.17.7
+      '@types/qs': 6.9.3
+      '@types/serve-static': 1.13.4
+    dev: false
+    resolution:
+      integrity: sha512-n/mr9tZI83kd4azlPG5y997C/M4DNABK9yErhFM6hKdym4kkmd9j0vtsJyjFIwfRBxtrxZtAfGZCNRIBMFLK5w==
   /@types/glob/7.1.1:
     dependencies:
       '@types/events': 3.0.0
@@ -68,6 +102,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-iYCgjm1dGPRuo12+BStjd1HiVQqhlRhWDOQigNxn023HcjnhsiFz9pc6CzJj4HwDCSQca9bxTL4PxJDbkdm3PA==
+  /@types/mime/2.0.2:
+    dev: false
+    resolution:
+      integrity: sha512-4kPlzbljFcsttWEq6aBW0OZe6BDajAmyvr2xknBG92tejQnvdGtT9+kXSZ580DqpxY9qG2xeQVF9Dq0ymUTo5Q==
   /@types/minimatch/3.0.3:
     dev: false
     resolution:
@@ -80,6 +118,21 @@ packages:
     dev: false
     resolution:
       integrity: sha512-5R/ADTMiAxv+4GAwzsupaUO51T1e0UYdPc8StO/t6a+Fv1o2sbY9MWgmP2QxtKGwge8HqTjq058L360ai5RDug==
+  /@types/qs/6.9.3:
+    dev: false
+    resolution:
+      integrity: sha512-7s9EQWupR1fTc2pSMtXRQ9w9gLOcrJn+h7HOXw4evxyvVqMi4f+q7d2tnFe3ng3SNHjtK+0EzGMGFUQX4/AQRA==
+  /@types/range-parser/1.2.3:
+    dev: false
+    resolution:
+      integrity: sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
+  /@types/serve-static/1.13.4:
+    dependencies:
+      '@types/express-serve-static-core': 4.17.7
+      '@types/mime': 2.0.2
+    dev: false
+    resolution:
+      integrity: sha512-jTDt0o/YbpNwZbQmE/+2e+lfjJEJJR0I3OFaKQKPWkASkCoW3i6fsUnqudSMcNAfbtmADGu8f4MV4q+GqULmug==
   /@types/source-list-map/0.1.2:
     dev: false
     resolution:
@@ -279,18 +332,14 @@ packages:
       ajv: ^6.0.0
     resolution:
       integrity: sha512-IR8uhRH0La4DweKHqBOVeoNo2prJ3bowWzGtNS3uDvYv5wKLgH/WQsoh6gHPVxTWXCGr+R+6I5vXDSXGAYnNPA==
-  /ajv-i18n/3.5.0/ajv@6.12.2:
-    dependencies:
-      ajv: 6.12.2
+  /ajv-keywords/3.4.1:
     dev: false
-    id: registry.npmjs.org/ajv-i18n/3.5.0
     peerDependencies:
-      ajv: ^6.0.0
+      ajv: ^6.9.1
     resolution:
-      integrity: sha512-IR8uhRH0La4DweKHqBOVeoNo2prJ3bowWzGtNS3uDvYv5wKLgH/WQsoh6gHPVxTWXCGr+R+6I5vXDSXGAYnNPA==
+      integrity: sha512-RO1ibKvd27e6FEShVFfPALuHI3WjSVNeK5FIsmme/LYRNxjKuNj+Dt7bucLa6NdSv3JcVTyMlm9kGR84z1XpaQ==
   /ajv-keywords/3.4.1/ajv@6.12.2:
-    dependencies:
-      ajv: 6.12.2
+    dependencies: {}
     dev: false
     id: registry.npmjs.org/ajv-keywords/3.4.1
     peerDependencies:
@@ -1012,7 +1061,7 @@ packages:
       p-limit: 2.3.0
       schema-utils: 1.0.0
       serialize-javascript: 2.1.2
-      webpack: 4.43.0
+      webpack: /webpack/4.43.0/webpack@4.43.0
       webpack-log: 2.0.0
     dev: false
     engines:
@@ -2065,7 +2114,7 @@ packages:
       pretty-error: 2.1.1
       tapable: 1.1.3
       util.promisify: 1.0.0
-      webpack: 4.43.0
+      webpack: /webpack/4.43.0/webpack@4.43.0
     dev: false
     engines:
       node: '>=6.9'
@@ -4117,6 +4166,17 @@ packages:
       webpack: ^4.0.0
     resolution:
       integrity: sha512-QMxecFz/gHQwteWwSo5nTc6UaICqN1bMedC5sMtUc7y3Ha3Q8y6ZO0iCR8pq4RJC8Hjf0FEPEHZqcMB/+DFCrA==
+  /terser-webpack-plugin/1.4.3/webpack@4.43.0:
+    dependencies:
+      webpack: /webpack/4.43.0/webpack@4.43.0
+    dev: false
+    engines:
+      node: '>= 6.9.0'
+    id: registry.npmjs.org/terser-webpack-plugin/1.4.3
+    peerDependencies:
+      webpack: ^4.0.0
+    resolution:
+      integrity: sha512-QMxecFz/gHQwteWwSo5nTc6UaICqN1bMedC5sMtUc7y3Ha3Q8y6ZO0iCR8pq4RJC8Hjf0FEPEHZqcMB/+DFCrA==
   /terser/4.7.0:
     dependencies:
       commander: 2.20.3
@@ -4431,7 +4491,7 @@ packages:
       mime: 2.4.6
       mkdirp: 0.5.5
       range-parser: 1.2.1
-      webpack: 4.43.0
+      webpack: /webpack/4.43.0/webpack@4.43.0
       webpack-log: 2.0.0
     dev: false
     engines:
@@ -4515,7 +4575,7 @@ packages:
       strip-ansi: 3.0.1
       supports-color: 6.1.0
       url: 0.11.0
-      webpack: 4.43.0
+      webpack: /webpack/4.43.0/webpack@4.43.0
       webpack-dev-middleware: /webpack-dev-middleware/3.7.2/webpack@4.43.0
       webpack-log: 2.0.0
       ws: 6.2.1
@@ -4574,6 +4634,17 @@ packages:
     engines:
       node: '>=6.11.5'
     hasBin: true
+    resolution:
+      integrity: sha512-GW1LjnPipFW2Y78OOab8NJlCflB7EFskMih2AHdvjbpKMeDJqEgSx24cXXXiPS65+WSwVyxtDsJH6jGX2czy+g==
+  /webpack/4.43.0/webpack@4.43.0:
+    dependencies:
+      ajv-keywords: 3.4.1
+      terser-webpack-plugin: /terser-webpack-plugin/1.4.3/webpack@4.43.0
+    dev: false
+    engines:
+      node: '>=6.11.5'
+    hasBin: true
+    id: registry.npmjs.org/webpack/4.43.0
     resolution:
       integrity: sha512-GW1LjnPipFW2Y78OOab8NJlCflB7EFskMih2AHdvjbpKMeDJqEgSx24cXXXiPS65+WSwVyxtDsJH6jGX2czy+g==
   /websocket-driver/0.6.5:
@@ -4717,17 +4788,21 @@ packages:
     version: 0.0.0
   'file:projects/egret-webpack-bundler.tgz':
     dependencies:
+      '@types/express': 4.17.6
+      '@types/webpack': 4.41.16
       copy-webpack-plugin: /copy-webpack-plugin/5.1.1/webpack@4.43.0
+      express: 4.17.1
       fork-ts-checker-webpack-plugin: 4.1.6
       html-webpack-plugin: /html-webpack-plugin/4.3.0/webpack@4.43.0
       ts-loader: /ts-loader/7.0.5/typescript@3.9.3
       typescript: 3.9.3
-      webpack: 4.43.0
+      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack-dev-middleware: /webpack-dev-middleware/3.7.2/webpack@4.43.0
       webpack-dev-server: /webpack-dev-server/3.11.0/webpack@4.43.0
     dev: false
     name: '@rush-temp/egret-webpack-bundler'
     resolution:
-      integrity: sha512-6/JBlLr7Rj06yigp+UZ1e7Zn03Dhs0OKkxXvOM9f124LPa/qAWzBefvtHzNwKXlXUBqcBhO5V3spQWhb6IpN2Q==
+      integrity: sha512-DM7iEqweCfNqf9gHdMPQWlqzm1oRQLxVuSf4f8YP5KcBS0OBr99lBzasBaHzUK5NSU5M9ughRq9D8pAcR2NJsw==
       tarball: 'file:projects/egret-webpack-bundler.tgz'
     version: 0.0.0
   'file:projects/eui-compiler.tgz':
@@ -4736,7 +4811,7 @@ packages:
       '@types/mocha': 7.0.2
       '@types/node': 11.15.14
       ajv: 6.12.2
-      ajv-i18n: /ajv-i18n/3.5.0/ajv@6.12.2
+      ajv-i18n: 3.5.0
       args: 5.0.1
       egret-node-utils: 0.0.7
       escodegen: 1.14.1
@@ -4759,8 +4834,10 @@ specifiers:
   '@rush-temp/egret-webpack-bundler': 'file:./projects/egret-webpack-bundler.tgz'
   '@rush-temp/eui-compiler': 'file:./projects/eui-compiler.tgz'
   '@types/ajv': ^1.0.0
+  '@types/express': ~4.17.6
   '@types/mocha': ^7.0.2
   '@types/node': ^11.11.3
+  '@types/webpack': ~4.41.16
   ajv: ^6.12.0
   ajv-i18n: ^3.5.0
   args: ^5.0.1
@@ -4768,6 +4845,7 @@ specifiers:
   egret-node-utils: 0.0.7
   escodegen: ^1.14.1
   esprima: ^4.0.1
+  express: ~4.17.1
   fork-ts-checker-webpack-plugin: ^4.1.3
   html-webpack-plugin: ^4.3.0
   mocha: ^6.2.2
@@ -4776,5 +4854,6 @@ specifiers:
   ts-loader: ^7.0.2
   typescript: ^3.8.3
   webpack: ^4.43.0
+  webpack-dev-middleware: ~3.7.2
   webpack-dev-server: ^3.10.3
   xml-js: ^1.6.9

@@ -1,4 +1,4 @@
-
+import { EgretWebpackBundler } from '@egret/egret-webpack-bundler'
 
 export class WebpackPlugin implements plugins.Command {
 
@@ -12,9 +12,13 @@ export class WebpackPlugin implements plugins.Command {
     onFinish(commandContext: plugins.CommandContext) {
         return new Promise<void>((resolve, reject) => {
 
-            setInterval(() => {
-                console.log('helloworld');
-            }, 1000)
+            // setInterval(() => {
+            //     console.log('helloworld');
+            // }, 1000)
+
+
+            const bundler = new EgretWebpackBundler();
+            bundler.startDevServer(commandContext.projectRoot)
         })
     }
 }
