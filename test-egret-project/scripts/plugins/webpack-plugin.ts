@@ -30,6 +30,9 @@ export class WebpackBundlePlugin implements plugins.Command {
     onFinish(commandContext: plugins.CommandContext) {
 
         const bundler = new EgretWebpackBundler();
+        bundler.emitter = (filename, content) => {
+            commandContext.createFile(filename, content);
+        }
         return bundler.build(commandContext.projectRoot);
     }
 }

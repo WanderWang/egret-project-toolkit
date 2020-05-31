@@ -5,6 +5,13 @@ const middleware = require("webpack-dev-middleware");
 export class EgretWebpackBundler {
 
 
+    emitter: ((filename: string, data: Buffer) => void) | null = null;
+
+    constructor() {
+
+    }
+
+
     startDevServer(context: string) {
 
 
@@ -39,6 +46,34 @@ export class EgretWebpackBundler {
                 resolve();
             };
             const compiler = webpack(webpackConfig);
+
+            if (this.emitter) {
+
+                compiler.outputFileSystem = {
+
+                    mkdir: (path: string, callback: (err: Error | undefined | null) => void) => {
+                        callback(null);
+                    },
+                    mkdirp: (path: string, callback: (err: Error | undefined | null) => void) => {
+                        callback(null);
+                    },
+
+                    rmdir: (path: string, callback: (err: Error | undefined | null) => void) => {
+                        callback(null)
+                    },
+
+                    unlink: (path: string, callback: (err: Error | undefined | null) => void) => {
+                        callback(null)
+                    },
+                    join: path.join,
+
+                    writeFile: (p: string, data: any, callback: (err: Error | undefined | null) => void) => {
+                        const relativePath = path.relative(webpackConfig.output?.path!, p).split("\\").join("/");
+                        this.emitter!(relativePath, data)
+                        callback(null)
+                    }
+                }
+            }
             compiler.run(handler)
         })
 
