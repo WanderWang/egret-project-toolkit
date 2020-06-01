@@ -13,7 +13,9 @@ skins.MyComponent2 = function (_super) {
             new eui.State('down', [
                 new eui.SetProperty('a1', 'source', 'button_down_png')
             ]),
-            new eui.State('disabled', [])
+            new eui.State('disabled', [
+                new eui.SetProperty('a1', 'alpha', 0.5)
+            ])
         ];
         return _this;
     }

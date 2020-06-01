@@ -58,7 +58,6 @@ function parseStateAttribute(className: string, context: number, originKey: stri
         attribute,
         context
     })
-    // process.exit();
 }
 
 
