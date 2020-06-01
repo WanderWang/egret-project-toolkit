@@ -1,0 +1,17 @@
+{
+  "name": "@egret/eui-compiler",
+  "entries": [
+    {
+      "version": "1.3.3",
+      "tag": "@egret/eui-compiler_v1.3.3",
+      "date": "Mon, 01 Jun 2020 06:15:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复生成的皮肤文件报错的问题"
+          }
+        ]
+      }
+    }
+  ]
+}
