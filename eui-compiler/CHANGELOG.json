@@ -2,6 +2,18 @@
   "name": "@egret/eui-compiler",
   "entries": [
     {
+      "version": "1.3.5",
+      "tag": "@egret/eui-compiler_v1.3.5",
+      "date": "Mon, 01 Jun 2020 08:38:02 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复textColor属性解析错误的bug"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.3.4",
       "tag": "@egret/eui-compiler_v1.3.4",
       "date": "Mon, 01 Jun 2020 07:33:02 GMT",
