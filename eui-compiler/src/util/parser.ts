@@ -101,10 +101,16 @@ function createAttribute(key: string, type: string, attributeValue: any): AST_At
 
     let value: AST_Attribute['value'] = attributeValue;
     if (type == 'number') {
-        value = parseFloat(attributeValue)
+        value = Number(attributeValue)
     }
     else if (type === 'boolean') {
         value = attributeValue === 'true'
+    }
+    else if (['top', 'bottom', 'left', 'right'].indexOf(key) >= 0) {
+        if (!isNaN(parseFloat(attributeValue))) {
+            type = 'number';
+            value = parseFloat(attributeValue)
+        }
     }
 
     return {
