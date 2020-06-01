@@ -127,6 +127,16 @@ export class JavaScriptEmitter {
                 )
             )
         }
+        if (node.stateAttributes.length > 0) {
+            this.writeToBody(
+                createExpressionStatment(
+                    createAssignmentExpression(
+                        createMemberExpression(createIdentifier("_this"), context),
+                        context
+                    )
+                )
+            )
+        }
         this.emitAttributes(context, node)
         this.emitChildren(context, node);
     }

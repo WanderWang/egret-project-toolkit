@@ -5,6 +5,7 @@ skins.MyComponent2 = function (_super) {
         _this.skinParts = [];
         _this.width = 400;
         var a1 = new eui.Image();
+        _this.a1 = a1;
         a1.width = 100;
         a1.source = 'a_png';
         _this.elementsContent = [a1];
