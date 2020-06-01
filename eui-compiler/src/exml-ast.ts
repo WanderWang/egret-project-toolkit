@@ -1,7 +1,11 @@
 export interface AST_NodeBase {
+
     attributes: AST_Attribute[];
+
     children: AST_Node[];
+
     stateAttributes: AST_STATE[]
+
 }
 
 
@@ -36,9 +40,13 @@ export interface AST_Attribute {
 
 
 export interface AST_STATE {
+
     type: "add" | "set",
+
     attribute: AST_Attribute,
+
     name: string
+
 };
 
 export enum AST_FullName_Type {
