@@ -20,7 +20,7 @@ export class JavaScriptEmitter {
 
         const ids: string[] = [];
 
-        const states: { name: string, items: AST_STATE[] }[] = [];
+        const states: { name: string, items: (AST_STATE & { context: number })[] }[] = [];
 
         if (skinNode.states) {
             for (const stateName of skinNode.states) {
@@ -35,7 +35,7 @@ export class JavaScriptEmitter {
 
             for (let stateAttribute of node.stateAttributes) {
                 let arr = states.find(s => s.name === stateAttribute.name)!;
-                arr.items.push(stateAttribute)
+                arr.items.push(Object.assign({}, stateAttribute, { context: node.varIndex }))
             }
 
             node.children.forEach(visitChildren);

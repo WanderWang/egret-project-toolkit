@@ -49,14 +49,13 @@ function getNodeType(name1: string): AST_Node_Name_And_Type {
     return { namespace, name, type };
 }
 
-function parseStateAttribute(className: string, context: number, originKey: string, value: string): AST_STATE {
+function parseStateAttribute(className: string, originKey: string, value: string): AST_STATE {
     const [key, stateName] = originKey.split(".");
     const type = getTypings(className, key)!;
     const attribute = createAttribute(key, type, value);
     return {
         type: "set",
         attribute,
-        context,
         name: stateName
     }
 }
@@ -66,7 +65,7 @@ function parseStateAttribute(className: string, context: number, originKey: stri
  * 将NodeElement的 attribute节点转化为Node的Attribute
  * @param nodeElement 
  */
-function createAST_Attributes(node: AST_Node, nodeElement: convert.Element): AST_Attribute[] {
+function createAST_Attributes(node: AST_Node, nodeElement: convert.Element) {
     const attributes: AST_Attribute[] = [];
     const className = getClassNameFromEXMLElement(nodeElement)
     for (let key in nodeElement.attributes) {
@@ -85,7 +84,7 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element): AST
             }
         }
         if (key.indexOf(".") >= 0) {
-            const stateAttribute = parseStateAttribute(className, node.varIndex, key, value);
+            const stateAttribute = parseStateAttribute(className, key, value);
             node.stateAttributes.push(stateAttribute);
             continue;
         }
@@ -96,7 +95,7 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element): AST
         const attribute = createAttribute(key, type, value);
         attributes.push(attribute);
     }
-    return attributes;
+    node.attributes = attributes
 }
 
 function createAttribute(key: string, type: string, attributeValue: any): AST_Attribute {
@@ -192,7 +191,7 @@ function createSkinNode(rootExmlElement: convert.Element) {
             id: null
         }
 
-        node.attributes = createAST_Attributes(node, nodeExmlElement);
+        createAST_Attributes(node, nodeExmlElement);
         const attributeIdIndex = node.attributes.findIndex(item => item.key === 'id');
         if (attributeIdIndex >= 0) {
             let attributeId = node.attributes[attributeIdIndex];

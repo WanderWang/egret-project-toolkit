@@ -1,5 +1,3 @@
-export type AST_STATE = { type: "add" | "set", context: number, attribute: AST_Attribute, name: string };
-
 export interface AST_NodeBase {
     attributes: AST_Attribute[];
     children: AST_Node[];
@@ -35,6 +33,13 @@ export interface AST_Attribute {
 
     value: number | boolean | string | AST_Node | AST_Skin
 }
+
+
+export interface AST_STATE {
+    type: "add" | "set",
+    attribute: AST_Attribute,
+    name: string
+};
 
 export enum AST_FullName_Type {
 
