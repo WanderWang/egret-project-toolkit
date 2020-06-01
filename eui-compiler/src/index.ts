@@ -78,7 +78,7 @@ export class EuiCompiler {
             skinNode = transformer(skinNode);
         }
         let text = emitter.emit(skinNode);
-        text += `generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname}`;//TODO
+        text += `generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};`;//TODO
         return text;
     }
 }
