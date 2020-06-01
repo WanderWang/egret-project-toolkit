@@ -1,5 +1,5 @@
 import * as codegen from 'escodegen';
-import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin } from "../exml-ast";
+import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE } from "../exml-ast";
 
 export class JavaScriptEmitter {
 
@@ -38,9 +38,9 @@ export class JavaScriptEmitter {
         this.emitAttributes(context, skinNode)
         this.emitChildren(context, skinNode);
         if (skinNode.states) {
-            const states: { name: string }[] = [];
+            const states: { name: string, items: AST_STATE[] }[] = [];
             for (let sName in skinNode.states) {
-                states.push({ name: sName })
+                states.push({ name: sName, items: skinNode.states[sName] })
             }
 
             this.writeToBody(
@@ -56,7 +56,19 @@ export class JavaScriptEmitter {
                                     ),
                                     [
                                         createStringLiteral(s.name),
-                                        createArray([])
+                                        createArray(s.items.map((item) => {
+                                            return createNewExpression(
+                                                createMemberExpression(
+                                                    createIdentifier("eui"),
+                                                    createIdentifier("SetProperty")
+                                                ),
+                                                [
+                                                    createStringLiteral(`a${item.context}`),
+                                                    createStringLiteral(item.attribute.key),
+                                                    this.mapping[item.attribute.type](item.attribute.value)
+                                                ]
+                                            )
+                                        }))
                                     ]
                                 )
                             })

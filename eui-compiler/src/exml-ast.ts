@@ -1,4 +1,4 @@
-export type AST_STATE = { type: "add" | "set", value: any };
+export type AST_STATE = { type: "add" | "set", context: number, attribute: AST_Attribute };
 
 export interface AST_NodeBase {
     attributes: AST_Attribute[];

@@ -6,6 +6,8 @@ import { getTypings } from './typings';
 
 let skinNameIndex = 0;
 
+let currentSkinNode: AST_Skin;
+
 export function generateAST(filecontent: string): AST_Skin {
     skinNameIndex = 0;
     const data = convert.xml2js(filecontent) as convert.Element;
@@ -47,12 +49,24 @@ function getNodeType(name1: string): AST_Node_Name_And_Type {
     return { namespace, name, type };
 }
 
+function parseStateAttribute(className: string, context: number, originKey: string, value: string) {
+    const [key, stateName] = originKey.split(".");
+    const type = getTypings(className, key)!;
+    const attribute = createAttribute(key, type, value);
+    currentSkinNode.states![stateName].push({
+        type: "set",
+        attribute,
+        context
+    })
+    // process.exit();
+}
+
 
 /**
  * 将NodeElement的 attribute节点转化为Node的Attribute
  * @param nodeElement 
  */
-function createAST_Attributes(nodeElement: convert.Element): AST_Attribute[] {
+function createAST_Attributes(node: AST_Node, nodeElement: convert.Element): AST_Attribute[] {
     const attributes: AST_Attribute[] = [];
     const className = getClassNameFromEXMLElement(nodeElement)
     for (let key in nodeElement.attributes) {
@@ -71,6 +85,7 @@ function createAST_Attributes(nodeElement: convert.Element): AST_Attribute[] {
             }
         }
         if (key.indexOf(".") >= 0) {
+            parseStateAttribute(className, node.varIndex, key, value)
             continue;
         }
         const type = getTypings(className, key);
@@ -119,7 +134,7 @@ function createSkinNode(rootExmlElement: convert.Element) {
 
 
 
-    const skin: AST_Skin = {
+    currentSkinNode = {
         namespace,
         classname,
         children: [],
@@ -127,7 +142,7 @@ function createSkinNode(rootExmlElement: convert.Element) {
         states: null
     }
 
-    skin.children = childrenExmlElement.map(createAST_Node);
+
 
     for (let key in rootExmlElement.attributes) {
         if (key === 'class' || key.indexOf("xmlns") >= 0) {
@@ -136,9 +151,9 @@ function createSkinNode(rootExmlElement: convert.Element) {
         const value = rootExmlElement.attributes[key] as string;
         if (key === 'states') {
             const states = value.split(',');
-            skin.states = {};
+            currentSkinNode.states = {};
             for (let state of states) {
-                skin.states[state] = [];
+                currentSkinNode.states[state] = [];
             }
             continue;
         }
@@ -149,12 +164,13 @@ function createSkinNode(rootExmlElement: convert.Element) {
         }
 
         const attribute = createAttribute(key, type, value);
-        skin.attributes.push(attribute);
+        currentSkinNode.attributes.push(attribute);
     }
 
+    currentSkinNode.children = childrenExmlElement.map(createAST_Node);
 
     // writeFileSync("2.log", JSON.stringify(skin, null, '  '));
-    return skin;
+    return currentSkinNode;
 
 
     function createAST_Node(nodeExmlElement: convert.Element): AST_Node {
@@ -171,7 +187,7 @@ function createSkinNode(rootExmlElement: convert.Element) {
             id: null
         }
 
-        node.attributes = createAST_Attributes(nodeExmlElement);
+        node.attributes = createAST_Attributes(node, nodeExmlElement);
         const attributeIdIndex = node.attributes.findIndex(item => item.key === 'id');
         if (attributeIdIndex >= 0) {
             let attributeId = node.attributes[attributeIdIndex];

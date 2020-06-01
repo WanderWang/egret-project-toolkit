@@ -10,7 +10,9 @@ skins.MyComponent2 = function (_super) {
         _this.elementsContent = [a1];
         _this.states = [
             new eui.State('up', []),
-            new eui.State('down', []),
+            new eui.State('down', [
+                new eui.SetProperty('a1', 'source', 'button_down_png')
+            ]),
             new eui.State('disabled', [])
         ];
         return _this;
