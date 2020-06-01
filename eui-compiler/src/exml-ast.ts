@@ -1,8 +1,9 @@
-export type AST_STATE = { type: "add" | "set", context: number, attribute: AST_Attribute };
+export type AST_STATE = { type: "add" | "set", context: number, attribute: AST_Attribute, name: string };
 
 export interface AST_NodeBase {
     attributes: AST_Attribute[];
     children: AST_Node[];
+    stateAttributes: AST_STATE[]
 }
 
 
@@ -12,7 +13,7 @@ export interface AST_Skin extends AST_NodeBase {
 
     classname: string;
 
-    states: { [stateName: string]: AST_STATE[] } | null;
+    states: string[]
 
 }
 

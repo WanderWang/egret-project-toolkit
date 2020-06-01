@@ -20,16 +20,29 @@ export class JavaScriptEmitter {
 
         const ids: string[] = [];
 
+        const states: { name: string, items: AST_STATE[] }[] = [];
+
+        if (skinNode.states) {
+            for (const stateName of skinNode.states) {
+                states.push({ name: stateName, items: [] })
+            }
+        }
+
         function visitChildren(node: AST_Node) {
             if (node.id) {
                 ids.push(node.id);
             }
+
+            for (let stateAttribute of node.stateAttributes) {
+                let arr = states.find(s => s.name === stateAttribute.name)!;
+                arr.items.push(stateAttribute)
+            }
+
             node.children.forEach(visitChildren);
 
         }
 
         visitChildren(skinNode as any as AST_Node)
-
 
         const className = createIdentifier(skinNode.classname);
         const namespace = createIdentifier(skinNode.namespace);
@@ -37,12 +50,7 @@ export class JavaScriptEmitter {
         const context = createIdentifier('_this');
         this.emitAttributes(context, skinNode)
         this.emitChildren(context, skinNode);
-        if (skinNode.states) {
-            const states: { name: string, items: AST_STATE[] }[] = [];
-            for (let sName in skinNode.states) {
-                states.push({ name: sName, items: skinNode.states[sName] })
-            }
-
+        if (skinNode.states.length > 0) {
             this.writeToBody(
                 createExpressionStatment(
                     createAssignmentExpression(

@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import * as convert from 'xml-js';
-import { AST_Attribute, AST_FullName_Type, AST_Node, AST_Node_Name_And_Type, AST_Skin } from '../exml-ast';
+import { AST_Attribute, AST_FullName_Type, AST_Node, AST_Node_Name_And_Type, AST_Skin, AST_STATE } from '../exml-ast';
 import { getTypings } from './typings';
 
 
@@ -49,15 +49,16 @@ function getNodeType(name1: string): AST_Node_Name_And_Type {
     return { namespace, name, type };
 }
 
-function parseStateAttribute(className: string, context: number, originKey: string, value: string) {
+function parseStateAttribute(className: string, context: number, originKey: string, value: string): AST_STATE {
     const [key, stateName] = originKey.split(".");
     const type = getTypings(className, key)!;
     const attribute = createAttribute(key, type, value);
-    currentSkinNode.states![stateName].push({
+    return {
         type: "set",
         attribute,
-        context
-    })
+        context,
+        name: stateName
+    }
 }
 
 
@@ -84,7 +85,8 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element): AST
             }
         }
         if (key.indexOf(".") >= 0) {
-            parseStateAttribute(className, node.varIndex, key, value)
+            const stateAttribute = parseStateAttribute(className, node.varIndex, key, value);
+            node.stateAttributes.push(stateAttribute);
             continue;
         }
         const type = getTypings(className, key);
@@ -141,10 +143,11 @@ function createSkinNode(rootExmlElement: convert.Element) {
 
     currentSkinNode = {
         namespace,
+        stateAttributes: [],
         classname,
         children: [],
         attributes: [],
-        states: null
+        states: []
     }
 
 
@@ -155,11 +158,7 @@ function createSkinNode(rootExmlElement: convert.Element) {
         }
         const value = rootExmlElement.attributes[key] as string;
         if (key === 'states') {
-            const states = value.split(',');
-            currentSkinNode.states = {};
-            for (let state of states) {
-                currentSkinNode.states[state] = [];
-            }
+            currentSkinNode.states = value.split(',');
             continue;
         }
 
@@ -188,6 +187,7 @@ function createSkinNode(rootExmlElement: convert.Element) {
             type,
             children: [],
             attributes: [],
+            stateAttributes: [],
             varIndex,
             id: null
         }

@@ -32,6 +32,7 @@ describe('emitter', () => {
                 const skinNode = parser.generateAST(content)
                 const emitter = new JavaScriptEmitter();
                 const result = emitter.emit(skinNode);
+                fs.writeFileSync('2.log', result, 'utf-8');
                 const output = fs.readFileSync('expected-output.js', 'utf-8')
                 const resultAst = esprima.parseScript(result);
                 const outputAst = esprima.parseScript(output);
