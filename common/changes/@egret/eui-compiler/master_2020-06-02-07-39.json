@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/eui-compiler",
+      "comment": "改善报错信息的可读性",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/eui-compiler",
+  "email": "185713114@qq.com"
+}
