@@ -1,6 +1,7 @@
 import express from 'express';
 import * as path from 'path';
 import webpack from 'webpack';
+import { openUrl } from './open';
 const middleware = require("webpack-dev-middleware");
 export class EgretWebpackBundler {
 
@@ -31,6 +32,7 @@ export class EgretWebpackBundler {
         compilerApp.use(middleware(compiler, middlewareOptions));
         startExpressServer(compilerApp, 3000);
         compilerApp.use(express.static(context));
+        openUrl('http://localhost:3000/index.html');
 
 
     }
