@@ -1,6 +1,7 @@
 import express from 'express';
 import * as path from 'path';
 import webpack from 'webpack';
+import { getLibsFileList } from './egretproject';
 import { openUrl } from './open';
 const middleware = require("webpack-dev-middleware");
 export class EgretWebpackBundler {
@@ -14,12 +15,13 @@ export class EgretWebpackBundler {
 
 
     startDevServer(context: string) {
-
+        const libraryType = 'debug';
+        const scripts = getLibsFileList('web', context, libraryType)
 
 
         const webpackStatsOptions = { colors: true, modules: false };
 
-        const webpackConfig = generateConfig(context, { dev: true, release: false })
+        const webpackConfig = generateConfig(context, libraryType, scripts)
         const compiler = webpack(webpackConfig);
         const compilerApp = express();
         compilerApp.use(allowCrossDomain);
@@ -37,11 +39,11 @@ export class EgretWebpackBundler {
 
     }
 
-    build(context: string): Promise<void> {
+    build(context: string, libraryType: "debug" | "release"): Promise<void> {
         return new Promise((resolve, reject) => {
             const webpackStatsOptions = { colors: true, modules: false };
-
-            const webpackConfig = generateConfig(context, { dev: false, release: true })
+            const scripts = getLibsFileList('web', context, libraryType)
+            const webpackConfig = generateConfig(context, libraryType, scripts)
 
             const handler: webpack.Compiler.Handler = (error, status) => {
                 console.log(status.toString(webpackStatsOptions));
@@ -83,29 +85,26 @@ export class EgretWebpackBundler {
 
 }
 
-function generateConfig(context: string, env: any): webpack.Configuration {
+function generateConfig(
+    context: string,
+    libraryType: "debug" | "release",
+    scripts: string[]
+
+): webpack.Configuration {
 
     context = context.split("/").join(path.sep);
     var ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
     var CopyPlugin = require('copy-webpack-plugin');
     var HtmlWebpackPlugin = require('html-webpack-plugin');
     // var reflectTransformer = require('./ts-transformers/index');
-    var needSourceMap = env.dev;
-    const mode = env.dev ? 'development' : "production";
+    var needSourceMap = libraryType == 'debug';
+    const mode = libraryType == 'debug' ? 'development' : "production";
     const plugins = [
         new ForkTsCheckerPlugin(),
         new HtmlWebpackPlugin({
             inject: false,
             template: 'scripts/plugins/templates/index.ejs',
-            libScripts: [
-                "libs/modules/egret/egret.js",
-                "libs/modules/egret/egret.web.js",
-                "libs/modules/eui/eui.js",
-                "libs/modules/game/game.js",
-                "libs/modules/tween/tween.js",
-                "libs/modules/assetsmanager/assetsmanager.js",
-                "libs/modules/promise/promise.js",
-            ],
+            libScripts: scripts,
             bundleScripts: [
                 "bundle.js"
             ]
@@ -114,9 +113,13 @@ function generateConfig(context: string, env: any): webpack.Configuration {
 
     if (mode == 'production') {
         plugins.push(
-            new CopyPlugin([
-                { from: 'libs', to: './libs' },
-            ]),
+            new CopyPlugin(
+                scripts.map(s => {
+                    return {
+                        from: s, to: s
+                    }
+                })
+            ),
         )
     }
 

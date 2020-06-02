@@ -1,12 +1,8 @@
+import { projectData, Target_Type } from "./data";
 import { manager } from "./manager";
-import { Target_Type, projectData } from "./data";
 
-export function run(target: Target_Type, projectRoot: string) {
+export function getLibsFileList(target: Target_Type, projectRoot: string, mode: "debug" | "release") {
     projectData.init(projectRoot)
-    const scripts = manager.copyLibsForPublish(target, 'release');
-    console.log(scripts)
-
-    // scripts.forEach((script) => {
-    //     pluginContext.createFile(script, fs.readFileSync(FileUtil.joinPath(pluginContext.projectRoot, script)));
-    // })
-}
+    const scripts = manager.copyLibsForPublish(target, mode);
+    return scripts;
+} 

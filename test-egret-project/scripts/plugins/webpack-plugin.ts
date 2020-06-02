@@ -37,6 +37,6 @@ export class WebpackBundlePlugin implements plugins.Command {
         bundler.emitter = (filename, content) => {
             commandContext.createFile(filename, content);
         }
-        return bundler.build(commandContext.projectRoot);
+        return bundler.build(commandContext.projectRoot, 'release');
     }
 }
