@@ -2,6 +2,24 @@
   "name": "@egret/eui-compiler",
   "entries": [
     {
+      "version": "1.4.1",
+      "tag": "@egret/eui-compiler_v1.4.1",
+      "date": "Tue, 02 Jun 2020 06:25:28 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复 emit state 相关问题"
+          },
+          {
+            "comment": "优化测试用例"
+          },
+          {
+            "comment": "添加 includeIn 属性支持"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.0",
       "tag": "@egret/eui-compiler_v1.4.0",
       "date": "Mon, 01 Jun 2020 09:54:27 GMT",
