@@ -36,7 +36,7 @@ export function getTypings(className: string, propertyKey: string) {
             type = 'any';
         }
         else {
-            console.error(className, propertyKey);
+            console.error(`${className}中不包含${propertyKey}属性`);
             return null;
         }
     }

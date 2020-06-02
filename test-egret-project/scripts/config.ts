@@ -40,14 +40,14 @@ const config: ResourceManagerConfig = {
                 outputDir,
                 commands: [
                     new CustomPlugin(),
-                    new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
+                    // new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
                     new WebpackBundlePlugin(),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
                     new EuiCompilerPlugin(),
-                    new UglifyPlugin([{
-                        sources: ["main.js"],
-                        target: "main.min.js"
-                    }]),
+                    // new UglifyPlugin([{
+                    //     sources: ["main.js"],
+                    //     target: "main.min.js"
+                    // }]),
                     new RenamePlugin({
                         verbose: true, hash: 'crc32', matchers: [
                             { from: "**/*.js", to: "[path][name]_[hash].[ext]" }

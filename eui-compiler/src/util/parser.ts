@@ -96,6 +96,7 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element) {
                 }
             })
             node.stateAttributes = node.stateAttributes.concat(includeStates);
+            continue;
         }
         const type = getTypings(className, key);
         if (!type) {

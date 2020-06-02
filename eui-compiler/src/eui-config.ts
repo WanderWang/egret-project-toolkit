@@ -39,7 +39,7 @@ class EgretPropertiesError extends Error {
 
 type EgretProperties = {
     eui: {
-        exmlRoot: string[],
+        // exmlRoot: string[],
         themes: string[]
     }
 }
@@ -70,6 +70,13 @@ function parseEgretProperties() {
     const validate = ajv.compile(schema);
     const filePath = path.join(projectRoot, 'egretProperties.json');
     egretProperties = getJson(filePath);
+    if (!egretProperties.eui) {
+        egretProperties.eui = {
+            themes: [
+                "resource/default.thm.json"
+            ]
+        }
+    }
     const valid = validate(egretProperties);
 
     if (!valid) {
