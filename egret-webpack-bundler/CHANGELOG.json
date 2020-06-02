@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.0.3",
+      "tag": "@egret/egret-webpack-bundler_v1.0.3",
+      "date": "Tue, 02 Jun 2020 08:17:59 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "startDevServer 会自动打开浏览器"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.2",
       "tag": "@egret/egret-webpack-bundler_v1.0.2",
       "date": "Sun, 31 May 2020 13:52:51 GMT",

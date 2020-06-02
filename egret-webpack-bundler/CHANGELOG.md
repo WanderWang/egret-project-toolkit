@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Sun, 31 May 2020 13:52:51 GMT and should not be manually modified.
+This log was last generated on Tue, 02 Jun 2020 08:17:59 GMT and should not be manually modified.
+
+## 1.0.3
+Tue, 02 Jun 2020 08:17:59 GMT
+
+### Patches
+
+- startDevServer 会自动打开浏览器
 
 ## 1.0.2
 Sun, 31 May 2020 13:52:51 GMT
