@@ -65,37 +65,44 @@ export class JavaScriptEmitter {
                                     [
                                         createStringLiteral(s.name),
                                         createArray(s.items.map((item) => {
-                                            return createNewExpression(
-                                                createMemberExpression(
-                                                    createIdentifier("eui"),
-                                                    createIdentifier("SetProperty")
-                                                ),
-                                                [
-                                                    createStringLiteral(`a${item.context}`),
-                                                    createStringLiteral(item.attribute.key),
-                                                    this.mapping[item.attribute.type](item.attribute.value)
-                                                ]
-                                            )
+                                            if (item.type === 'set') {
+                                                return createNewExpression(
+                                                    createMemberExpression(
+                                                        createIdentifier("eui"),
+                                                        createIdentifier("SetProperty")
+                                                    ),
+                                                    [
+                                                        createStringLiteral(`a${item.context}`),
+                                                        createStringLiteral(item.attribute.key),
+                                                        this.mapping[item.attribute.type](item.attribute.value)
+                                                    ]
+                                                )
+                                            }
+                                            else {
+                                                return createNewExpression(
+                                                    createMemberExpression(
+                                                        createIdentifier("eui"),
+                                                        createIdentifier("AddItems")
+                                                    ),
+                                                    [
+                                                        createStringLiteral(`a${item.context}`),
+                                                        createStringLiteral(""),
+                                                        createNumberOrBooleanLiteral(1),
+                                                        createStringLiteral("")
+                                                        // createStringLiteral(item.attribute.key),
+                                                        // this.mapping[item.attribute.type](item.attribute.value)
+                                                    ]
+                                                )
+                                            }
+
                                         }))
                                     ]
                                 )
                             })
                         )
                     )
-
-
                 )
             )
-            // block.addStatements(`this.states = [`)
-            // for (let stateName in skinNode.states) {
-            //     const states = skinNode.states[stateName];
-            //     block.addStatements(`new eui.State("${stateName}",[`);
-            //     for (let property of states) {
-            //         // block.addStatements(`"ddd"`);
-            //     }
-            //     block.addStatements("])")
-            // }
-            // block.addStatements("]")
         }
         const code = createExpressionStatment(
             createAssignmentExpression(

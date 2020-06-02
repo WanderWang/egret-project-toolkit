@@ -39,15 +39,23 @@ export interface AST_Attribute {
 }
 
 
-export interface AST_STATE {
+export type AST_STATE = AST_STATE_ADD | AST_STATE_MODIFY_PROPERTY
 
-    type: "add" | "set",
+
+export interface AST_STATE_MODIFY_PROPERTY {
+
+    type: "set",
 
     attribute: AST_Attribute,
 
     name: string
+}
 
-};
+export interface AST_STATE_ADD {
+
+    type: "add",
+    name: string
+}
 
 export enum AST_FullName_Type {
 

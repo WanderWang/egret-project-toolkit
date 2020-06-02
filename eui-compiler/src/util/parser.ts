@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import * as convert from 'xml-js';
-import { AST_Attribute, AST_FullName_Type, AST_Node, AST_Node_Name_And_Type, AST_Skin, AST_STATE } from '../exml-ast';
+import { AST_Attribute, AST_FullName_Type, AST_Node, AST_Node_Name_And_Type, AST_Skin, AST_STATE, AST_STATE_ADD } from '../exml-ast';
 import { getTypings } from './typings';
 
 
@@ -87,6 +87,15 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element) {
             const stateAttribute = parseStateAttribute(className, key, value);
             node.stateAttributes.push(stateAttribute);
             continue;
+        }
+        if (key === 'includeIn') {
+            const includeStates: AST_STATE_ADD[] = value.split(",").map(sName => {
+                return {
+                    name: sName,
+                    type: 'add'
+                }
+            })
+            node.stateAttributes = node.stateAttributes.concat(includeStates);
         }
         const type = getTypings(className, key);
         if (!type) {
