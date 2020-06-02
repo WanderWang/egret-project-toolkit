@@ -4,7 +4,7 @@
 import * as path from 'path';
 import { UglifyPlugin, CompilePlugin, ManifestPlugin, ExmlPlugin, EmitResConfigFilePlugin, TextureMergerPlugin, CleanPlugin } from 'built-in';
 import { QQgamePlugin } from './qqgame/qqgame';
-import { EuiCompilerPlugin } from './plugins/eui-compiler-plugin';
+import { CustomPlugin } from './myplugin';
 import * as defaultConfig from './config';
 //是否使用QQ小游戏引擎插件
 const useQQPlugin: boolean = false;

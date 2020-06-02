@@ -1,8 +1,6 @@
 test-egret-project/bin-debug
 test-egret-project/libs
-
-test-egret-project2
-
+test-egret-project/bin-release
 
 # Logs
 *.log

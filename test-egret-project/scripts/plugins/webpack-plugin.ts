@@ -2,6 +2,10 @@ require('./npm').installDependencies(["@egret/egret-webpack-bundler"]);
 
 import { EgretWebpackBundler } from '@egret/egret-webpack-bundler';
 
+/**
+ * Webpack 插件
+ * 允许在白鹭引擎中使用 webpack
+ */
 export class WebpackDevServerPlugin implements plugins.Command {
 
     constructor() {

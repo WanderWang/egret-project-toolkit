@@ -21,7 +21,7 @@ function install(cwd: string, dependencies: string[]) {
         'install',
     ].concat(dependencies).concat([
         '--registry',
-        'http://registry.npmjs.org'
+        'https://registry.npm.taobao.org'
     ]);
     console.log(`正在安装依赖'${cwd}`)
     console.log(`您也可以在${cwd}目录下手动执行 npm ${args.join(" ")}`)

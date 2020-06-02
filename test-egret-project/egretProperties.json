@@ -2,13 +2,13 @@
   "engineVersion": "5.2.33",
   "compilerVersion": "5.2.33",
   "template": {},
-  "target": {
-    "current": "web"
-  },
   "eui": {
     "themes": [
       "resource/default.thm.json"
     ]
+  },
+  "target": {
+    "current": "web"
   },
   "modules": [
     {

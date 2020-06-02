@@ -1,16 +1,18 @@
 /// 阅读 api.d.ts 查看文档
 ///<reference path="api.d.ts"/>
-import { CompilePlugin, ExmlPlugin, ManifestPlugin, RenamePlugin, UglifyPlugin } from 'built-in';
+
+import * as path from 'path';
+import { UglifyPlugin, IncrementCompilePlugin, CompilePlugin, ManifestPlugin, ExmlPlugin, EmitResConfigFilePlugin, TextureMergerPlugin, RenamePlugin } from 'built-in';
+import { WxgamePlugin } from './wxgame/wxgame';
+import { BricksPlugin } from './bricks/bricks';
+import { CustomPlugin } from './myplugin';
+import { WebpackBundlePlugin, WebpackDevServerPlugin } from './plugins/webpack-plugin';
 import { EuiCompilerPlugin } from './plugins/eui-compiler-plugin';
-import { WebpackDevServerPlugin, WebpackBundlePlugin } from './plugins/webpack-plugin';
-
-
 
 const config: ResourceManagerConfig = {
 
 
     buildConfig: (params) => {
-
 
         const { target, command, projectName, version } = params;
 
@@ -25,12 +27,10 @@ const config: ResourceManagerConfig = {
                     //     nameSelector: p => path.basename(p).replace(/\./gi, "_"),
                     //     groupSelector: p => "preload"
                     // }),
-                    new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
+                    new ExmlPlugin('debug'), // 非 EUI 项目关闭此设置
                     // new IncrementCompilePlugin(),
-                    // new WebpackPlugin(),
-                    new EuiCompilerPlugin(),
-                    // new WebpackDevServerPlugin()
                     // new WebpackBundlePlugin()
+                    new WebpackDevServerPlugin()
                 ]
             }
         }
@@ -39,20 +39,21 @@ const config: ResourceManagerConfig = {
             return {
                 outputDir,
                 commands: [
-                    // new EuiCompilerPlugin(),
-                    // new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
+                    new CustomPlugin(),
+                    new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
+                    new WebpackBundlePlugin(),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
-                    // new UglifyPlugin([{
-                    //     sources: ["main.js"],
-                    //     target: "main.min.js"
-                    // }]),
-                    // new RenamePlugin({
-                    //     verbose: true, hash: 'crc32', matchers: [
-                    //         { from: "**/*.js", to: "[path][name]_[hash].[ext]" }
-                    //     ]
-                    // }),
-                    // new ManifestPlugin({ output: "manifest.json" }),
-                    new WebpackBundlePlugin()
+                    new EuiCompilerPlugin(),
+                    new UglifyPlugin([{
+                        sources: ["main.js"],
+                        target: "main.min.js"
+                    }]),
+                    new RenamePlugin({
+                        verbose: true, hash: 'crc32', matchers: [
+                            { from: "**/*.js", to: "[path][name]_[hash].[ext]" }
+                        ]
+                    }),
+                    new ManifestPlugin({ output: "manifest.json" })
                 ]
             }
         }

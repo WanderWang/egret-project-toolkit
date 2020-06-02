@@ -3,7 +3,7 @@
 interface Console {
     Console: NodeJS.ConsoleConstructor;
     assert(value: any, message?: string, ...optionalParams: any[]): void;
-    dir(obj: any, options?: { showHidden?: boolean, depth?: number, colors?: boolean }): void;
+    dir(obj: any, options?: {showHidden?: boolean, depth?: number, colors?: boolean}): void;
     error(message?: any, ...optionalParams: any[]): void;
     info(message?: any, ...optionalParams: any[]): void;
     log(message?: any, ...optionalParams: any[]): void;
@@ -31,11 +31,11 @@ interface SetConstructor { }
 interface WeakSetConstructor { }
 
 // Forward-declare needed types from lib.es2015.d.ts (in case users are using `--lib es5`)
-interface Iterable<T> { }
+interface Iterable<T> {}
 interface Iterator<T> {
     next(value?: any): IteratorResult<T>;
 }
-interface IteratorResult<T> { }
+interface IteratorResult<T> {}
 interface SymbolConstructor {
     readonly iterator: symbol;
 }
@@ -88,10 +88,10 @@ declare var module: NodeModule;
 // Same as module.exports
 declare var exports: any;
 declare var SlowBuffer: {
-    new(str: string, encoding?: string): Buffer;
-    new(size: number): Buffer;
-    new(size: Uint8Array): Buffer;
-    new(array: any[]): Buffer;
+    new (str: string, encoding?: string): Buffer;
+    new (size: number): Buffer;
+    new (size: Uint8Array): Buffer;
+    new (array: any[]): Buffer;
     prototype: Buffer;
     isBuffer(obj: any): boolean;
     byteLength(string: string, encoding?: string): number;
@@ -115,19 +115,19 @@ declare var Buffer: {
      * @param str String to store in buffer.
      * @param encoding encoding to use, optional.  Default is 'utf8'
      */
-    new(str: string, encoding?: string): Buffer;
+    new (str: string, encoding?: string): Buffer;
     /**
      * Allocates a new buffer of {size} octets.
      *
      * @param size count of octets to allocate.
      */
-    new(size: number): Buffer;
+    new (size: number): Buffer;
     /**
      * Allocates a new buffer containing the given {array} of octets.
      *
      * @param array The octets to store.
      */
-    new(array: Uint8Array): Buffer;
+    new (array: Uint8Array): Buffer;
     /**
      * Produces a Buffer backed by the same allocated memory as
      * the given {ArrayBuffer}.
@@ -135,19 +135,19 @@ declare var Buffer: {
      *
      * @param arrayBuffer The ArrayBuffer with which to share memory.
      */
-    new(arrayBuffer: ArrayBuffer): Buffer;
+    new (arrayBuffer: ArrayBuffer): Buffer;
     /**
      * Allocates a new buffer containing the given {array} of octets.
      *
      * @param array The octets to store.
      */
-    new(array: any[]): Buffer;
+    new (array: any[]): Buffer;
     /**
      * Copies the passed {buffer} data onto a new {Buffer} instance.
      *
      * @param buffer The buffer to copy.
      */
-    new(buffer: Buffer): Buffer;
+    new (buffer: Buffer): Buffer;
     prototype: Buffer;
     /**
      * Allocates a new Buffer using an {array} of octets.
@@ -346,13 +346,13 @@ declare namespace NodeJS {
     }
 
     type Platform = 'aix'
-        | 'android'
-        | 'darwin'
-        | 'freebsd'
-        | 'linux'
-        | 'openbsd'
-        | 'sunos'
-        | 'win32';
+                  | 'android'
+                  | 'darwin'
+                  | 'freebsd'
+                  | 'linux'
+                  | 'openbsd'
+                  | 'sunos'
+                  | 'win32';
 
     export interface Process extends EventEmitter {
         stdout: WritableStream;
@@ -1052,14 +1052,14 @@ declare module "zlib" {
     import * as stream from "stream";
 
     export interface ZlibOptions {
-        flush?: number; // default: zlib.constants.Z_NO_FLUSH
-        finishFlush?: number; // default: zlib.constants.Z_FINISH
-        chunkSize?: number; // default: 16*1024
-        windowBits?: number;
-        level?: number; // compression only
-        memLevel?: number; // compression only
-        strategy?: number; // compression only
-        dictionary?: any; // deflate/inflate only, empty dictionary by default
+      flush?: number; // default: zlib.constants.Z_NO_FLUSH
+      finishFlush?: number; // default: zlib.constants.Z_FINISH
+      chunkSize?: number; // default: 16*1024
+      windowBits?: number;
+      level?: number; // compression only
+      memLevel?: number; // compression only
+      strategy?: number; // compression only
+      dictionary?: any; // deflate/inflate only, empty dictionary by default
     }
 
     export interface Gzip extends stream.Transform { }
@@ -1370,7 +1370,7 @@ declare module "https" {
     }
 
     export var Agent: {
-        new(options?: AgentOptions): Agent;
+        new (options?: AgentOptions): Agent;
     };
     export interface Server extends tls.Server { }
     export function createServer(options: ServerOptions, requestListener?: Function): Server;
@@ -2036,7 +2036,7 @@ declare module "net" {
     }
 
     export var Socket: {
-        new(options?: { fd?: string; type?: string; allowHalfOpen?: boolean; }): Socket;
+        new (options?: { fd?: string; type?: string; allowHalfOpen?: boolean; }): Socket;
     };
 
     export interface ListenOptions {
@@ -2858,7 +2858,7 @@ declare module "string_decoder" {
         end(buffer?: Buffer): string;
     }
     export var StringDecoder: {
-        new(encoding?: string): NodeStringDecoder;
+        new (encoding?: string): NodeStringDecoder;
     };
 }
 
@@ -2912,65 +2912,65 @@ declare module "tls" {
         /**
          * Construct a new tls.TLSSocket object from an existing TCP socket.
          */
-        constructor(socket: net.Socket, options?: {
-            /**
-             * An optional TLS context object from tls.createSecureContext()
-             */
-            secureContext?: SecureContext,
-            /**
-             * If true the TLS socket will be instantiated in server-mode.
-             * Defaults to false.
-             */
-            isServer?: boolean,
-            /**
-             * An optional net.Server instance.
-             */
-            server?: net.Server,
-            /**
-             * If true the server will request a certificate from clients that
-             * connect and attempt to verify that certificate. Defaults to
-             * false.
-             */
-            requestCert?: boolean,
-            /**
-             * If true the server will reject any connection which is not
-             * authorized with the list of supplied CAs. This option only has an
-             * effect if requestCert is true. Defaults to false.
-             */
-            rejectUnauthorized?: boolean,
-            /**
-             * An array of strings or a Buffer naming possible NPN protocols.
-             * (Protocols should be ordered by their priority.)
-             */
-            NPNProtocols?: string[] | Buffer,
-            /**
-             * An array of strings or a Buffer naming possible ALPN protocols.
-             * (Protocols should be ordered by their priority.) When the server
-             * receives both NPN and ALPN extensions from the client, ALPN takes
-             * precedence over NPN and the server does not send an NPN extension
-             * to the client.
-             */
-            ALPNProtocols?: string[] | Buffer,
-            /**
-             * SNICallback(servername, cb) <Function> A function that will be
-             * called if the client supports SNI TLS extension. Two arguments
-             * will be passed when called: servername and cb. SNICallback should
-             * invoke cb(null, ctx), where ctx is a SecureContext instance.
-             * (tls.createSecureContext(...) can be used to get a proper
-             * SecureContext.) If SNICallback wasn't provided the default callback
-             * with high-level API will be used (see below).
-             */
-            SNICallback?: Function,
-            /**
-             * An optional Buffer instance containing a TLS session.
-             */
-            session?: Buffer,
-            /**
-             * If true, specifies that the OCSP status request extension will be
-             * added to the client hello and an 'OCSPResponse' event will be
-             * emitted on the socket before establishing a secure communication
-             */
-            requestOCSP?: boolean
+        constructor(socket:net.Socket, options?: {
+          /**
+           * An optional TLS context object from tls.createSecureContext()
+           */
+          secureContext?: SecureContext,
+          /**
+           * If true the TLS socket will be instantiated in server-mode.
+           * Defaults to false.
+           */
+          isServer?: boolean,
+          /**
+           * An optional net.Server instance.
+           */
+          server?: net.Server,
+          /**
+           * If true the server will request a certificate from clients that
+           * connect and attempt to verify that certificate. Defaults to
+           * false.
+           */
+          requestCert?: boolean,
+          /**
+           * If true the server will reject any connection which is not
+           * authorized with the list of supplied CAs. This option only has an
+           * effect if requestCert is true. Defaults to false.
+           */
+          rejectUnauthorized?: boolean,
+          /**
+           * An array of strings or a Buffer naming possible NPN protocols.
+           * (Protocols should be ordered by their priority.)
+           */
+          NPNProtocols?: string[] | Buffer,
+          /**
+           * An array of strings or a Buffer naming possible ALPN protocols.
+           * (Protocols should be ordered by their priority.) When the server
+           * receives both NPN and ALPN extensions from the client, ALPN takes
+           * precedence over NPN and the server does not send an NPN extension
+           * to the client.
+           */
+          ALPNProtocols?: string[] | Buffer,
+          /**
+           * SNICallback(servername, cb) <Function> A function that will be
+           * called if the client supports SNI TLS extension. Two arguments
+           * will be passed when called: servername and cb. SNICallback should
+           * invoke cb(null, ctx), where ctx is a SecureContext instance.
+           * (tls.createSecureContext(...) can be used to get a proper
+           * SecureContext.) If SNICallback wasn't provided the default callback
+           * with high-level API will be used (see below).
+           */
+          SNICallback?: Function,
+          /**
+           * An optional Buffer instance containing a TLS session.
+           */
+          session?: Buffer,
+          /**
+           * If true, specifies that the OCSP status request extension will be
+           * added to the client hello and an 'OCSPResponse' event will be
+           * emitted on the socket before establishing a secure communication
+           */
+          requestOCSP?: boolean
         });
         /**
          * Returns the bound address, the address family name and port of the underlying socket as reported by
@@ -3262,7 +3262,7 @@ declare module "crypto" {
         verifySpkac(spkac: Buffer): boolean;
     }
     export var Certificate: {
-        new(): Certificate;
+        new (): Certificate;
         (): Certificate;
     }
 
@@ -4203,7 +4203,7 @@ declare module "_debugger" {
         reqContinue(cb: RequestHandler): void;
     }
 
-    export var Client: {
-        new(): ClientInstance
+    export var Client : {
+        new (): ClientInstance
     }
 }

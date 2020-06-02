@@ -27,6 +27,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
+import { AssetAdapter } from "./AssetAdapter";
+import { ThemeAdapter } from "./ThemeAdapter";
+import { platform } from "./Platform";
+import { LoadingUI } from "./LoadingUI";
+
 class Main extends eui.UILayer {
 
 

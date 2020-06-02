@@ -1,15 +1,9 @@
 {
   "name": "egret-build-script-plugins",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "echo helloworld"
-  },
-  "author": "",
-  "license": "ISC",
+  "description": "egret-build-script-plugins",
   "dependencies": {
-    "@egret/egret-webpack-bundler": "1.0.2",
+    "@egret/egret-webpack-bundler": "^1.0.2",
     "@egret/eui-compiler": "^1.4.1"
   }
 }

@@ -4,7 +4,7 @@
 import * as path from 'path';
 import { UglifyPlugin, CompilePlugin, ManifestPlugin, ExmlPlugin, EmitResConfigFilePlugin, TextureMergerPlugin, CleanPlugin } from 'built-in';
 import { BricksPlugin } from './bricks/bricks';
-import { EuiCompilerPlugin } from './plugins/eui-compiler-plugin';
+import { CustomPlugin } from './myplugin';
 import * as defaultConfig from './config';
 
 const config: ResourceManagerConfig = {
