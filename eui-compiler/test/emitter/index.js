@@ -21,9 +21,14 @@ describe('emitter', () => {
 
     const baselineDir = path.join(__dirname, 'baselines')
     const dirs = fs.readdirSync(baselineDir)
+    const cwd = process.cwd();
+    afterEach(function () {
+        //本块代码会在每个测试用例执行之后执行
+        process.chdir(cwd);
+    });
     for (let dir of dirs) {
         it(`emitter-simple-${dir}`, () => {
-            const cwd = process.cwd();
+
 
             if (todos.indexOf(dir)) {
                 process.chdir(path.join(baselineDir, dir));
@@ -43,7 +48,7 @@ describe('emitter', () => {
                 // console.log(result)
             }
 
-            process.chdir(cwd);
+
         })
     }
 

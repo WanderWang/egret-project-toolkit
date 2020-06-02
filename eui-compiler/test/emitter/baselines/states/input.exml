@@ -3,4 +3,5 @@
 	xmlns:e="http://ns.egret.com/eui" states="up,down,disabled">
 
 <e:Image width="100" source="a_png" source.down="button_down_png" alpha.disabled="0.5"></e:Image>
+<e:Label id="promptDisplay" includeIn="disabled"/>
 </e:Skin>
