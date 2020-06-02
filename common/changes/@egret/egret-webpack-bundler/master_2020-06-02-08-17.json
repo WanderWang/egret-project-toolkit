@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/egret-webpack-bundler",
+      "comment": "startDevServer 会自动打开浏览器",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/egret-webpack-bundler",
+  "email": "185713114@qq.com"
+}
