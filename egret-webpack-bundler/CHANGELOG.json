@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.0.7",
+      "tag": "@egret/egret-webpack-bundler_v1.0.7",
+      "date": "Wed, 03 Jun 2020 08:04:29 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "解决 DevServer Manifest.json 生成错误的问题"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.6",
       "tag": "@egret/egret-webpack-bundler_v1.0.6",
       "date": "Wed, 03 Jun 2020 07:52:14 GMT",

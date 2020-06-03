@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Wed, 03 Jun 2020 07:52:14 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jun 2020 08:04:29 GMT and should not be manually modified.
+
+## 1.0.7
+Wed, 03 Jun 2020 08:04:29 GMT
+
+### Patches
+
+- 解决 DevServer Manifest.json 生成错误的问题
 
 ## 1.0.6
 Wed, 03 Jun 2020 07:52:14 GMT
