@@ -2,6 +2,21 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.0.4",
+      "tag": "@egret/egret-webpack-bundler_v1.0.4",
+      "date": "Wed, 03 Jun 2020 05:50:11 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "整合egret的发布libs功能"
+          },
+          {
+            "comment": "改进对外API"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.3",
       "tag": "@egret/egret-webpack-bundler_v1.0.3",
       "date": "Tue, 02 Jun 2020 08:17:59 GMT",
