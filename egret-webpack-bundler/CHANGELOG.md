@@ -1,6 +1,14 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Wed, 03 Jun 2020 05:50:11 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jun 2020 06:25:40 GMT and should not be manually modified.
+
+## 1.0.5
+Wed, 03 Jun 2020 06:25:40 GMT
+
+### Patches
+
+- 修复 bundle 不应生成 sourcemap 的问题
+- 输出文件名修改为 main.js
 
 ## 1.0.4
 Wed, 03 Jun 2020 05:50:11 GMT

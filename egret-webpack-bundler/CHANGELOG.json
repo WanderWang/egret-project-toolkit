@@ -2,6 +2,21 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.0.5",
+      "tag": "@egret/egret-webpack-bundler_v1.0.5",
+      "date": "Wed, 03 Jun 2020 06:25:40 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复 bundle 不应生成 sourcemap 的问题"
+          },
+          {
+            "comment": "输出文件名修改为 main.js"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.4",
       "tag": "@egret/egret-webpack-bundler_v1.0.4",
       "date": "Wed, 03 Jun 2020 05:50:11 GMT",
