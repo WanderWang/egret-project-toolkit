@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/egret-webpack-bundler",
+      "comment": "修复 bundle 不应生成 sourcemap 的问题",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/egret-webpack-bundler",
+  "email": "185713114@qq.com"
+}

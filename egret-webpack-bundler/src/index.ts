@@ -127,7 +127,7 @@ function generateConfig(
                 template: 'template/web/index.html',
                 libScripts: scripts,
                 bundleScripts: [
-                    "bundle.js"
+                    "main.js"
                 ]
             }))
     }
