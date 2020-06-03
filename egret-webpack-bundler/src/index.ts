@@ -51,7 +51,7 @@ export class EgretWebpackBundler {
 
 
         const manifestContent = JSON.stringify(
-            { initial: scripts, game: [] }, null, '\t'
+            { initial: scripts, game: ['main.js'] }, null, '\t'
         )
         fs.writeFileSync(path.join(this.projectRoot, 'manifest.json'), manifestContent, 'utf-8')
         openUrl('http://localhost:3000/index.html');
