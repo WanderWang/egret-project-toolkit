@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Wed, 03 Jun 2020 08:04:29 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jun 2020 08:56:49 GMT and should not be manually modified.
+
+## 1.0.8
+Wed, 03 Jun 2020 08:56:49 GMT
+
+### Patches
+
+- bundler发布代码不再使用 UglifyJS
 
 ## 1.0.7
 Wed, 03 Jun 2020 08:04:29 GMT

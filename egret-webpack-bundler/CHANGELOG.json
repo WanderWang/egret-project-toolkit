@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.0.8",
+      "tag": "@egret/egret-webpack-bundler_v1.0.8",
+      "date": "Wed, 03 Jun 2020 08:56:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "bundler发布代码不再使用 UglifyJS"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.7",
       "tag": "@egret/egret-webpack-bundler_v1.0.7",
       "date": "Wed, 03 Jun 2020 08:04:29 GMT",
