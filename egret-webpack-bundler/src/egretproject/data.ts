@@ -230,7 +230,7 @@ class EgretProjectData {
             ].filter(fs.existsSync);
 
             let target: SourceCode[] = source.map(s => {
-                let debug = _path.join(targetDir, _path.basename(s).split("\\").join("/"));
+                let debug = _path.join(targetDir, _path.basename(s)).split("\\").join("/");
                 let release = _path.join(targetDir, _path.basename(s, '.js') + '.min.js').split("\\").join("/");
                 return {
                     debug,

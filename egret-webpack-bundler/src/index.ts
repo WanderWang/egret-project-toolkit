@@ -5,8 +5,7 @@ import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
 import { openUrl } from './open';
 const middleware = require("webpack-dev-middleware");
-
-
+import * as fs from 'fs';
 
 
 
@@ -49,6 +48,12 @@ export class EgretWebpackBundler {
         compilerApp.use(middleware(compiler, middlewareOptions));
         startExpressServer(compilerApp, 3000);
         compilerApp.use(express.static(this.projectRoot));
+
+
+        const manifestContent = JSON.stringify(
+            { initial: scripts, game: [] }, null, '\t'
+        )
+        fs.writeFileSync(path.join(this.projectRoot, 'manifest.json'), manifestContent, 'utf-8')
         openUrl('http://localhost:3000/index.html');
 
 
@@ -67,6 +72,12 @@ export class EgretWebpackBundler {
             const compiler = webpack(webpackConfig);
 
             if (this.emitter) {
+
+                for (let script of scripts) {
+                    const content = fs.readFileSync(path.join(this.projectRoot, script));
+                    this.emitter(script, content);
+                }
+
 
                 compiler.outputFileSystem = {
 
@@ -124,26 +135,9 @@ function generateConfig(
         plugins.push(
             new HtmlWebpackPlugin({
                 inject: false,
-                template: 'template/web/index.html',
-                libScripts: scripts,
-                bundleScripts: [
-                    "main.js"
-                ]
+                template: 'template/web/index.html'
             }))
     }
-
-    if (!devServer) {
-        plugins.push(
-            new CopyPlugin(
-                scripts.map(s => {
-                    return {
-                        from: s, to: s
-                    }
-                })
-            ),
-        )
-    }
-
 
     return {
         stats: "minimal",
@@ -154,7 +148,7 @@ function generateConfig(
         devtool: needSourceMap ? "source-map" : false,
         output: {
             path: path.resolve(context, 'dist'),
-            filename: 'bundle.js'
+            filename: 'main.js'
         },
         module: {
             rules: [
