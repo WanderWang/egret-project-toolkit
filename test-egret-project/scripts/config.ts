@@ -47,11 +47,11 @@ const config: ResourceManagerConfig = {
                     //     sources: ["main.js"],
                     //     target: "main.min.js"
                     // }]),
-                    // new RenamePlugin({
-                    //     verbose: true, hash: 'crc32', matchers: [
-                    //         { from: "**/*.js", to: "[path][name]_[hash].[ext]" }
-                    //     ]
-                    // }),
+                    new RenamePlugin({
+                        verbose: true, hash: 'crc32', matchers: [
+                            { from: "**/*.js", to: "[path][name]_[hash].[ext]" }
+                        ]
+                    }),
                     new ManifestPlugin({ output: "manifest.json" })
                 ]
             }

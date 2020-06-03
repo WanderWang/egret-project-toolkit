@@ -35,6 +35,7 @@ describe('emitter', () => {
                 const content = fs.readFileSync('input.exml', 'utf-8');
                 typings.initTypings();
                 const skinNode = parser.generateAST(content)
+                fs.writeFileSync('1.log', JSON.stringify(skinNode, null, '\t'), 'utf-8');
                 const emitter = new JavaScriptEmitter();
                 const result = emitter.emit(skinNode);
                 fs.writeFileSync('2.log', result, 'utf-8');

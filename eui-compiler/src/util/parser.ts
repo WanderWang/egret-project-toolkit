@@ -14,7 +14,6 @@ export function generateAST(filecontent: string): AST_Skin {
 
     const rootExmlElement = data.elements!.find(e => e.name === 'e:Skin')!;
     const skinNode = createSkinNode(rootExmlElement);
-    writeFileSync('1.log', JSON.stringify(skinNode, null, '\t'), 'utf-8');
     return skinNode;
 }
 
