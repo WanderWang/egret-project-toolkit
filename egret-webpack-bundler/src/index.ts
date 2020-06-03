@@ -23,19 +23,19 @@ export class EgretWebpackBundler {
 
     emitter: ((filename: string, data: Buffer) => void) | null = null;
 
-    constructor() {
+    constructor(private projectRoot: string, private target: string) {
 
     }
 
 
-    startDevServer(projectRoot: string, options: WebpackBundleOptions) {
+    startDevServer(options: WebpackBundleOptions) {
         const libraryType = 'debug';
-        const scripts = getLibsFileList('web', projectRoot, libraryType)
+        const scripts = getLibsFileList('web', this.projectRoot, libraryType)
 
 
         const webpackStatsOptions = { colors: true, modules: false };
 
-        const webpackConfig = generateConfig(projectRoot, libraryType, scripts)
+        const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target)
         const compiler = webpack(webpackConfig);
         const compilerApp = express();
         compilerApp.use(allowCrossDomain);
@@ -47,17 +47,17 @@ export class EgretWebpackBundler {
 
         compilerApp.use(middleware(compiler, middlewareOptions));
         startExpressServer(compilerApp, 3000);
-        compilerApp.use(express.static(projectRoot));
+        compilerApp.use(express.static(this.projectRoot));
         openUrl('http://localhost:3000/index.html');
 
 
     }
 
-    build(projectRoot: string, options: WebpackBundleOptions): Promise<void> {
+    build(options: WebpackBundleOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             const webpackStatsOptions = { colors: true, modules: false };
-            const scripts = getLibsFileList('web', projectRoot, options.libraryType)
-            const webpackConfig = generateConfig(projectRoot, options.libraryType, scripts)
+            const scripts = getLibsFileList('web', this.projectRoot, options.libraryType);
+            const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target);
 
             const handler: webpack.Compiler.Handler = (error, status) => {
                 console.log(status.toString(webpackStatsOptions));
@@ -101,29 +101,34 @@ export class EgretWebpackBundler {
 
 function generateConfig(
     context: string,
-    libraryType: "debug" | "release",
-    scripts: string[]
+    options: WebpackBundleOptions,
+    scripts: string[],
+    target: string,
 
 ): webpack.Configuration {
 
     context = context.split("/").join(path.sep);
-    var ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
-    var CopyPlugin = require('copy-webpack-plugin');
-    var HtmlWebpackPlugin = require('html-webpack-plugin');
-    // var reflectTransformer = require('./ts-transformers/index');
-    var needSourceMap = libraryType == 'debug';
-    const mode = libraryType == 'debug' ? 'development' : "production";
+    const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
+    const CopyPlugin = require('copy-webpack-plugin');
+    const HtmlWebpackPlugin = require('html-webpack-plugin');
+    const needSourceMap = options.libraryType == 'debug';
+    const mode = options.libraryType == 'debug' ? 'development' : "production";
     const plugins = [
         new ForkTsCheckerPlugin(),
-        new HtmlWebpackPlugin({
-            inject: false,
-            template: 'scripts/plugins/templates/index.ejs',
-            libScripts: scripts,
-            bundleScripts: [
-                "bundle.js"
-            ]
-        })
+
     ];
+
+    if (['web', 'ios', 'android'].indexOf(target) >= 0) {
+        plugins.push(
+            new HtmlWebpackPlugin({
+                inject: false,
+                template: 'template/web/index.html',
+                libScripts: scripts,
+                bundleScripts: [
+                    "bundle.js"
+                ]
+            }))
+    }
 
     if (mode == 'production') {
         plugins.push(

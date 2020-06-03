@@ -17,8 +17,8 @@ export class WebpackDevServerPlugin implements plugins.Command {
 
     onFinish(commandContext: plugins.CommandContext) {
         return new Promise<void>((resolve, reject) => {
-            const bundler = new EgretWebpackBundler();
-            bundler.startDevServer(commandContext.projectRoot, { libraryType: "debug" })
+            const bundler = new EgretWebpackBundler(commandContext.projectRoot, commandContext.buildConfig.target);
+            bundler.startDevServer({ libraryType: "debug" })
         })
     }
 }
@@ -35,10 +35,10 @@ export class WebpackBundlePlugin implements plugins.Command {
 
     onFinish(commandContext: plugins.CommandContext) {
 
-        const bundler = new EgretWebpackBundler();
+        const bundler = new EgretWebpackBundler(commandContext.projectRoot, commandContext.buildConfig.target);
         bundler.emitter = (filename, content) => {
             commandContext.createFile(filename, content);
         }
-        return bundler.build(commandContext.projectRoot, this.options);
+        return bundler.build(this.options);
     }
 }
