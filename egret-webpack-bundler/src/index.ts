@@ -2,6 +2,7 @@ import express from 'express';
 import * as path from 'path';
 import webpack from 'webpack';
 import { getLibsFileList } from './egretproject';
+import { Target_Type } from './egretproject/data';
 import { openUrl } from './open';
 const middleware = require("webpack-dev-middleware");
 
@@ -35,7 +36,7 @@ export class EgretWebpackBundler {
 
         const webpackStatsOptions = { colors: true, modules: false };
 
-        const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target)
+        const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target, true)
         const compiler = webpack(webpackConfig);
         const compilerApp = express();
         compilerApp.use(allowCrossDomain);
@@ -56,8 +57,8 @@ export class EgretWebpackBundler {
     build(options: WebpackBundleOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             const webpackStatsOptions = { colors: true, modules: false };
-            const scripts = getLibsFileList('web', this.projectRoot, options.libraryType);
-            const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target);
+            const scripts = getLibsFileList(this.target as Target_Type, this.projectRoot, options.libraryType);
+            const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target, false);
 
             const handler: webpack.Compiler.Handler = (error, status) => {
                 console.log(status.toString(webpackStatsOptions));
@@ -104,6 +105,7 @@ function generateConfig(
     options: WebpackBundleOptions,
     scripts: string[],
     target: string,
+    devServer: boolean
 
 ): webpack.Configuration {
 
@@ -111,7 +113,7 @@ function generateConfig(
     const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
     const CopyPlugin = require('copy-webpack-plugin');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
-    const needSourceMap = options.libraryType == 'debug';
+    const needSourceMap = devServer;
     const mode = options.libraryType == 'debug' ? 'development' : "production";
     const plugins = [
         new ForkTsCheckerPlugin(),
@@ -130,7 +132,7 @@ function generateConfig(
             }))
     }
 
-    if (mode == 'production') {
+    if (!devServer) {
         plugins.push(
             new CopyPlugin(
                 scripts.map(s => {
@@ -141,6 +143,7 @@ function generateConfig(
             ),
         )
     }
+
 
     return {
         stats: "minimal",
