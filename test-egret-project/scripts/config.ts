@@ -29,7 +29,6 @@ const config: ResourceManagerConfig = {
                     // }),
                     new ExmlPlugin('debug'), // 非 EUI 项目关闭此设置
                     // new IncrementCompilePlugin(),
-                    // new WebpackBundlePlugin()
                     new WebpackDevServerPlugin()
                 ]
             }
@@ -41,7 +40,7 @@ const config: ResourceManagerConfig = {
                 commands: [
                     new CustomPlugin(),
                     // new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
-                    new WebpackBundlePlugin(),
+                    new WebpackBundlePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
                     new EuiCompilerPlugin(),
                     // new UglifyPlugin([{

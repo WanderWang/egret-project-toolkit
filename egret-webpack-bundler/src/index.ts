@@ -4,6 +4,20 @@ import webpack from 'webpack';
 import { getLibsFileList } from './egretproject';
 import { openUrl } from './open';
 const middleware = require("webpack-dev-middleware");
+
+
+
+
+
+
+export type WebpackBundleOptions = {
+
+    libraryType: "debug" | "release"
+
+    defines?: any
+}
+
+
 export class EgretWebpackBundler {
 
 
@@ -14,14 +28,14 @@ export class EgretWebpackBundler {
     }
 
 
-    startDevServer(context: string) {
+    startDevServer(projectRoot: string, options: WebpackBundleOptions) {
         const libraryType = 'debug';
-        const scripts = getLibsFileList('web', context, libraryType)
+        const scripts = getLibsFileList('web', projectRoot, libraryType)
 
 
         const webpackStatsOptions = { colors: true, modules: false };
 
-        const webpackConfig = generateConfig(context, libraryType, scripts)
+        const webpackConfig = generateConfig(projectRoot, libraryType, scripts)
         const compiler = webpack(webpackConfig);
         const compilerApp = express();
         compilerApp.use(allowCrossDomain);
@@ -33,17 +47,17 @@ export class EgretWebpackBundler {
 
         compilerApp.use(middleware(compiler, middlewareOptions));
         startExpressServer(compilerApp, 3000);
-        compilerApp.use(express.static(context));
+        compilerApp.use(express.static(projectRoot));
         openUrl('http://localhost:3000/index.html');
 
 
     }
 
-    build(context: string, libraryType: "debug" | "release"): Promise<void> {
+    build(projectRoot: string, options: WebpackBundleOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             const webpackStatsOptions = { colors: true, modules: false };
-            const scripts = getLibsFileList('web', context, libraryType)
-            const webpackConfig = generateConfig(context, libraryType, scripts)
+            const scripts = getLibsFileList('web', projectRoot, options.libraryType)
+            const webpackConfig = generateConfig(projectRoot, options.libraryType, scripts)
 
             const handler: webpack.Compiler.Handler = (error, status) => {
                 console.log(status.toString(webpackStatsOptions));
