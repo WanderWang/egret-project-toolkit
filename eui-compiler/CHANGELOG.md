@@ -1,6 +1,13 @@
 # Change Log - @egret/eui-compiler
 
-This log was last generated on Tue, 02 Jun 2020 07:40:46 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jun 2020 08:01:19 GMT and should not be manually modified.
+
+## 1.4.3
+Wed, 03 Jun 2020 08:01:19 GMT
+
+### Patches
+
+- eui-compiler不再生成log文件
 
 ## 1.4.2
 Tue, 02 Jun 2020 07:40:46 GMT

@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "@egret/egret-webpack-bundler": "^1.0.6",
-    "@egret/eui-compiler": "^1.4.2"
+    "@egret/eui-compiler": "^1.4.3"
   }
 }

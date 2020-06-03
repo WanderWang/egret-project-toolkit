@@ -2,6 +2,18 @@
   "name": "@egret/eui-compiler",
   "entries": [
     {
+      "version": "1.4.3",
+      "tag": "@egret/eui-compiler_v1.4.3",
+      "date": "Wed, 03 Jun 2020 08:01:19 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "eui-compiler不再生成log文件"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.2",
       "tag": "@egret/eui-compiler_v1.4.2",
       "date": "Tue, 02 Jun 2020 07:40:46 GMT",
