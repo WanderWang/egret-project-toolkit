@@ -1,11 +1,11 @@
 import express from 'express';
+import * as fs from 'fs';
 import * as path from 'path';
 import webpack from 'webpack';
 import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
 import { openUrl } from './open';
 const middleware = require("webpack-dev-middleware");
-import * as fs from 'fs';
 
 
 
@@ -35,7 +35,7 @@ export class EgretWebpackBundler {
 
         const webpackStatsOptions = { colors: true, modules: false };
 
-        const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target, true)
+        const webpackConfig = generateConfig(this.projectRoot, options, this.target, true)
         const compiler = webpack(webpackConfig);
         const compilerApp = express();
         compilerApp.use(allowCrossDomain);
@@ -63,7 +63,7 @@ export class EgretWebpackBundler {
         return new Promise((resolve, reject) => {
             const webpackStatsOptions = { colors: true, modules: false };
             const scripts = getLibsFileList(this.target as Target_Type, this.projectRoot, options.libraryType);
-            const webpackConfig = generateConfig(this.projectRoot, options, scripts, this.target, false);
+            const webpackConfig = generateConfig(this.projectRoot, options, this.target, false);
 
             const handler: webpack.Compiler.Handler = (error, status) => {
                 console.log(status.toString(webpackStatsOptions));
@@ -114,7 +114,6 @@ export class EgretWebpackBundler {
 function generateConfig(
     context: string,
     options: WebpackBundleOptions,
-    scripts: string[],
     target: string,
     devServer: boolean
 
@@ -122,10 +121,9 @@ function generateConfig(
 
     context = context.split("/").join(path.sep);
     const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
-    const CopyPlugin = require('copy-webpack-plugin');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
     const needSourceMap = devServer;
-    const mode = options.libraryType == 'debug' ? 'development' : "production";
+    const mode = 'development'
     const plugins = [
         new ForkTsCheckerPlugin(),
 
