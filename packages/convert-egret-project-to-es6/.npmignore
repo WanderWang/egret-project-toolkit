@@ -4,3 +4,4 @@ src
 tsconfig.json
 output
 examples
+.rush

@@ -10,12 +10,7 @@
     "watch": "tsc -w",
     "build": "tsc",
     "test:doctor": "node ./bin/cli.js doctor ./tests/helloworld",
-    "test:convert": "node ./bin/cli.js convert ./tests/helloworld ./tests/output",
-    "test2:doctor": "node ./bin/cli.js doctor ./realgame/game1",
-    "test2:convert": "node ./bin/cli.js convert ./realgame/game1 ./output/game1",
-    "test3:doctor": "node ./bin/cli.js doctor ./realgame/game2",
-    "test3:convert": "node ./bin/cli.js convert ./realgame/game2 ./output/game2",
-    "test5:convert": "node ./bin/cli.js convert ./realgame/game5 ./output/game5",
+    "test:convert": "node ./bin/cli.js convert ../../test-egret-project ./tests",
     "test:split": "node ./bin/cli.js split ./output/test"
   },
   "author": "",
