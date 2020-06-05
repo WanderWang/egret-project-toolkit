@@ -1,0 +1,17 @@
+{
+  "name": "@egret/convert-egret-project-to-es6",
+  "entries": [
+    {
+      "version": "1.1.1",
+      "tag": "@egret/convert-egret-project-to-es6_v1.1.1",
+      "date": "Fri, 05 Jun 2020 03:29:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "初始提交"
+          }
+        ]
+      }
+    }
+  ]
+}
