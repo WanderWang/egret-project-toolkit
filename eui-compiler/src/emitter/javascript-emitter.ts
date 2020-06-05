@@ -1,7 +1,8 @@
 import * as codegen from 'escodegen';
+import { BaseEmitter } from '.';
 import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE } from "../exml-ast";
 
-export class JavaScriptEmitter {
+export class JavaScriptEmitter extends BaseEmitter {
 
     private mapping: { [index: string]: EmitterFunction } = {
         number: createNumberOrBooleanLiteral,

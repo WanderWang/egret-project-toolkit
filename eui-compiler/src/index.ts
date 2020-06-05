@@ -1,7 +1,7 @@
 import * as fs from 'fs';
+import { JavaScriptEmitter } from './emitter';
 import { getFilePathRelativeProjectRoot, getThemes, initilize } from './eui-config';
 import { AST_Skin } from './exml-ast';
-import { JavaScriptEmitter } from './util/emitter2';
 import { generateAST } from "./util/parser";
 import { initTypings } from './util/typings';
 
