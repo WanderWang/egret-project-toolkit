@@ -15,9 +15,31 @@ export class JavaScriptEmitter extends BaseEmitter {
 
     private javascript = '';
 
+    getResult() {
+        return this.javascript;
+    }
+
     private body: JS_AST.Node[] = [];
 
-    emit(skinNode: AST_Skin) {
+    emitHeader(themeData: any) {
+        let outputText = '';
+        outputText += extendsHelper;
+        outputText += euiHelper(themeData.skins);
+        this.javascript += outputText;
+    }
+
+    emitSkinNode(filename: string, skinNode: AST_Skin) {
+        let ast = this.generateJavaScriptAST(skinNode);
+        const text = codegen.generate(
+            ast
+        )
+        this.javascript += text + "\n";
+        this.javascript += `
+generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
+        `;
+    }
+
+    generateJavaScriptAST(skinNode: AST_Skin) {
 
         const ids: string[] = [];
 
@@ -111,10 +133,8 @@ export class JavaScriptEmitter extends BaseEmitter {
                 createClass(className, this.body)
             )
         );
-        this.javascript += codegen.generate(
-            createProgram([code])
-        )
-        return this.javascript;
+
+        return createProgram([code]);
     }
 
     private emitNode(node: AST_Node) {
@@ -309,7 +329,7 @@ function createNumberOrBooleanLiteral(value: number | boolean): JS_AST.Literal {
     return {
         type: "Literal",
         value,
-        raw: value
+        raw: value.toString()
     }
 }
 
@@ -494,3 +514,31 @@ function createClass(className: JS_AST.Identifier, constractorBody: any[]) {
     }
 }
 
+
+
+const extendsHelper = `
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+`
+
+function euiHelper(skins: any) {
+    return `
+    window.skins=window.skins||{};
+    window.generateEUI = {};
+    generateEUI.paths = {};
+    generateEUI.styles = undefined;
+    generateEUI.skins = ${JSON.stringify(skins)};
+    `
+}

@@ -25,14 +25,14 @@ export class EuiCompiler {
         const themes = getThemes();
         let output = '';
         for (const theme of themes) {
-            output += this.parseThemeJson(theme) + "\n";
+            output += this.compileTheme(theme) + "\n";
         }
         return [
             { filename: 'resource/default.thm.js', content: output }
         ]
     }
 
-    private parseThemeJson(themeData: any) {
+    private compileTheme(themeData: any) {
 
 
         const exmlFiles = themeData.exmls;
@@ -49,37 +49,24 @@ export class EuiCompiler {
         // generateEUI.styles = undefined;
         // generateEUI.skins = { "eui.Button": "resource/eui_skins/ButtonSkin.exml", "eui.CheckBox": "resource/eui_skins/CheckBoxSkin.exml", "eui.HScrollBar": "resource/eui_skins/HScrollBarSkin.exml", "eui.HSlider": "resource/eui_skins/HSliderSkin.exml", "eui.Panel": "resource/eui_skins/PanelSkin.exml", "eui.TextInput": "resource/eui_skins/TextInputSkin.exml", "eui.ProgressBar": "resource/eui_skins/ProgressBarSkin.exml", "eui.RadioButton": "resource/eui_skins/RadioButtonSkin.exml", "eui.Scroller": "resource/eui_skins/ScrollerSkin.exml", "eui.ToggleSwitch": "resource/eui_skins/ToggleSwitchSkin.exml", "eui.VScrollBar": "resource/eui_skins/VScrollBarSkin.exml", "eui.VSlider": "resource/eui_skins/VSliderSkin.exml", "eui.ItemRenderer": "resource/eui_skins/ItemRendererSkin.exml" };
 
-        let outputText = '';
-        outputText += extendsHelper;
-        outputText += euiHelper(themeData.skins);
+
+        const emitter = new JavaScriptEmitter();
+        emitter.emitHeader(themeData);
         for (let filename of exmlFiles) {
             const fullpath = getFilePathRelativeProjectRoot(filename)
-            const exmlFile: plugins.File = {
-                contents: fs.readFileSync(fullpath),
-                origin: filename,
-                extname: ".exml",
-                base: "",
-                basename: "",
-                dirname: "",
-                path: "",
-                relative: filename,
-                history: [filename]
+            const content = fs.readFileSync(fullpath, 'utf-8');
+            let skinNode = generateAST(content);
+            for (let transformer of this._transformers) {
+                skinNode = transformer(skinNode);
             }
-            const text = this.compileExml(filename, exmlFile.contents.toString());
-            outputText += text;
+            emitter.emitSkinNode(filename, skinNode);
         }
-        return outputText;
+        return emitter.getResult();
     }
 
     private compileExml(filename: string, content: string) {
-        let skinNode = generateAST(content);
-        const emitter = new JavaScriptEmitter();
-        for (let transformer of this._transformers) {
-            skinNode = transformer(skinNode);
-        }
-        let text = emitter.emit(skinNode);
-        text += `generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};`;//TODO
-        return text;
+
+
     }
 }
 
@@ -91,29 +78,3 @@ export class EuiCompiler {
 
 
 
-const extendsHelper = `
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-
-`
-
-function euiHelper(skins: any) {
-    return `
-    window.skins=window.skins||{};
-    window.generateEUI = {};
-    generateEUI.paths = {};
-    generateEUI.styles = undefined;
-    generateEUI.skins = ${JSON.stringify(skins)};
-    `
-}
