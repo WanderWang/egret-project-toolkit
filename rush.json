@@ -386,6 +386,12 @@
       "projectFolder": "eui-compiler",
       "reviewCategory": "production",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@egret/convert-egret-project-to-es6",
+      "projectFolder": "packages/convert-egret-project-to-es6",
+      "reviewCategory": "production",
+      "shouldPublish": true
     }
   ]
 }

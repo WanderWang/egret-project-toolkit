@@ -1,0 +1,33 @@
+{
+  "name": "@egret/convert-egret-project-to-es6",
+  "version": "1.1.0",
+  "description": "",
+  "main": "out/index.js",
+  "bin": {
+    "convert-egret": "./bin/cli.js"
+  },
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc",
+    "test:doctor": "node ./bin/cli.js doctor ./tests/helloworld",
+    "test:convert": "node ./bin/cli.js convert ./tests/helloworld ./tests/output",
+    "test2:doctor": "node ./bin/cli.js doctor ./realgame/game1",
+    "test2:convert": "node ./bin/cli.js convert ./realgame/game1 ./output/game1",
+    "test3:doctor": "node ./bin/cli.js doctor ./realgame/game2",
+    "test3:convert": "node ./bin/cli.js convert ./realgame/game2 ./output/game2",
+    "test5:convert": "node ./bin/cli.js convert ./realgame/game5 ./output/game5",
+    "test:split": "node ./bin/cli.js split ./output/test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "args": "^5.0.1",
+    "fs-extra-promise": "^1.0.1",
+    "ts-morph": "^7.0.3",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra-promise": "^1.0.9",
+    "@types/node": "^13.13.4"
+  }
+}

@@ -1,11 +1,12 @@
 dependencies:
+  '@rush-temp/convert-egret-project-to-es6': 'file:projects/convert-egret-project-to-es6.tgz'
   '@rush-temp/egret-build-script-plugins': 'file:projects/egret-build-script-plugins.tgz'
   '@rush-temp/egret-webpack-bundler': 'file:projects/egret-webpack-bundler.tgz'
   '@rush-temp/eui-compiler': 'file:projects/eui-compiler.tgz'
   '@types/ajv': 1.0.0
   '@types/express': 4.17.6
+  '@types/fs-extra-promise': 1.0.9
   '@types/mocha': 7.0.2
-  '@types/node': 11.15.14
   '@types/webpack': 4.41.16
   ajv: 6.12.2
   ajv-i18n: 3.5.0
@@ -16,11 +17,13 @@ dependencies:
   esprima: 4.0.1
   express: 4.17.1
   fork-ts-checker-webpack-plugin: 4.1.6
+  fs-extra-promise: 1.0.1
   html-webpack-plugin: 4.3.0
   mocha: 6.2.3
   mock-fs: 4.12.0
   trim-lines: 1.1.3
   ts-loader: 7.0.5
+  ts-morph: 7.1.1
   typescript: 3.9.3
   webpack: 4.43.0
   webpack-dev-middleware: 3.7.2
@@ -45,6 +48,50 @@ packages:
     dev: false
     resolution:
       integrity: sha512-8rMof+gVP8mxYZApLF/JgNDAkdKa+aJt3ZYxF8z6+j/hpeXL7iMsKCPHa2jNMHu/qqBwzQF4OHNoYi8dMA/rYg==
+  /@dsherret/to-absolute-glob/2.0.2:
+    dependencies:
+      is-absolute: 1.0.0
+      is-negated-glob: 1.0.0
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha1-H2R13IvZdM6gei2vOGSzF7HdMyw=
+  /@nodelib/fs.scandir/2.1.3:
+    dependencies:
+      '@nodelib/fs.stat': 2.0.3
+      run-parallel: 1.1.9
+    dev: false
+    engines:
+      node: '>= 8'
+    resolution:
+      integrity: sha512-eGmwYQn3gxo4r7jdQnkrrN6bY478C3P+a/y72IJukF8LjB6ZHeB3c+Ehacj3sYeSmUXGlnA67/PmbM9CVwL7Dw==
+  /@nodelib/fs.stat/2.0.3:
+    dev: false
+    engines:
+      node: '>= 8'
+    resolution:
+      integrity: sha512-bQBFruR2TAwoevBEd/NWMoAAtNGzTRgdrqnYCc7dhzfoNvqPzLyqlEQnzZ3kVnNrSp25iyxE00/3h2fqGAGArA==
+  /@nodelib/fs.walk/1.2.4:
+    dependencies:
+      '@nodelib/fs.scandir': 2.1.3
+      fastq: 1.8.0
+    dev: false
+    engines:
+      node: '>= 8'
+    resolution:
+      integrity: sha512-1V9XOY4rDW0rehzbrcqAmHnz8e7SKvX27gh8Gt2WgB0+pdzdiLV83p72kZPU+jvMbS1qU5mauP2iOvO8rhmurQ==
+  /@ts-morph/common/0.5.0:
+    dependencies:
+      '@dsherret/to-absolute-glob': 2.0.2
+      fast-glob: 3.2.2
+      fs-extra: 9.0.1
+      is-negated-glob: 1.0.0
+      multimatch: 4.0.0
+      typescript: 3.9.5
+    dev: false
+    resolution:
+      integrity: sha512-/nIPpBgAJULjFnPlreL3gm4XJK9wiE3TGkBh02qXe80naG+AvegvCZX34abU3MArJRPeTfQL8vJxcx8HBMVBiQ==
   /@types/ajv/1.0.0:
     dependencies:
       ajv: 6.12.2
@@ -56,6 +103,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-/+CRPXpBDpo2RK9C68N3b2cOvO0Cf5B9aPijHsoDQTHivnGSObdOF2BRQOYjojWTDy6nQvMjmqRXIxH55VjxxA==
+  /@types/bluebird/3.5.32:
+    dev: false
+    resolution:
+      integrity: sha512-dIOxFfI0C+jz89g6lQ+TqhGgPQ0MxSnh/E4xuC0blhFtyW269+mPG5QeLgbdwst/LvdP8o1y0o/Gz5EHXLec/g==
   /@types/body-parser/1.19.0:
     dependencies:
       '@types/connect': 3.4.33
@@ -90,6 +141,20 @@ packages:
     dev: false
     resolution:
       integrity: sha512-n/mr9tZI83kd4azlPG5y997C/M4DNABK9yErhFM6hKdym4kkmd9j0vtsJyjFIwfRBxtrxZtAfGZCNRIBMFLK5w==
+  /@types/fs-extra-promise/1.0.9:
+    dependencies:
+      '@types/bluebird': 3.5.32
+      '@types/fs-extra': 4.0.11
+      '@types/node': 14.0.11
+    dev: false
+    resolution:
+      integrity: sha512-szcr7YrgyeGo9ydkm8e8AS08L02kHz0ozOWJMR+SxZYOeYa7UoF3MhjcV3xRGsm56odstbdNvGWu6LNI7F4CQQ==
+  /@types/fs-extra/4.0.11:
+    dependencies:
+      '@types/node': 14.0.11
+    dev: false
+    resolution:
+      integrity: sha512-iHm/nBVmMR/VJQn/xCSwZ6C/qfm1Tgsh2IrCCinAsF+mlHDGpV+vLR/EA6xezBXpv0/amDOaqxa8f2TVxBQyog==
   /@types/glob/7.1.1:
     dependencies:
       '@types/events': 3.0.0
@@ -118,6 +183,14 @@ packages:
     dev: false
     resolution:
       integrity: sha512-5R/ADTMiAxv+4GAwzsupaUO51T1e0UYdPc8StO/t6a+Fv1o2sbY9MWgmP2QxtKGwge8HqTjq058L360ai5RDug==
+  /@types/node/13.13.10:
+    dev: false
+    resolution:
+      integrity: sha512-J+FbkhLTcFstD7E5mVZDjYxa1VppwT2HALE6H3n2AnBSP8uiCQk0Pyr6BkJcP38dFV9WecoVJRJmFnl9ikIW7Q==
+  /@types/node/14.0.11:
+    dev: false
+    resolution:
+      integrity: sha512-lCvvI24L21ZVeIiyIUHZ5Oflv1hhHQ5E1S25IRlKIXaRkVgmXpJMI3wUJkmym2bTbCe+WoIibQnMVAU3FguaOg==
   /@types/qs/6.9.3:
     dev: false
     resolution:
@@ -332,14 +405,18 @@ packages:
       ajv: ^6.0.0
     resolution:
       integrity: sha512-IR8uhRH0La4DweKHqBOVeoNo2prJ3bowWzGtNS3uDvYv5wKLgH/WQsoh6gHPVxTWXCGr+R+6I5vXDSXGAYnNPA==
-  /ajv-keywords/3.4.1:
+  /ajv-i18n/3.5.0/ajv@6.12.2:
+    dependencies:
+      ajv: 6.12.2
     dev: false
+    id: registry.npmjs.org/ajv-i18n/3.5.0
     peerDependencies:
-      ajv: ^6.9.1
+      ajv: ^6.0.0
     resolution:
-      integrity: sha512-RO1ibKvd27e6FEShVFfPALuHI3WjSVNeK5FIsmme/LYRNxjKuNj+Dt7bucLa6NdSv3JcVTyMlm9kGR84z1XpaQ==
+      integrity: sha512-IR8uhRH0La4DweKHqBOVeoNo2prJ3bowWzGtNS3uDvYv5wKLgH/WQsoh6gHPVxTWXCGr+R+6I5vXDSXGAYnNPA==
   /ajv-keywords/3.4.1/ajv@6.12.2:
-    dependencies: {}
+    dependencies:
+      ajv: 6.12.2
     dev: false
     id: registry.npmjs.org/ajv-keywords/3.4.1
     peerDependencies:
@@ -456,6 +533,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-45sJrqne+Gao8gbiiK9jkZuuOcQ=
+  /array-differ/3.0.0:
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-THtfYS6KtME/yIAhKjZ2ul7XI96lQGHRputJQHO80LAWQnuGP4iCIN8vdMRboGbIEYBwU33q8Tch1os2+X0kMg==
   /array-flatten/1.1.1:
     dev: false
     resolution:
@@ -472,6 +555,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-mjRBDk9OPaI96jdb5b5w8kd47Dk=
+  /array-union/2.1.0:
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==
   /array-uniq/1.0.3:
     dev: false
     engines:
@@ -484,6 +573,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=
+  /arrify/2.0.1:
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==
   /asn1.js/4.10.1:
     dependencies:
       bn.js: 4.11.9
@@ -519,6 +614,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==
+  /at-least-node/1.0.0:
+    dev: false
+    engines:
+      node: '>= 4.0.0'
+    resolution:
+      integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
   /atob/2.1.2:
     dev: false
     engines:
@@ -898,6 +999,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-PYeGSEmmHM6zvoef2w8TPzlrnNpXIjTipYK780YswmIP9vjxmd6Y2a3CB2Ks6/AU8NHjZugXvo8w3oWM2qnwXA==
+  /code-block-writer/10.1.0:
+    dev: false
+    resolution:
+      integrity: sha512-RG9hpXtWFeUWhuUav1YuP/vGcyncW+t90yJLk9fNZs1De2OuHTHKAKThVCokt29PYq5RoJ0QSZaIZ+rvPO23hA==
   /collection-visit/1.0.0:
     dependencies:
       map-visit: 1.0.0
@@ -1061,7 +1166,7 @@ packages:
       p-limit: 2.3.0
       schema-utils: 1.0.0
       serialize-javascript: 2.1.2
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
       webpack-log: 2.0.0
     dev: false
     engines:
@@ -1662,6 +1767,19 @@ packages:
     dev: false
     resolution:
       integrity: sha512-8UEa58QDLauDNfpbrX55Q9jrGHThw2ZMdOky5Gl1CDtVeJDPVrG4Jxx1N8jw2gkWaff5UUuX1KJd+9zGe2B+ZA==
+  /fast-glob/3.2.2:
+    dependencies:
+      '@nodelib/fs.stat': 2.0.3
+      '@nodelib/fs.walk': 1.2.4
+      glob-parent: 5.1.1
+      merge2: 1.4.1
+      micromatch: 4.0.2
+      picomatch: 2.2.2
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-UDV82o4uQyljznxwMxyVRJgZZt3O5wENYojjzbaGEGZgeOxkLFf+V4cnUD+krzb2F72E18RhamkMZ7AdeggF7A==
   /fast-json-stable-stringify/2.1.0:
     dev: false
     resolution:
@@ -1670,6 +1788,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
+  /fastq/1.8.0:
+    dependencies:
+      reusify: 1.0.4
+    dev: false
+    resolution:
+      integrity: sha512-SMIZoZdLh/fgofivvIkmknUXyPnvxRE3DhtZ5Me3Mrsk5gyPL42F0xr51TdRXskBxHfMp+07bcYzfsYEsSQA9Q==
   /faye-websocket/0.10.0:
     dependencies:
       websocket-driver: 0.7.4
@@ -1825,6 +1949,15 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-rCjNLPa6ckjYI13ziHts9u3fNC8=
+  /fs-extra-promise/1.0.1:
+    dependencies:
+      bluebird: 3.7.2
+      fs-extra: 2.1.2
+    dev: false
+    engines:
+      node: '>=4'
+    resolution:
+      integrity: sha1-tu0azpexDga5X0WNBRt/BcZhPuY=
   /fs-extra/0.30.0:
     dependencies:
       graceful-fs: 4.2.4
@@ -1835,6 +1968,24 @@ packages:
     dev: false
     resolution:
       integrity: sha1-8jP/zAjU2n1DLapEl3aYnbHfk/A=
+  /fs-extra/2.1.2:
+    dependencies:
+      graceful-fs: 4.2.4
+      jsonfile: 2.4.0
+    dev: false
+    resolution:
+      integrity: sha1-BGxwFjzvmq1GsOSn+kZ/si1x3jU=
+  /fs-extra/9.0.1:
+    dependencies:
+      at-least-node: 1.0.0
+      graceful-fs: 4.2.4
+      jsonfile: 6.0.1
+      universalify: 1.0.0
+    dev: false
+    engines:
+      node: '>=10'
+    resolution:
+      integrity: sha512-h2iAoN838FqAFJY2/qVpzFXy+EBxfVE220PalAqQLDVsFOHLJrZvut5puAbCdNv6WJk+B8ihI+k0c7JK5erwqQ==
   /fs-write-stream-atomic/1.0.10:
     dependencies:
       graceful-fs: 4.2.4
@@ -1908,7 +2059,6 @@ packages:
     dev: false
     engines:
       node: '>= 6'
-    optional: true
     resolution:
       integrity: sha512-FnI+VGOpnlGHWZxthPGR+QhR78fuiK0sNLkHQv+bL9fQi57lNNdquIbna/WrfROrolq8GK5Ek6BiMwqL/voRYQ==
   /glob/7.1.3:
@@ -2114,7 +2264,7 @@ packages:
       pretty-error: 2.1.1
       tapable: 1.1.3
       util.promisify: 1.0.0
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
     dev: false
     engines:
       node: '>=6.9'
@@ -2292,6 +2442,15 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-opmNIX7uFnS96NtPmhWQgQx6/NYFgsUXYMllcfzwWKUMwfo8kku1TvE6hkNcH+Q1ts5cMVrsY7j0bxXQDciu9Q==
+  /is-absolute/1.0.0:
+    dependencies:
+      is-relative: 1.0.0
+      is-windows: 1.0.2
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-dOWoqflvcydARa360Gvv18DZ/gRuHKi2NU/wU5X1ZFzdYfH29nkiNZsF3mp4OJ3H4yo9Mx8A/uAGNzpzPN3yBA==
   /is-accessor-descriptor/0.1.6:
     dependencies:
       kind-of: 3.2.2
@@ -2431,6 +2590,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-5G0tKtBTFImOqDnLB2hG6Bp2qcKEFduo4tZu9MT/H6NQv/ghhy30o55ufafxJ/LdH79LLs2Kfrn85TLKyA7BUg==
+  /is-negated-glob/1.0.0:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha1-aRC8pdqMleeEtXUbl2z1oQ/uNtI=
   /is-number/3.0.0:
     dependencies:
       kind-of: 3.2.2
@@ -2483,6 +2648,14 @@ packages:
       node: '>= 0.4'
     resolution:
       integrity: sha512-vlKW17SNq44owv5AQR3Cq0bQPEb8+kF3UKZ2fiZNOWtztYE5i0CzCZxFDwO58qAOWtxdBRVO/V5Qin1wjCqFYQ==
+  /is-relative/1.0.0:
+    dependencies:
+      is-unc-path: 1.0.0
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-Kw/ReK0iqwKeu0MITLFuj0jbPAmEiOsIwyIXvvbfa6QfmN9pkD1M+8pdk7Rl/dTKbH34/XBFMbgD4iMJhLQbGA==
   /is-stream/1.1.0:
     dev: false
     engines:
@@ -2497,6 +2670,14 @@ packages:
       node: '>= 0.4'
     resolution:
       integrity: sha512-OwijhaRSgqvhm/0ZdAcXNZt9lYdKFpcRDT5ULUuYXPoT794UNOdU+gpT6Rzo7b4V2HUl/op6GqY894AZwv9faQ==
+  /is-unc-path/1.0.0:
+    dependencies:
+      unc-path-regex: 0.1.2
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-mrGpVd0fs7WWLfVsStvgF6iEJnbjDFZh9/emhRDcGWTduTfNHd9CHeUwH3gYIjdbwo4On6hunkztwOaAw0yllQ==
   /is-windows/1.0.2:
     dev: false
     engines:
@@ -2568,6 +2749,14 @@ packages:
       graceful-fs: 4.2.4
     resolution:
       integrity: sha1-NzaitCi4e72gzIO1P6PWM6NcKug=
+  /jsonfile/6.0.1:
+    dependencies:
+      universalify: 1.0.0
+    dev: false
+    optionalDependencies:
+      graceful-fs: 4.2.4
+    resolution:
+      integrity: sha512-jR2b5v7d2vIOust+w3wtFKZIfpC2pnRmFAhAC/BuweZFQR8qZzxH1OyrQ10HmdVYiXWkYUqPVsz91cG7EL2FBg==
   /killable/1.0.1:
     dev: false
     resolution:
@@ -2733,6 +2922,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=
+  /merge2/1.4.1:
+    dev: false
+    engines:
+      node: '>= 8'
+    resolution:
+      integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
   /methods/1.1.2:
     dev: false
     engines:
@@ -2943,6 +3138,18 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-ji6J5enbMyGRHIAkAOu3WdV8nggqviKCEKtXcOqfphZZtQrmHKycfynJ2V7eVPUA4NhJ6V7Wf4TmGbTwKE9B6g==
+  /multimatch/4.0.0:
+    dependencies:
+      '@types/minimatch': 3.0.3
+      array-differ: 3.0.0
+      array-union: 2.1.0
+      arrify: 2.0.1
+      minimatch: 3.0.4
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-lDmx79y1z6i7RNx0ZGCPq1bzJ6ZoDDKbvh7jxr9SJcWLkShMzXrHbYVpTdnhNM5MXpDUxCQ4DgqVttVXlBgiBQ==
   /nan/2.14.1:
     dev: false
     optional: true
@@ -3664,6 +3871,13 @@ packages:
       node: '>= 4'
     resolution:
       integrity: sha1-G0KmJmoh8HQh0bC1S33BZ7AcATs=
+  /reusify/1.0.4:
+    dev: false
+    engines:
+      iojs: '>=1.0.0'
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
   /rimraf/2.7.1:
     dependencies:
       glob: 7.1.6
@@ -3678,6 +3892,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==
+  /run-parallel/1.1.9:
+    dev: false
+    resolution:
+      integrity: sha512-DEqnSRTDw/Tc3FXf49zedI638Z9onwUotBMiUFKmrO2sdFKIbXamXGQ3Axd4qgphxKB4kw/qP1w5kTxnfU1B9Q==
   /run-queue/1.0.3:
     dependencies:
       aproba: 1.2.0
@@ -4166,17 +4384,6 @@ packages:
       webpack: ^4.0.0
     resolution:
       integrity: sha512-QMxecFz/gHQwteWwSo5nTc6UaICqN1bMedC5sMtUc7y3Ha3Q8y6ZO0iCR8pq4RJC8Hjf0FEPEHZqcMB/+DFCrA==
-  /terser-webpack-plugin/1.4.3/webpack@4.43.0:
-    dependencies:
-      webpack: /webpack/4.43.0/webpack@4.43.0
-    dev: false
-    engines:
-      node: '>= 6.9.0'
-    id: registry.npmjs.org/terser-webpack-plugin/1.4.3
-    peerDependencies:
-      webpack: ^4.0.0
-    resolution:
-      integrity: sha512-QMxecFz/gHQwteWwSo5nTc6UaICqN1bMedC5sMtUc7y3Ha3Q8y6ZO0iCR8pq4RJC8Hjf0FEPEHZqcMB/+DFCrA==
   /terser/4.7.0:
     dependencies:
       commander: 2.20.3
@@ -4287,6 +4494,14 @@ packages:
       typescript: '*'
     resolution:
       integrity: sha512-zXypEIT6k3oTc+OZNx/cqElrsbBtYqDknf48OZos0NQ3RTt045fBIU8RRSu+suObBzYB355aIPGOe/3kj9h7Ig==
+  /ts-morph/7.1.1:
+    dependencies:
+      '@dsherret/to-absolute-glob': 2.0.2
+      '@ts-morph/common': 0.5.0
+      code-block-writer: 10.1.0
+    dev: false
+    resolution:
+      integrity: sha512-vzLA3RW6bHNApHtzFA9CzR1VVBsImjKAhg4rMh/VjyNRWIgIGsyX8RIYBqwhR7CNWv40/W5fmdDgdtHRf+Q02w==
   /tslib/1.13.0:
     dev: false
     resolution:
@@ -4323,6 +4538,19 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-D/wqnB2xzNFIcoBG9FG8cXRDjiqSTbG2wd8DMZeQyJlP1vfTkIxH4GKveWaEBYySKIg+USu+E+EDIR47SqnaMQ==
+  /typescript/3.9.5:
+    dev: false
+    engines:
+      node: '>=4.2.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
+  /unc-path-regex/0.1.2:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha1-5z3T17DXxe2G+6xrCufYxqadUPo=
   /union-value/1.0.1:
     dependencies:
       arr-union: 3.1.0
@@ -4346,6 +4574,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-zoWr9ObaxALD3DOPfjPSqxt4fnZiWblxHIgeWqW8x7UqDzEtHEQLzji2cuJYQFCU6KmoJikOYAZlrTHHebjx2w==
+  /universalify/1.0.0:
+    dev: false
+    engines:
+      node: '>= 10.0.0'
+    resolution:
+      integrity: sha512-rb6X1W158d7pRQBg5gkR8uPaSfiids68LTJQYOtEUhoJUWBdaQHsuT/EUduxXYxcrt4r5PJ4fuHW1MHT6p0qug==
   /unpipe/1.0.0:
     dev: false
     engines:
@@ -4491,7 +4725,7 @@ packages:
       mime: 2.4.6
       mkdirp: 0.5.5
       range-parser: 1.2.1
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
       webpack-log: 2.0.0
     dev: false
     engines:
@@ -4575,7 +4809,7 @@ packages:
       strip-ansi: 3.0.1
       supports-color: 6.1.0
       url: 0.11.0
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
       webpack-dev-middleware: /webpack-dev-middleware/3.7.2/webpack@4.43.0
       webpack-log: 2.0.0
       ws: 6.2.1
@@ -4634,17 +4868,6 @@ packages:
     engines:
       node: '>=6.11.5'
     hasBin: true
-    resolution:
-      integrity: sha512-GW1LjnPipFW2Y78OOab8NJlCflB7EFskMih2AHdvjbpKMeDJqEgSx24cXXXiPS65+WSwVyxtDsJH6jGX2czy+g==
-  /webpack/4.43.0/webpack@4.43.0:
-    dependencies:
-      ajv-keywords: 3.4.1
-      terser-webpack-plugin: /terser-webpack-plugin/1.4.3/webpack@4.43.0
-    dev: false
-    engines:
-      node: '>=6.11.5'
-    hasBin: true
-    id: registry.npmjs.org/webpack/4.43.0
     resolution:
       integrity: sha512-GW1LjnPipFW2Y78OOab8NJlCflB7EFskMih2AHdvjbpKMeDJqEgSx24cXXXiPS65+WSwVyxtDsJH6jGX2czy+g==
   /websocket-driver/0.6.5:
@@ -4779,11 +5002,25 @@ packages:
     dev: false
     resolution:
       integrity: sha512-AX3Zw5iPruN5ie6xGRIDgqkT+ZhnRlZMLMHAs8tg7nRruy2Nb+i5o9bwghAogtM08q1dpr2LVoS8KSTMYpWXUw==
+  'file:projects/convert-egret-project-to-es6.tgz':
+    dependencies:
+      '@types/fs-extra-promise': 1.0.9
+      '@types/node': 13.13.10
+      args: 5.0.1
+      fs-extra-promise: 1.0.1
+      ts-morph: 7.1.1
+      typescript: 3.9.5
+    dev: false
+    name: '@rush-temp/convert-egret-project-to-es6'
+    resolution:
+      integrity: sha512-j9gUCUhp9tP2WYcsq2YXJiRYDdFn4EnxrsjRkfDJHHl3uBVvVTSC4hwlMTYeLdTQ6LCg5HvyoiHyb3Vmy44/Cg==
+      tarball: 'file:projects/convert-egret-project-to-es6.tgz'
+    version: 0.0.0
   'file:projects/egret-build-script-plugins.tgz':
     dev: false
     name: '@rush-temp/egret-build-script-plugins'
     resolution:
-      integrity: sha512-+tokbb4Yim37nCOILfUviFj/LVqyqzkxZj3Auyx0Edmde+Zn3XVnGTbuiccE8O8FQJ172FHXtru2KIzXf3fAdg==
+      integrity: sha512-YbNgNXExpGNF125X+ZOhOSdgWd0KnrkdodrTk69iLP+RVFEVT6EkzZDuxlTOol5ye+avsktp9wJHbCFqZIxSeQ==
       tarball: 'file:projects/egret-build-script-plugins.tgz'
     version: 0.0.0
   'file:projects/egret-webpack-bundler.tgz':
@@ -4796,7 +5033,7 @@ packages:
       html-webpack-plugin: /html-webpack-plugin/4.3.0/webpack@4.43.0
       ts-loader: /ts-loader/7.0.5/typescript@3.9.3
       typescript: 3.9.3
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
       webpack-dev-middleware: /webpack-dev-middleware/3.7.2/webpack@4.43.0
       webpack-dev-server: /webpack-dev-server/3.11.0/webpack@4.43.0
     dev: false
@@ -4811,7 +5048,7 @@ packages:
       '@types/mocha': 7.0.2
       '@types/node': 11.15.14
       ajv: 6.12.2
-      ajv-i18n: 3.5.0
+      ajv-i18n: /ajv-i18n/3.5.0/ajv@6.12.2
       args: 5.0.1
       egret-node-utils: 0.0.7
       escodegen: 1.14.1
@@ -4830,13 +5067,14 @@ registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
+  '@rush-temp/convert-egret-project-to-es6': 'file:./projects/convert-egret-project-to-es6.tgz'
   '@rush-temp/egret-build-script-plugins': 'file:./projects/egret-build-script-plugins.tgz'
   '@rush-temp/egret-webpack-bundler': 'file:./projects/egret-webpack-bundler.tgz'
   '@rush-temp/eui-compiler': 'file:./projects/eui-compiler.tgz'
   '@types/ajv': ^1.0.0
   '@types/express': ~4.17.6
+  '@types/fs-extra-promise': ^1.0.9
   '@types/mocha': ^7.0.2
-  '@types/node': ^11.11.3
   '@types/webpack': ~4.41.16
   ajv: ^6.12.0
   ajv-i18n: ^3.5.0
@@ -4847,11 +5085,13 @@ specifiers:
   esprima: ^4.0.1
   express: ~4.17.1
   fork-ts-checker-webpack-plugin: ^4.1.3
+  fs-extra-promise: ^1.0.1
   html-webpack-plugin: ^4.3.0
   mocha: ^6.2.2
   mock-fs: ^4.10.2
   trim-lines: ^1.1.2
   ts-loader: ^7.0.2
+  ts-morph: ^7.0.3
   typescript: ^3.8.3
   webpack: ^4.43.0
   webpack-dev-middleware: ~3.7.2
