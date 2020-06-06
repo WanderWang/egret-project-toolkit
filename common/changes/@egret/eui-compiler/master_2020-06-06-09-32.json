@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/eui-compiler",
+      "comment": "重构 theme 相关代码",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/eui-compiler",
+  "email": "185713114@qq.com"
+}
