@@ -61,7 +61,7 @@ describe('declaration-emitter', () => {
         assert.equal(`declare module skins {
     class MyComponent1 extends eui.Skin {
     }
-}        
+}
 `, result);
     })
 })
