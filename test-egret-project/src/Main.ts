@@ -32,6 +32,10 @@ import { ThemeAdapter } from "./ThemeAdapter";
 import { platform } from "./Platform";
 import { LoadingUI } from "./LoadingUI";
 
+require('../resource/default.thm.js')
+
+declare function require(x: string): any
+
 class Main extends eui.UILayer {
 
 

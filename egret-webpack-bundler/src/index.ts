@@ -4,6 +4,7 @@ import * as path from 'path';
 import webpack from 'webpack';
 import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
+import ThemePlugin from './loaders/theme';
 import { openUrl } from './open';
 const middleware = require("webpack-dev-middleware");
 
@@ -129,6 +130,43 @@ function generateConfig(
 
     ];
 
+    const typescriptLoaderRule: webpack.RuleSetRule = {
+        test: /\.tsx?$/,
+        loader: require.resolve('ts-loader'),
+        options: {
+            transpileOnly: true,
+            compilerOptions: {
+                sourceMap: needSourceMap
+            },
+            getCustomTransformers: function () {
+                return ({
+                    before: [
+                        emitClassName()
+                    ]
+                });
+            }
+        }
+    }
+
+    const exmlLoaderRule: webpack.RuleSetRule = {
+        test: /\.exml/,
+        use: [
+            // {
+            //     loader: 'thread-loader',
+            //     options: {
+            //         workers: 2,
+            //     },
+            // },
+            require.resolve("./loaders/exml"),
+        ],
+    };
+
+    const rules: webpack.RuleSetRule[] = [typescriptLoaderRule];
+    if (true) {
+        rules.push(exmlLoaderRule);
+        plugins.push(new ThemePlugin({}))
+    }
+
     if (['web', 'ios', 'android'].indexOf(target) >= 0) {
         plugins.push(
             new HtmlWebpackPlugin({
@@ -149,26 +187,10 @@ function generateConfig(
             filename: 'main.js'
         },
         module: {
-            rules: [
-                {
-                    test: /\.tsx?$/, loader: require.resolve('ts-loader'), options: {
-                        transpileOnly: true,
-                        compilerOptions: {
-                            sourceMap: needSourceMap
-                        },
-                        getCustomTransformers: function () {
-                            return ({
-                                before: [
-                                    emitClassName()
-                                ]
-                            });
-                        }
-                    }
-                }
-            ]
+            rules
         },
         resolve: {
-            extensions: [".ts", ".js", ".json"]
+            extensions: [".ts", ".js"]
         },
         plugins
     };

@@ -7,5 +7,7 @@
 		"libs/modules/tween/tween.js",
 		"libs/modules/promise/promise.js"
 	],
-	"games": []
+	"game": [
+		"main.js"
+	]
 }
