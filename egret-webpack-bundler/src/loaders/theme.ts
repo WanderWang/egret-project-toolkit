@@ -1,9 +1,10 @@
+import { EuiCompiler } from '@egret/eui-compiler';
 import * as path from 'path';
 // import { SyncHook } from 'tapable';
 import * as webpack from 'webpack';
+import { CachedFile } from './file';
 // import FileCacheWriter from './FileCacheWriter';
 import * as utils from './utils';
-import { CachedFile } from './file';
 
 interface ThemePluginOptions {
     dirs?: string[];
@@ -57,7 +58,12 @@ export default class ThemePlugin {
         this.dirs = this.options.dirs.map(dir => path.join(compiler.context, dir));
         const pluginName = this.constructor.name;
 
-        const thmJSPath = path.join(compiler.context, this.options.thmJS);
+
+
+        const euiCompiler = new EuiCompiler(compiler.context);
+        const theme = euiCompiler.getThemes()[0]
+        const outputFilename = theme.filePath.replace(".thm.json", ".thm.js");
+        const thmJSPath = path.join(compiler.context, outputFilename);
         utils.addWatchIgnore(compiler, thmJSPath);
         this.thmJS = new CachedFile(thmJSPath);
 
@@ -73,7 +79,8 @@ export default class ThemePlugin {
             // this.exmlDeclare = new FileCacheWriter(exmlDeclarePath);
         }
 
-        this.thmJS.update(utils.generateContent('require("./eui_skins/ButtonSkin.exml")'));
+        const content = theme.data.exmls.map(exml => `require("./${path.relative('resource', exml).split("\\").join("/")}")`).join("\n");
+        this.thmJS.update(utils.generateContent(content));
 
         // 更新文件系统缓存状态
         utils.updateFileTimestamps(this.compiler, this.thmJS.filePath);

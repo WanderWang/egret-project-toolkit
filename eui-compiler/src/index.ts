@@ -4,6 +4,7 @@ import { getFilePathRelativeProjectRoot, getThemes, initilize } from './eui-conf
 import { AST_Skin } from './exml-ast';
 import { generateAST } from "./util/parser";
 import { initTypings } from './util/typings';
+import { ThemeData } from './theme';
 
 
 export type EuiAstTransformer = (ast: AST_Skin) => AST_Skin
@@ -25,31 +26,22 @@ export class EuiCompiler {
         const themes = getThemes();
         let output = '';
         for (const theme of themes) {
-            output += this.compileTheme(theme) + "\n";
+            output += this.compileTheme(theme.data) + "\n";
         }
         return [
             { filename: 'resource/default.thm.js', content: output }
         ]
     }
 
-    private compileTheme(themeData: any) {
+    getThemes() {
+        return getThemes();
+    }
+
+    private compileTheme(themeData: ThemeData) {
 
 
         const exmlFiles = themeData.exmls;
         // const exmlFiles = theme.exmls.map(item => 'resource/' + item) as string[];
-        const duplicate = exmlFiles.filter((item, index, array) => {
-            return array.lastIndexOf(item) !== array.indexOf(item)
-        })
-        if (duplicate.length > 0) {
-            console.log(`存在相同的皮肤文件`, duplicate)
-            process.exit(1);
-        }
-        // window.generateEUI = {};
-        // generateEUI.paths = {};
-        // generateEUI.styles = undefined;
-        // generateEUI.skins = { "eui.Button": "resource/eui_skins/ButtonSkin.exml", "eui.CheckBox": "resource/eui_skins/CheckBoxSkin.exml", "eui.HScrollBar": "resource/eui_skins/HScrollBarSkin.exml", "eui.HSlider": "resource/eui_skins/HSliderSkin.exml", "eui.Panel": "resource/eui_skins/PanelSkin.exml", "eui.TextInput": "resource/eui_skins/TextInputSkin.exml", "eui.ProgressBar": "resource/eui_skins/ProgressBarSkin.exml", "eui.RadioButton": "resource/eui_skins/RadioButtonSkin.exml", "eui.Scroller": "resource/eui_skins/ScrollerSkin.exml", "eui.ToggleSwitch": "resource/eui_skins/ToggleSwitchSkin.exml", "eui.VScrollBar": "resource/eui_skins/VScrollBarSkin.exml", "eui.VSlider": "resource/eui_skins/VSliderSkin.exml", "eui.ItemRenderer": "resource/eui_skins/ItemRendererSkin.exml" };
-
-
         const emitter = new JavaScriptEmitter();
         emitter.emitHeader(themeData);
         for (let filename of exmlFiles) {
