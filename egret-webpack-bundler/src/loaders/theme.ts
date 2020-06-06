@@ -8,8 +8,6 @@ import * as utils from './utils';
 
 interface ThemePluginOptions {
     dirs?: string[];
-    thmJS?: string;
-    thmJSON?: string;
     exmlDeclare?: string;
 }
 
@@ -33,8 +31,6 @@ export default class ThemePlugin {
     constructor(options: ThemePluginOptions) {
         this.options = {
             dirs: ['resource/eui_skins', 'resource/skins'], // 扫描目录
-            thmJS: 'resource/default.thm.js', // must not empty
-            thmJSON: 'resource/default.thm.json', // json供编辑器使用
             exmlDeclare: 'libs/ExmlDeclare.ts',
             ...options,
         };
@@ -67,11 +63,11 @@ export default class ThemePlugin {
         utils.addWatchIgnore(compiler, thmJSPath);
         this.thmJS = new CachedFile(thmJSPath);
 
-        if (this.options.thmJSON) {
-            const thmJSONPath = path.join(compiler.context, this.options.thmJSON);
-            utils.addWatchIgnore(compiler, thmJSONPath);
-            // this.thmJSON = new FileCacheWriter(thmJSONPath);
-        }
+        // if (this.options.thmJSON) {
+        //     const thmJSONPath = path.join(compiler.context, this.options.thmJSON);
+        //     utils.addWatchIgnore(compiler, thmJSONPath);
+        //     // this.thmJSON = new FileCacheWriter(thmJSONPath);
+        // }
 
         if (this.options.exmlDeclare) {
             const exmlDeclarePath = path.join(compiler.context, this.options.exmlDeclare);
@@ -79,7 +75,29 @@ export default class ThemePlugin {
             // this.exmlDeclare = new FileCacheWriter(exmlDeclarePath);
         }
 
-        const content = theme.data.exmls.map(exml => `require("./${path.relative('resource', exml).split("\\").join("/")}")`).join("\n");
+
+
+        const requires = theme.data.exmls.map(exml => `require("./${path.relative(path.dirname(theme.filePath), exml).split("\\").join("/")}");`);
+        const content = `window.skins = window.skins || {};
+    window.generateEUI = window.generateEUI || {
+      paths: {},
+      styles: undefined,
+      skins: ${JSON.stringify(theme.data.skins, null, '\t')},
+    };
+    ${requires.join('\n')}
+    module.exports = window.generateEUI;
+    `;
+
+        //   if (utils.isHot(this.compiler)) {
+        //     content += '\nif (module.hot) { module.hot.accept(); }';
+        //   }
+
+
+
+
+
+
+
         this.thmJS.update(utils.generateContent(content));
 
         // 更新文件系统缓存状态

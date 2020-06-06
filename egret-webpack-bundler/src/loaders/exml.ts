@@ -4,6 +4,9 @@
 //     const className = result.className.replace(/^skins./, 'eui.');
 //     const resource = this.resource.replace(this.rootContext || (this as any).options.context, '.');
 
+import * as eui from "@egret/eui-compiler";
+import * as webpack from 'webpack';
+import * as path from 'path';
 //     let code = `${STATIC}
 //       module.exports = ${result.code};
 //       if (window.generateEUI) {
@@ -22,6 +25,16 @@
 //     return code;
 // };
 
-export default function exmlLoader(content: string) {
-    return "module.exports = 1111"
+const exmlLoader: webpack.loader.Loader = function (content) {
+
+    const { parser, emitter } = eui;
+    const skinNode = parser.generateAST(content.toString());
+    const jsEmitter = new emitter.JavaScriptEmitter();
+    const relativePath = path.relative(this.rootContext, this.resourcePath).split("\\").join("/");
+    jsEmitter.emitSkinNode(relativePath, skinNode);
+    const result = `module.exports = ${jsEmitter.getResult()};`
+    // const result = `module.exports = 1`
+    return result;
 }
+
+export default exmlLoader;

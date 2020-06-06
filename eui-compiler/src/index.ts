@@ -6,6 +6,10 @@ import { generateAST } from "./util/parser";
 import { initTypings } from './util/typings';
 import { ThemeData } from './theme';
 
+export const parser = require('./util/parser') as typeof import("./util/parser")
+export const emitter = {
+    JavaScriptEmitter
+}
 
 export type EuiAstTransformer = (ast: AST_Skin) => AST_Skin
 
