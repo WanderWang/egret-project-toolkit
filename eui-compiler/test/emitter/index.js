@@ -11,7 +11,7 @@ const typings = require('../../lib/util/typings');
 const esprima = require('esprima');
 
 
-describe('javascript-emitter', () => {
+describe('emitter', () => {
 
 
     const baselineDir = path.join(__dirname, 'baselines')
@@ -49,29 +49,4 @@ describe('javascript-emitter', () => {
         })
     }
 
-})
-
-describe('declaration-emitter', () => {
-
-    const cwd = process.cwd();
-    before(() => {
-        const dir = path.join(path.join(__dirname, 'baselines/simple'));
-        process.chdir(dir);
-    })
-    after(() => {
-        process.chdir(cwd);
-    })
-
-    it('simple', () => {
-        const content = fs.readFileSync('input.exml', 'utf-8');
-        const skinNode = parser.generateAST(content)
-        const emitter = new DeclarationEmitter();
-        emitter.emitSkinNode('input.exml', skinNode);
-        const result = emitter.getResult();
-        assert.equal(`declare module skins {
-    class MyComponent1 extends eui.Skin {
-    }
-}
-`, result);
-    })
 })
