@@ -6,6 +6,7 @@ import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
 import ThemePlugin from './loaders/theme';
 import { openUrl } from './open';
+import { emitClassName, addDependency } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
 
 
@@ -141,7 +142,8 @@ function generateConfig(
             getCustomTransformers: function () {
                 return ({
                     before: [
-                        emitClassName()
+                        emitClassName(),
+                        addDependency('../resource/default.thm.js')
                     ]
                 });
             }
@@ -214,28 +216,3 @@ function startExpressServer(compilerApp: express.Express, port: number) {
 }
 
 
-function emitClassName() {
-    var ts = require('typescript');
-    return function (ctx: any) {
-        function visitClassDeclaration(node: any) {
-            // const isExport = node.modifiers ? node.modifiers.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) : false;
-            var clzNameNode = node.name;
-            var clzName = clzNameNode.getText();
-            var binaryExpression = ts.createIdentifier("window[\"" + clzName + "\"] = " + clzName + ";");
-            var arrays = [
-                node,
-                binaryExpression,
-            ];
-            return ts.createNodeArray(arrays);
-        }
-        var visitor = function (node: any) {
-            if (node.kind === ts.SyntaxKind.ClassDeclaration) {
-                return visitClassDeclaration(node);
-            }
-            else {
-                return ts.visitEachChild(node, visitor, ctx);
-            }
-        };
-        return function (sf: any) { return ts.visitNode(sf, visitor); };
-    };
-}

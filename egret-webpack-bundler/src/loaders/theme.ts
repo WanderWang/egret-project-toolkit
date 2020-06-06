@@ -131,11 +131,11 @@ export default class ThemePlugin {
         //     this.errors = [];
         // });
 
-        // // 监听文件目录
-        // compiler.hooks.afterCompile.tap(pluginName, compilation => {
-        //     this.dirs.forEach(item => {
-        //         compilation.contextDependencies.add(item);
-        //     });
-        // });
+        // 监听文件目录
+        compiler.hooks.afterCompile.tap(pluginName, compilation => {
+            this.dirs.forEach(item => {
+                compilation.contextDependencies.add(item);
+            });
+        });
     }
 }
