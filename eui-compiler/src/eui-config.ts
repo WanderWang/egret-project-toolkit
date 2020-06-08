@@ -1,6 +1,7 @@
 import * as Ajv from 'ajv';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ThemeFile } from './theme';
 
 let localize = require('ajv-i18n/localize/zh');
 
@@ -91,9 +92,8 @@ function parseEgretProperties() {
 export function getThemes() {
     const themes = egretProperties.eui.themes;
     return themes.map(t => {
-        const jsonContent = fs.readFileSync(path.join(projectRoot, t), 'utf-8');
-        const json = JSON.parse(jsonContent);
-        return json;
+        const themeFile = new ThemeFile(projectRoot, t);
+        return themeFile;
     })
 }
 

@@ -4,7 +4,9 @@ import * as path from 'path';
 import webpack from 'webpack';
 import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
+import ThemePlugin from './loaders/theme';
 import { openUrl } from './open';
+import { addDependency, emitClassName } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
 
 
@@ -14,7 +16,11 @@ export type WebpackBundleOptions = {
 
     libraryType: "debug" | "release"
 
-    defines?: any
+    defines?: any,
+
+    exml?: {
+        watch: boolean
+    }
 }
 
 
@@ -129,6 +135,46 @@ function generateConfig(
 
     ];
 
+    const before = [emitClassName()];
+    if (options.exml) {
+        before.push(addDependency('../resource/default.thm.js'));
+    }
+
+    const typescriptLoaderRule: webpack.RuleSetRule = {
+        test: /\.tsx?$/,
+        loader: require.resolve('ts-loader'),
+        options: {
+            transpileOnly: true,
+            compilerOptions: {
+                sourceMap: needSourceMap
+            },
+            getCustomTransformers: function () {
+                return ({
+                    before
+                });
+            }
+        }
+    }
+
+    const exmlLoaderRule: webpack.RuleSetRule = {
+        test: /\.exml/,
+        use: [
+            // {
+            //     loader: 'thread-loader',
+            //     options: {
+            //         workers: 2,
+            //     },
+            // },
+            require.resolve("./loaders/exml"),
+        ],
+    };
+
+    const rules: webpack.RuleSetRule[] = [typescriptLoaderRule];
+    if (options.exml?.watch) {
+        rules.push(exmlLoaderRule);
+        plugins.push(new ThemePlugin({}))
+    }
+
     if (['web', 'ios', 'android'].indexOf(target) >= 0) {
         plugins.push(
             new HtmlWebpackPlugin({
@@ -149,26 +195,10 @@ function generateConfig(
             filename: 'main.js'
         },
         module: {
-            rules: [
-                {
-                    test: /\.tsx?$/, loader: require.resolve('ts-loader'), options: {
-                        transpileOnly: true,
-                        compilerOptions: {
-                            sourceMap: needSourceMap
-                        },
-                        getCustomTransformers: function () {
-                            return ({
-                                before: [
-                                    emitClassName()
-                                ]
-                            });
-                        }
-                    }
-                }
-            ]
+            rules
         },
         resolve: {
-            extensions: [".ts", ".js", ".json"]
+            extensions: [".ts", ".js"]
         },
         plugins
     };
@@ -192,28 +222,3 @@ function startExpressServer(compilerApp: express.Express, port: number) {
 }
 
 
-function emitClassName() {
-    var ts = require('typescript');
-    return function (ctx: any) {
-        function visitClassDeclaration(node: any) {
-            // const isExport = node.modifiers ? node.modifiers.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) : false;
-            var clzNameNode = node.name;
-            var clzName = clzNameNode.getText();
-            var binaryExpression = ts.createIdentifier("window[\"" + clzName + "\"] = " + clzName + ";");
-            var arrays = [
-                node,
-                binaryExpression,
-            ];
-            return ts.createNodeArray(arrays);
-        }
-        var visitor = function (node: any) {
-            if (node.kind === ts.SyntaxKind.ClassDeclaration) {
-                return visitClassDeclaration(node);
-            }
-            else {
-                return ts.visitEachChild(node, visitor, ctx);
-            }
-        };
-        return function (sf: any) { return ts.visitNode(sf, visitor); };
-    };
-}
