@@ -25,7 +25,6 @@ export class CachedFile {
         //     .digest('hex');
 
         const newHash = crypto.createHash('md5').update(content.toString()).digest('hex');
-
         if (this.hash !== newHash) {
             this.hash = newHash;
             this.compiler.outputFileSystem.writeFile(this.filePath, content, function () {

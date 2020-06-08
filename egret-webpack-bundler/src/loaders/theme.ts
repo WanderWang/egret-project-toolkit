@@ -93,15 +93,40 @@ export default class ThemePlugin {
         //   }
 
 
+        const beforeRun = async (_compiler: webpack.Compiler, callback: Function) => {
+            // if (this.needRebuild(compiler.contextTimestamps)) {
+            //     this.ret = await this.make(); // cached ret
+
+            //     this.generateThmJS(this.ret);
+            //     this.thmJSON && this.generateThmJSON(this.ret);
+            //     this.exmlDeclare && this.generateExmlDeclare(this.ret);
+
+            //     this.buildTimestamp = Date.now();
+            // }
+
+            // // invoke themePluginResult
+            // compiler.hooks.themePluginResult.call(this.ret);
+            // callback();
+
+            this.thmJS.update(utils.generateContent(content));
+
+            // 更新文件系统缓存状态
+            utils.updateFileTimestamps(this.compiler, this.thmJS.filePath);
+            callback();
+        };
+
+        compiler.hooks.watchRun.tapAsync(pluginName, beforeRun);
+        compiler.hooks.beforeRun.tapAsync(pluginName, beforeRun);
 
 
 
 
 
-        this.thmJS.update(utils.generateContent(content));
 
-        // 更新文件系统缓存状态
-        utils.updateFileTimestamps(this.compiler, this.thmJS.filePath);
+        // this.thmJS.update(utils.generateContent(content));
+
+        // // 更新文件系统缓存状态
+        // utils.updateFileTimestamps(this.compiler, this.thmJS.filePath);
 
         // 扩展
         // compiler.hooks.themePluginResult = new SyncHook(['themeResult']);
