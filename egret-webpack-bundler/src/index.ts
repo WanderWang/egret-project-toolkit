@@ -6,7 +6,7 @@ import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
 import ThemePlugin from './loaders/theme';
 import { openUrl } from './open';
-import { emitClassName, addDependency } from './ts-transformer';
+import { addDependency, emitClassName } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
 
 
@@ -16,7 +16,11 @@ export type WebpackBundleOptions = {
 
     libraryType: "debug" | "release"
 
-    defines?: any
+    defines?: any,
+
+    exml?: {
+        watch: boolean
+    }
 }
 
 
@@ -131,6 +135,11 @@ function generateConfig(
 
     ];
 
+    const before = [emitClassName()];
+    if (options.exml) {
+        before.push(addDependency('../resource/default.thm.js'));
+    }
+
     const typescriptLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
         loader: require.resolve('ts-loader'),
@@ -141,10 +150,7 @@ function generateConfig(
             },
             getCustomTransformers: function () {
                 return ({
-                    before: [
-                        emitClassName(),
-                        addDependency('../resource/default.thm.js')
-                    ]
+                    before
                 });
             }
         }
@@ -164,7 +170,7 @@ function generateConfig(
     };
 
     const rules: webpack.RuleSetRule[] = [typescriptLoaderRule];
-    if (true) {
+    if (options.exml?.watch) {
         rules.push(exmlLoaderRule);
         plugins.push(new ThemePlugin({}))
     }
