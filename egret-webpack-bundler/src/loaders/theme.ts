@@ -61,7 +61,7 @@ export default class ThemePlugin {
         const outputFilename = theme.filePath.replace(".thm.json", ".thm.js");
         const thmJSPath = path.join(compiler.context, outputFilename);
         utils.addWatchIgnore(compiler, thmJSPath);
-        this.thmJS = new CachedFile(thmJSPath);
+        this.thmJS = new CachedFile(thmJSPath, compiler);
 
         // if (this.options.thmJSON) {
         //     const thmJSONPath = path.join(compiler.context, this.options.thmJSON);
