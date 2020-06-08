@@ -12,3 +12,4 @@ export abstract class BaseEmitter {
 
 export * from './javascript-emitter';
 export * from './declaration-emitter';
+export * from './json-emitter';
