@@ -5,8 +5,8 @@
 //     const resource = this.resource.replace(this.rootContext || (this as any).options.context, '.');
 
 import * as eui from "@egret/eui-compiler";
-import * as webpack from 'webpack';
 import * as path from 'path';
+import * as webpack from 'webpack';
 //     let code = `${STATIC}
 //       module.exports = ${result.code};
 //       if (window.generateEUI) {
@@ -27,14 +27,41 @@ import * as path from 'path';
 
 const exmlLoader: webpack.loader.Loader = function (content) {
 
+    if (!euiCompiler) {
+        // euiCompiler = new eui.EuiCompiler(this.rootContext);
+    }
     const { parser, emitter } = eui;
     const skinNode = parser.generateAST(content.toString());
     const jsEmitter = new emitter.JavaScriptEmitter();
     const relativePath = path.relative(this.rootContext, this.resourcePath).split("\\").join("/");
     jsEmitter.emitSkinNode(relativePath, skinNode);
+    // const theme = euiCompiler.getThemes()[0]
+    // generateThemeJs(this, theme);
     const result = `module.exports = ${jsEmitter.getResult()};`
-    // const result = `module.exports = 1`
     return result;
+}
+
+function generateThemeJs(loaderContext: webpack.loader.LoaderContext, theme: import("@egret/eui-compiler/lib/theme").ThemeFile) {
+    const outputFilename = theme.filePath.replace(".thm.json", ".thm.js");
+    const requires = theme.data.exmls.map(exml => `require("./${path.relative(path.dirname(theme.filePath), exml).split("\\").join("/")}");`);
+    const content = `window.skins = window.skins || {};
+window.generateEUI = window.generateEUI || {
+  paths: {},
+  styles: undefined,
+  skins: ${JSON.stringify(theme.data.skins, null, '\t')},
+};
+${requires.join('\n')}
+module.exports = window.generateEUI;
+`;
+    loaderContext.emitFile(outputFilename, content, null);
+}
+
+
+
+let euiCompiler: eui.EuiCompiler;
+
+function getEuiCompier() {
+
 }
 
 export default exmlLoader;
