@@ -4,12 +4,13 @@ import * as path from 'path';
 import webpack from 'webpack';
 import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
-import { SrcLoaderPlugn } from './loaders/src-loader';
+import SrcLoaderPlugin from './loaders/src-loader/Plugin';
 import ThemePlugin from './loaders/theme';
 import { openUrl } from './open';
 import { addDependency, emitClassName } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
-
+const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 
 
@@ -21,6 +22,10 @@ export type WebpackBundleOptions = {
 
     exml?: {
         watch: boolean
+    }
+
+    typescript?: {
+        mode: "legacy" | "modern"
     }
 }
 
@@ -127,31 +132,31 @@ function generateConfig(
 ): webpack.Configuration {
 
     context = context.split("/").join(path.sep);
-    const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
-    const HtmlWebpackPlugin = require('html-webpack-plugin');
+
     const needSourceMap = devServer;
     const mode = 'development'
     const cwd = process.cwd();
-    const plugins = [
-        new ForkTsCheckerPlugin(),
 
-    ];
+    const plugins: webpack.Plugin[] = [];
 
-    const before = [emitClassName()];
-    if (options.exml) {
-        before.push(addDependency('../resource/default.thm.js'));
+    const rules: webpack.RuleSetRule[] = [];
+
+    const typescriptLoaderRule: webpack.RuleSetRule = {
+        test: /\.tsx?$/,
+        loader: require.resolve('ts-loader')
     }
+
     const srcLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
         include: path.join(cwd, 'src'),
         loader: require.resolve('./loaders/src-loader'),
     };
 
-    const typescriptLoaderRule: webpack.RuleSetRule = {
-        test: /\.tsx?$/,
-        loader: require.resolve('ts-loader'),
-        options: {
-            // TODO global的老代码中有namespace不能开启transpileOnly
+    const before = [emitClassName()];
+
+    if (options.typescript?.mode === 'modern') {
+        rules.push(typescriptLoaderRule)
+        typescriptLoaderRule.options = {
             transpileOnly: true,
             compilerOptions: {
                 sourceMap: needSourceMap
@@ -162,7 +167,28 @@ function generateConfig(
                 });
             }
         }
+        plugins.push(new ForkTsCheckerPlugin());
     }
+    else {
+        plugins.push(new SrcLoaderPlugin())
+        rules.push(srcLoaderRule);
+        rules.push(typescriptLoaderRule);
+        typescriptLoaderRule.options = {
+            transpileOnly: false,
+            compilerOptions: {
+                sourceMap: needSourceMap
+            },
+        }
+    }
+
+
+
+    if (options.exml) {
+        before.push(addDependency('../resource/default.thm.js'));
+    }
+
+
+
 
     const exmlLoaderRule: webpack.RuleSetRule = {
         test: /\.exml/,
@@ -177,14 +203,13 @@ function generateConfig(
         ],
     };
 
-    const rules: webpack.RuleSetRule[] = [typescriptLoaderRule];
+
     if (options.exml?.watch) {
         rules.push(srcLoaderRule);
         rules.push(exmlLoaderRule);
         plugins.push(new ThemePlugin({}))
     }
 
-    plugins.push(new SrcLoaderPlugn());
     if (['web', 'ios', 'android'].indexOf(target) >= 0) {
         plugins.push(
             new HtmlWebpackPlugin({
