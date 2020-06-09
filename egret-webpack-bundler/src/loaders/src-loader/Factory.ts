@@ -1,7 +1,7 @@
-import * as path from 'path';
 import * as crypto from 'crypto';
-import * as glob from 'glob';
 import * as _fs from 'fs';
+import * as glob from 'glob';
+import * as path from 'path';
 import parse, { Dependencies } from './parse';
 
 interface FactoryOptions {
@@ -102,10 +102,10 @@ export default class Factory {
   private findDependencyFiles(dependencies: Dependencies): string[] {
     const files: Set<string> = new Set();
     Object.keys(dependencies).forEach(key => {
-      let thisFiles;
+      let thisFiles: Set<string> | null = null;
       const tmp = key.split('@');
       const names = tmp[0].split('.');
-      const namspaces = tmp[1] ? tmp[1].split('.') : [ ];
+      const namspaces = tmp[1] ? tmp[1].split('.') : [];
       for (let i = namspaces.length; i >= 0; i--) { // 插入一个空的空间
         const ns = namspaces.slice(0, i).join('.');
         for (let j = names.length; j > 0; j--) {
@@ -121,9 +121,9 @@ export default class Factory {
         }
       }
       if (thisFiles) {
-        for (const item of thisFiles) {
-          files.add(item);
-        }
+        thisFiles.forEach(item => {
+          files.add(item)
+        })
       }
     });
     return Array.from(files);
