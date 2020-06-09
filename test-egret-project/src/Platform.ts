@@ -23,7 +23,7 @@ class DebugPlatform implements Platform {
 
 
 
-export const platform = new DebugPlatform();
+const platform = new DebugPlatform();
 
 
 

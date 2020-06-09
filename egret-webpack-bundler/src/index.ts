@@ -205,7 +205,7 @@ function generateConfig(
 
 
     if (options.exml?.watch) {
-        rules.push(srcLoaderRule);
+        // rules.push(srcLoaderRule);
         rules.push(exmlLoaderRule);
         plugins.push(new ThemePlugin({}))
     }

@@ -28,7 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-export class ThemeAdapter implements eui.IThemeAdapter {
+class ThemeAdapter implements eui.IThemeAdapter {
 
     /**
      * 解析主题

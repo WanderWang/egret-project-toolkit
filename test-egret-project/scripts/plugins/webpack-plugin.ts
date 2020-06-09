@@ -18,7 +18,12 @@ export class WebpackDevServerPlugin implements plugins.Command {
     onFinish(commandContext: plugins.CommandContext) {
         return new Promise<void>((resolve, reject) => {
             const bundler = new EgretWebpackBundler(commandContext.projectRoot, commandContext.buildConfig.target);
-            bundler.startDevServer({ libraryType: "debug", exml: { watch: true } })
+            bundler.startDevServer({
+                libraryType: "debug",
+                typescript: { mode: 'legacy' }
+                // , exml: { watch: true } 
+            }
+            )
         })
     }
 }

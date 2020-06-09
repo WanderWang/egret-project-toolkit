@@ -27,12 +27,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-import { AssetAdapter } from "./AssetAdapter";
-import { ThemeAdapter } from "./ThemeAdapter";
-import { platform } from "./Platform";
-import { LoadingUI } from "./LoadingUI";
-
-declare function require(x: string): any
 
 // HEADER_INJECTION_PLACEHOLDER 注入global文件依赖的地方
 

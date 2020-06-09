@@ -28,7 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-export class AssetAdapter implements eui.IAssetAdapter {
+class AssetAdapter implements eui.IAssetAdapter {
     /**
      * @language zh_CN
      * 解析素材
