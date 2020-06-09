@@ -1,6 +1,21 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Wed, 03 Jun 2020 08:56:49 GMT and should not be manually modified.
+This log was last generated on Tue, 09 Jun 2020 08:03:17 GMT and should not be manually modified.
+
+## 1.1.0
+Tue, 09 Jun 2020 08:03:17 GMT
+
+### Minor changes
+
+- 添加 exml-loader
+- 添加 srcLoader
+
+### Patches
+
+- 添加 exml-loader
+- 添加依赖机制
+- 向下兼容不引入exml.watch
+- 添加 legacy 模式
 
 ## 1.0.8
 Wed, 03 Jun 2020 08:56:49 GMT

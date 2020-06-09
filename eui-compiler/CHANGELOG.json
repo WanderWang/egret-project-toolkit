@@ -2,6 +2,21 @@
   "name": "@egret/eui-compiler",
   "entries": [
     {
+      "version": "1.4.4",
+      "tag": "@egret/eui-compiler_v1.4.4",
+      "date": "Tue, 09 Jun 2020 08:03:17 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "重构代码，为多 emitter 做准备"
+          },
+          {
+            "comment": "重构 theme 相关代码"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.3",
       "tag": "@egret/eui-compiler_v1.4.3",
       "date": "Wed, 03 Jun 2020 08:01:19 GMT",

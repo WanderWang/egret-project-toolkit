@@ -1,6 +1,14 @@
 # Change Log - @egret/eui-compiler
 
-This log was last generated on Wed, 03 Jun 2020 08:01:19 GMT and should not be manually modified.
+This log was last generated on Tue, 09 Jun 2020 08:03:17 GMT and should not be manually modified.
+
+## 1.4.4
+Tue, 09 Jun 2020 08:03:17 GMT
+
+### Patches
+
+- 重构代码，为多 emitter 做准备
+- 重构 theme 相关代码
 
 ## 1.4.3
 Wed, 03 Jun 2020 08:01:19 GMT

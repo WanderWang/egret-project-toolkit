@@ -2,6 +2,40 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "@egret/egret-webpack-bundler_v1.1.0",
+      "date": "Tue, 09 Jun 2020 08:03:17 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "添加 exml-loader"
+          },
+          {
+            "comment": "添加 srcLoader"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "添加 exml-loader"
+          },
+          {
+            "comment": "添加依赖机制"
+          },
+          {
+            "comment": "向下兼容不引入exml.watch"
+          },
+          {
+            "comment": "添加 legacy 模式"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@egret/eui-compiler\" from `1.4.3` to `1.4.4`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.8",
       "tag": "@egret/egret-webpack-bundler_v1.0.8",
       "date": "Wed, 03 Jun 2020 08:56:49 GMT",
