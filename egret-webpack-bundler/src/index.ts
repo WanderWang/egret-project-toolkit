@@ -4,6 +4,7 @@ import * as path from 'path';
 import webpack from 'webpack';
 import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
+import { SrcLoaderPlugn } from './loaders/src-loader';
 import ThemePlugin from './loaders/theme';
 import { openUrl } from './open';
 import { addDependency, emitClassName } from './ts-transformer';
@@ -130,6 +131,7 @@ function generateConfig(
     const HtmlWebpackPlugin = require('html-webpack-plugin');
     const needSourceMap = devServer;
     const mode = 'development'
+    const cwd = process.cwd();
     const plugins = [
         new ForkTsCheckerPlugin(),
 
@@ -139,11 +141,17 @@ function generateConfig(
     if (options.exml) {
         before.push(addDependency('../resource/default.thm.js'));
     }
+    const srcLoaderRule: webpack.RuleSetRule = {
+        test: /\.tsx?$/,
+        include: path.join(cwd, 'src'),
+        loader: require.resolve('./loaders/src-loader'),
+    };
 
     const typescriptLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
         loader: require.resolve('ts-loader'),
         options: {
+            // TODO global的老代码中有namespace不能开启transpileOnly
             transpileOnly: true,
             compilerOptions: {
                 sourceMap: needSourceMap
@@ -171,10 +179,12 @@ function generateConfig(
 
     const rules: webpack.RuleSetRule[] = [typescriptLoaderRule];
     if (options.exml?.watch) {
+        rules.push(srcLoaderRule);
         rules.push(exmlLoaderRule);
         plugins.push(new ThemePlugin({}))
     }
 
+    plugins.push(new SrcLoaderPlugn());
     if (['web', 'ios', 'android'].indexOf(target) >= 0) {
         plugins.push(
             new HtmlWebpackPlugin({
@@ -185,7 +195,7 @@ function generateConfig(
 
     return {
         stats: "minimal",
-        entry: './src/Main',
+        entry: './src/Main.ts',
         target: 'web',
         mode,
         context: context,

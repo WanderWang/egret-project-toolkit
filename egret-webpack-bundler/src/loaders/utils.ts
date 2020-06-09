@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as webpack from 'webpack';
 
 // 添加automatically头
@@ -101,15 +102,28 @@ export function addWatchIgnore(compiler: webpack.Compiler, ignored: string) {
 //   return path.basename(fileName).replace(/\./g, '_');
 // }
 
-// // 判断文件是否是webpack构建的entry
-// export function isEntry(entries, resourcePath) {
-//   return Object.values(entries).some((item: any) => {
-//     if (!Array.isArray(item)) {
-//       item = [item];
-//     }
-//     return item.some(p => p.replace(/^.*!/, '') === resourcePath);
-//   });
-// }
+// 判断文件是否是webpack构建的entry
+export function isEntry(compiler: webpack.Compiler, resourcePath: string) {
+  let { entry } = compiler.options;
+  if (typeof entry === 'string') {
+    entry = {
+      index: entry,
+    };
+  }
+  return Object.values(entry as any).some((item: any) => {
+    if (!Array.isArray(item)) {
+      item = [item];
+    }
+    return item.some((p: string) => {
+      p = p.replace(/^.*!/, '');
+      // TODO 如果文件没有后缀将判断失误 例如 './src/Main'
+      if (!path.isAbsolute(p)) {
+        p = path.join(process.cwd(), p);
+      }
+      return p === resourcePath;
+    });
+  });
+}
 
 // // 判断是否需要热更新
 // export function isHot(compiler) {
@@ -117,18 +131,18 @@ export function addWatchIgnore(compiler: webpack.Compiler, ignored: string) {
 //   return mode === 'development' && devServer && devServer.hot;
 // }
 
-// // 获取相对路径
-// // eg: src/Main.ts src/common/Component.ts => ./common/Component.ts
-// export function relative(parent, relative) {
-//   if (path.isAbsolute(relative)) {
-//     relative = path.relative(path.dirname(parent), relative).replace(/\\/g, '/');
+// 获取相对路径
+// eg: src/Main.ts src/common/Component.ts => ./common/Component.ts
+export function relative(parent: string, relative: string) {
+  if (path.isAbsolute(relative)) {
+    relative = path.relative(path.dirname(parent), relative).replace(/\\/g, '/');
 
-//     if (!/^[\.\/]/.test(relative)) {
-//       relative = `./${relative}`;
-//     }
-//   }
-//   return relative;
-// }
+    if (!/^[\.\/]/.test(relative)) {
+      relative = `./${relative}`;
+    }
+  }
+  return relative;
+}
 
 // // 同步timestamps
 // // 同时清除inputFileSystem缓存
