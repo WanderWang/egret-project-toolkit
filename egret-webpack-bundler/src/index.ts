@@ -7,7 +7,7 @@ import { Target_Type } from './egretproject/data';
 import SrcLoaderPlugin from './loaders/src-loader/Plugin';
 import ThemePlugin from './loaders/theme';
 import { openUrl } from './open';
-import { addDependency, emitClassName } from './ts-transformer';
+import { emitClassName } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
 const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -132,23 +132,46 @@ function generateConfig(
 ): webpack.Configuration {
 
     context = context.split("/").join(path.sep);
-
     const needSourceMap = devServer;
     const mode = 'development'
-    const cwd = process.cwd();
 
-    const plugins: webpack.Plugin[] = [];
+    const config: webpack.Configuration = {
+        stats: "minimal",
+        entry: './src/Main.ts',
+        target: 'web',
+        mode,
+        context,
+        devtool: needSourceMap ? "source-map" : false,
+        output: {
+            path: path.resolve(context, 'dist'),
+            filename: 'main.js'
+        },
+        module: {
+            rules: []
+        },
+        resolve: {
+            extensions: [".ts", ".js"]
+        },
+        plugins: []
+    };
+    generateWebpackConfig_typescript(config, options, needSourceMap);
+    generateWebpackConfig_exml(config, options);
+    generateWebpackConfig_html(config, options, target);
+    return config;
+}
 
-    const rules: webpack.RuleSetRule[] = [];
+function generateWebpackConfig_typescript(config: webpack.Configuration, options: WebpackBundleOptions, needSourceMap: boolean) {
 
     const typescriptLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
         loader: require.resolve('ts-loader')
     }
+    const rules = config.module!.rules!;
+    const plugins = config.plugins!;
 
     const srcLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
-        include: path.join(cwd, 'src'),
+        include: path.join(config.context!, 'src'),
         loader: require.resolve('./loaders/src-loader'),
     };
 
@@ -180,15 +203,13 @@ function generateConfig(
             },
         }
     }
+}
 
-
+function generateWebpackConfig_exml(config: webpack.Configuration, options: WebpackBundleOptions) {
 
     if (options.exml) {
-        before.push(addDependency('../resource/default.thm.js'));
+        // before.push(addDependency('../resource/default.thm.js'));
     }
-
-
-
 
     const exmlLoaderRule: webpack.RuleSetRule = {
         test: /\.exml/,
@@ -203,41 +224,24 @@ function generateConfig(
         ],
     };
 
-
     if (options.exml?.watch) {
         // rules.push(srcLoaderRule);
-        rules.push(exmlLoaderRule);
-        plugins.push(new ThemePlugin({}))
+        config.module!.rules.push(exmlLoaderRule);
+        config.plugins!.push(new ThemePlugin({}))
     }
+}
 
+function generateWebpackConfig_html(config: webpack.Configuration, options: WebpackBundleOptions, target: string) {
     if (['web', 'ios', 'android'].indexOf(target) >= 0) {
-        plugins.push(
+        config.plugins?.push(
             new HtmlWebpackPlugin({
                 inject: false,
                 template: 'template/web/index.html'
             }))
     }
-
-    return {
-        stats: "minimal",
-        entry: './src/Main.ts',
-        target: 'web',
-        mode,
-        context: context,
-        devtool: needSourceMap ? "source-map" : false,
-        output: {
-            path: path.resolve(context, 'dist'),
-            filename: 'main.js'
-        },
-        module: {
-            rules
-        },
-        resolve: {
-            extensions: [".ts", ".js"]
-        },
-        plugins
-    };
 }
+
+
 
 function allowCrossDomain(req: express.Request, res: express.Response, next: express.NextFunction) {
     res.header("Access-Control-Allow-Origin", "*");
