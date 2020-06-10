@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as fs from 'fs';
 import { DeclarationEmitter, JavaScriptEmitter, JSONEmitter } from './emitter';
 import { getFilePathRelativeProjectRoot, getThemes, initilize } from './eui-config';
@@ -5,7 +6,7 @@ import { AST_Skin } from './exml-ast';
 import { ThemeFile } from './theme';
 import { generateAST } from "./util/parser";
 import { initTypings } from './util/typings';
-
+import * as glob from 'glob';
 export const parser = require('./util/parser') as typeof import("./util/parser")
 export const emitter = {
     JavaScriptEmitter,
@@ -57,6 +58,19 @@ const jsonEmitSolution: EmitSolution = (theme, transformers) => {
 }
 
 const debugEmitSolution: EmitSolution = (theme, transformers) => {
+    if (theme.data.autoGenerateExmlsList) {
+        const dirname = path.dirname(theme.filePath);
+        // const 
+        const exmlFiles = glob.sync('**/*.exml', { cwd: dirname }).map(item => path.join(dirname, item).split("\\").join("/"));
+        const exmlContents = exmlFiles.map(filename => {
+            const contents = fs.readFileSync(filename, 'utf-8');
+            return { filename, contents }
+        })
+        // console.log(theme.data.exmls)
+        theme.sort(exmlContents);
+        // console.log(theme.data.exmls)
+        // todo:保存
+    }
     const themeData = theme.data;
     const exmlFiles = themeData.exmls;
     const emitter = new DeclarationEmitter();

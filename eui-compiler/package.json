@@ -27,7 +27,8 @@
     "@types/mocha": "^7.0.2",
     "@types/node": "^11.11.3",
     "mocha": "^6.2.2",
-    "mock-fs": "^4.10.2"
+    "mock-fs": "^4.10.2",
+    "@types/glob": "~7.1.2"
   },
   "dependencies": {
     "ajv": "^6.12.0",
@@ -38,6 +39,7 @@
     "esprima": "^4.0.1",
     "trim-lines": "^1.1.2",
     "xml-js": "^1.6.9",
-    "ts-morph": "~7.1.1"
+    "ts-morph": "~7.1.1",
+    "glob": "7.1.6"
   }
 }
