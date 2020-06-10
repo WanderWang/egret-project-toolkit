@@ -19,11 +19,73 @@ export type EuiAstTransformer = (ast: AST_Skin) => AST_Skin
 type EmitSolution = (theme: ThemeFile, transformers: EuiAstTransformer[]) => { filename: string, content: string }
 
 
+const javascriptEmitSolution: EmitSolution = (theme, transformers) => {
+    const themeData = theme.data;
+    const exmlFiles = themeData.exmls;
+    const emitter = new JavaScriptEmitter();
+    emitter.emitHeader(themeData);
+    for (let filename of exmlFiles) {
+        const fullpath = getFilePathRelativeProjectRoot(filename)
+        const content = fs.readFileSync(fullpath, 'utf-8');
+        let skinNode = generateAST(content);
+        for (let transformer of transformers) {
+            skinNode = transformer(skinNode);
+        }
+        emitter.emitSkinNode(filename, skinNode);
+    }
+    const filename = theme.filePath.replace("thm.json", 'thm.js');
+    const content = emitter.getResult();
+    return { filename, content }
+}
+
+const jsonEmitSolution: EmitSolution = (theme, transformers) => {
+    const themeData = theme.data;
+    const exmlFiles = themeData.exmls;
+    const emitter = new JSONEmitter();
+    for (let filename of exmlFiles) {
+        const fullpath = getFilePathRelativeProjectRoot(filename)
+        const content = fs.readFileSync(fullpath, 'utf-8');
+        let skinNode = generateAST(content);
+        for (let transformer of transformers) {
+            skinNode = transformer(skinNode);
+        }
+        emitter.emitSkinNode(filename, skinNode);
+    }
+    const filename = theme.filePath.replace("thm.json", 'thm.js');
+    const content = emitter.getResult();
+    return { filename, content }
+}
+
+const debugEmitSolution: EmitSolution = (theme, transformers) => {
+    const themeData = theme.data;
+    const exmlFiles = themeData.exmls;
+    const emitter = new DeclarationEmitter();
+    for (let filename of exmlFiles) {
+        const fullpath = getFilePathRelativeProjectRoot(filename)
+        const content = fs.readFileSync(fullpath, 'utf-8');
+        let skinNode = generateAST(content);
+        for (let transformer of transformers) {
+            skinNode = transformer(skinNode);
+        }
+        emitter.emitSkinNode(filename, skinNode);
+    }
+    const filename = 'libs/exmls.e.d.ts';
+    const content = emitter.getResult();
+    return { filename, content }
+}
+
+const modes: { [mode: string]: EmitSolution } = {
+    'commonjs': javascriptEmitSolution,
+    'commonjs2': jsonEmitSolution,
+    'debug': debugEmitSolution
+}
+
+
 export class EuiCompiler {
 
     private _transformers: EuiAstTransformer[] = [];
 
-    constructor(root: string) {
+    constructor(root: string, private mode = 'commonjs') {
         initilize(root)
         initTypings();
     }
@@ -33,32 +95,13 @@ export class EuiCompiler {
     }
 
     emit(): { filename: string, content: string }[] {
-        const solution: EmitSolution = this.compileTheme;
         const themes = getThemes();
+        const solution = modes[this.mode];
         return themes.map((theme) => solution(theme, this._transformers));
     }
 
     getThemes() {
         return getThemes();
-    }
-
-    private compileTheme(theme: ThemeFile, transformers: EuiAstTransformer[]) {
-        const themeData = theme.data;
-        const exmlFiles = themeData.exmls;
-        const emitter = new JavaScriptEmitter();
-        emitter.emitHeader(themeData);
-        for (let filename of exmlFiles) {
-            const fullpath = getFilePathRelativeProjectRoot(filename)
-            const content = fs.readFileSync(fullpath, 'utf-8');
-            let skinNode = generateAST(content);
-            for (let transformer of transformers) {
-                skinNode = transformer(skinNode);
-            }
-            emitter.emitSkinNode(filename, skinNode);
-        }
-        const filename = theme.filePath.replace("thm.json", 'thm.js');
-        const content = emitter.getResult();
-        return { filename, content }
     }
 }
 

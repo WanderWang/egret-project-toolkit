@@ -29,6 +29,7 @@ const config: ResourceManagerConfig = {
                     // }),
                     new ExmlPlugin('debug'), // 非 EUI 项目关闭此设置
                     // new IncrementCompilePlugin(),
+                    new EuiCompilerPlugin('debug'),
                     new WebpackDevServerPlugin()
                 ]
             }

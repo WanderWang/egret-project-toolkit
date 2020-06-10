@@ -8,7 +8,7 @@ import * as eui from '@egret/eui-compiler';
  */
 export class EuiCompilerPlugin implements plugins.Command {
 
-    constructor() {
+    constructor(private mode: string) {
     }
 
     async onFile(file: plugins.File) {
@@ -22,7 +22,7 @@ export class EuiCompilerPlugin implements plugins.Command {
     }
 
     async onFinish(commandContext: plugins.CommandContext) {
-        const compiler = new eui.EuiCompiler(commandContext.projectRoot);
+        const compiler = new eui.EuiCompiler(commandContext.projectRoot, this.mode);
         compiler.setCustomTransformers([
             transformer
         ])
