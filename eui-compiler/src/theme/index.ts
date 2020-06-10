@@ -48,7 +48,7 @@ export class ThemeFile {
         theme.exmls = this.sortExmls(theme.exmls);
     }
 
-    getDependence(exmls: any[]) {
+    private getDependence(exmls: any[]) {
         const dependenceMap = this._dependenceMap;
         for (const exml of exmls) {
             if (exml.filename in dependenceMap) continue;
@@ -63,7 +63,7 @@ export class ThemeFile {
     }
 
 
-    getDependenceClasses(node: AST_Node) {
+    private getDependenceClasses(node: AST_Node) {
         const result = [node.type];
         for (const child of node.children) {
             result.push(...this.getDependenceClasses(child));
@@ -71,7 +71,7 @@ export class ThemeFile {
         return result;
     }
 
-    sortExmls(exmls: string[]) {
+    private sortExmls(exmls: string[]) {
         const result: string[] = []
         const preloads = this._preloads
         for (const filename of exmls!) {
@@ -85,7 +85,7 @@ export class ThemeFile {
         return result;
     }
 
-    sortFileName(filename: string, output: string[]) {
+    private sortFileName(filename: string, output: string[]) {
         if (output.indexOf(filename) > -1) return;
 
         const dependencies = this._dependenceMap[filename];
