@@ -1,17 +1,23 @@
 import * as fs from 'fs';
-import { JavaScriptEmitter } from './emitter';
+import { DeclarationEmitter, JavaScriptEmitter, JSONEmitter } from './emitter';
 import { getFilePathRelativeProjectRoot, getThemes, initilize } from './eui-config';
 import { AST_Skin } from './exml-ast';
+import { ThemeFile } from './theme';
 import { generateAST } from "./util/parser";
 import { initTypings } from './util/typings';
-import { ThemeData } from './theme';
 
 export const parser = require('./util/parser') as typeof import("./util/parser")
 export const emitter = {
-    JavaScriptEmitter
+    JavaScriptEmitter,
+    JSONEmitter,
+    DeclarationEmitter
 }
 
 export type EuiAstTransformer = (ast: AST_Skin) => AST_Skin
+
+
+type EmitSolution = (theme: ThemeFile, transformers: EuiAstTransformer[]) => { filename: string, content: string }
+
 
 export class EuiCompiler {
 
@@ -27,42 +33,32 @@ export class EuiCompiler {
     }
 
     emit(): { filename: string, content: string }[] {
+        const solution: EmitSolution = this.compileTheme;
         const themes = getThemes();
-        let output = '';
-        for (const theme of themes) {
-            output += this.compileTheme(theme.data) + "\n";
-        }
-        return [
-            { filename: 'resource/default.thm.js', content: output }
-        ]
+        return themes.map((theme) => solution(theme, this._transformers));
     }
 
     getThemes() {
         return getThemes();
     }
 
-    private compileTheme(themeData: ThemeData) {
-
-
+    private compileTheme(theme: ThemeFile, transformers: EuiAstTransformer[]) {
+        const themeData = theme.data;
         const exmlFiles = themeData.exmls;
-        // const exmlFiles = theme.exmls.map(item => 'resource/' + item) as string[];
         const emitter = new JavaScriptEmitter();
         emitter.emitHeader(themeData);
         for (let filename of exmlFiles) {
             const fullpath = getFilePathRelativeProjectRoot(filename)
             const content = fs.readFileSync(fullpath, 'utf-8');
             let skinNode = generateAST(content);
-            for (let transformer of this._transformers) {
+            for (let transformer of transformers) {
                 skinNode = transformer(skinNode);
             }
             emitter.emitSkinNode(filename, skinNode);
         }
-        return emitter.getResult();
-    }
-
-    private compileExml(filename: string, content: string) {
-
-
+        const filename = theme.filePath.replace("thm.json", 'thm.js');
+        const content = emitter.getResult();
+        return { filename, content }
     }
 }
 

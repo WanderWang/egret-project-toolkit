@@ -1,4 +1,3 @@
-import { writeFileSync } from 'fs';
 import * as convert from 'xml-js';
 import { AST_Attribute, AST_FullName_Type, AST_Node, AST_Node_Name_And_Type, AST_Skin, AST_STATE, AST_STATE_ADD } from '../exml-ast';
 import { getTypings } from './typings';
