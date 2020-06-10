@@ -1,10 +1,9 @@
 import { BaseEmitter } from ".";
-import { Project, NamespaceDeclarationKind } from 'ts-morph';
+import { AST_Skin } from "../exml-ast";
 
 export class DeclarationEmitter extends BaseEmitter {
 
     private declaration: string = '';
-    private project: Project = null!;
 
     getResult(): string {
         return this.declaration;
@@ -12,27 +11,25 @@ export class DeclarationEmitter extends BaseEmitter {
     emitHeader(themeData: any): void {
 
     }
-    emitSkinNode(filename: string, skinNode: import("../exml-ast").AST_Skin): void {
-        if (!this.project) {
-            this.project = new Project();
-        }
-        const project = this.project;
-        const sourceFile = project.createSourceFile('output.ts');
-        if (skinNode.namespace) {
-            let a = sourceFile.getNamespace(skinNode.namespace);
-            if (!a) {
-                a = sourceFile.addNamespace({
-                    hasDeclareKeyword: true,
-                    declarationKind: NamespaceDeclarationKind.Module,
-                    name: skinNode.namespace
-                });
-            }
-            a.addClass({ name: skinNode.classname, extends: 'eui.Skin' });
+    emitSkinNode(filename: string, skinNode: AST_Skin): void {
+        const text = this.generateText(skinNode.classname, skinNode.namespace);
+        this.declaration += text;
+    }
+
+    generateText(className: string, moduleName: string) {
+        let text = '';
+        if (moduleName) {
+            text = `declare module ${moduleName} {
+    class ${className} extends eui.Skin {
+    }
+}
+`;
         }
         else {
-            sourceFile.addClass({ name: skinNode.classname, extends: 'eui.Skin' });
+            text = `class ${className} extends eui.Skin {
+}
+`;
         }
-        this.declaration = sourceFile.getText();
-        project.removeSourceFile(sourceFile);
+        return text;
     }
 }
