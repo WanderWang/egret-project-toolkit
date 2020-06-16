@@ -1,4 +1,4 @@
-var egret = window.egret;(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["resource"],{
+var egret = window.egret;(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["loading"],{
 
 /***/ "./src/LoadingUI.ts":
 /*!**************************!*\

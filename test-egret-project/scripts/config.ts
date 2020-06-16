@@ -15,6 +15,7 @@ const config: ResourceManagerConfig = {
     buildConfig: (params) => {
 
         const { target, command, projectName, version } = params;
+
         if (command == 'build') {
             const outputDir = '.';
             return {
@@ -34,8 +35,7 @@ const config: ResourceManagerConfig = {
             }
         }
         else if (command == 'publish') {
-            const outputDir = `../${projectName}_wxgame`;
-            // const outputDir = `bin-release/web/${version}`;
+            const outputDir = `bin-release/web/${version}`;
             return {
                 outputDir,
                 commands: [
@@ -44,7 +44,6 @@ const config: ResourceManagerConfig = {
                     new WebpackBundlePlugin({ libraryType: "debug", defines: { DEBUG: false, RELEASE: true } }),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
                     new EuiCompilerPlugin('commonjs'),
-                    new WxgamePlugin(false),
                     // new UglifyPlugin([{
                     //     sources: ["main.js"],
                     //     target: "main.min.js"

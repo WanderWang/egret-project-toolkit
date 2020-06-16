@@ -66,7 +66,6 @@ export class EgretWebpackBundler {
         startExpressServer(compilerApp, 3000);
         compilerApp.use(express.static(this.projectRoot));
 
-
         const manifestContent = JSON.stringify(
             { initial: scripts, game: ['main.js'] }, null, '\t'
         )
@@ -157,32 +156,44 @@ function generateConfig(
         resolve: {
             extensions: [".ts", ".js"]
         },
-        plugins: [],
-        optimization: {
-            // minimize: false,
-            splitChunks: {
-                // 分割文件
-                cacheGroups: {
-                    default: false,
-                    resource: {
-                        name: 'resource',
-                        chunks: 'initial',
-                        test(module) {
-                            return module.resource.indexOf('LoadingUI') >= 0;
-                            // return module.context.startsWith(path.join(context, 'src'));
-                        },
-                        minSize: 0,
-                    },
-                },
-            },
-        },
+        plugins: []
     };
     generateWebpackConfig_typescript(config, options, needSourceMap);
     generateWebpackConfig_exml(config, options);
     generateWebpackConfig_html(config, options, target);
+    genrateWebpackConfig_subpackages(config, options);
     if (options.webpackConfig) {
         const customWebpackConfig = typeof options.webpackConfig === 'function' ? options.webpackConfig(config) : options.webpackConfig;
         config = webpackMerge(config, customWebpackConfig);
+    }
+    return config;
+}
+
+function genrateWebpackConfig_subpackages(config: webpack.Configuration, options: WebpackBundleOptions) {
+    if (!options.subpackage) {
+        return config;
+    }
+    const items = options.subpackage.map(subpackage => {
+        return {
+            name: subpackage.name,
+            filename: subpackage.name + ".js",
+            test: (module: any) => {
+                return subpackage.matcher(module.resource)
+            },
+            chunks: "initial",
+            minSize: 0,
+        }
+    })
+
+    config.optimization = {
+        splitChunks: {
+            cacheGroups: {
+                default: false
+            }
+        }
+    }
+    for (let item of items) {
+        (config.optimization.splitChunks as any).cacheGroups[item.name] = item;
     }
     return config;
 }

@@ -33,25 +33,26 @@ const config: ResourceManagerConfig = {
             return {
                 outputDir,
                 commands: [
-                    new CleanPlugin({ matchers: ["js", "resource", "egret-library"] }),
+                    new CustomPlugin(),
                     // new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
-                    // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
-                    new WebpackBundlePlugin({ libraryType: "debug", defines: { DEBUG: false, RELEASE: true } }),
+                    new WebpackBundlePlugin({
+                        libraryType: "debug", defines: { DEBUG: false, RELEASE: true }, subpackage: [
+                            { name: 'loading', matcher: (p) => p.indexOf("LoadingUI") >= 0 }
+                        ]
+                    }),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
                     new EuiCompilerPlugin('commonjs'),
-                    new WxgamePlugin(useWxPlugin),
-                    // new UglifyPlugin([
-                    //     // 使用 EUI 项目，要压缩皮肤文件，可以开启这个压缩配置
-                    //     // {
-                    //     //     sources: ["resource/default.thm.js"],
-                    //     //     target: "default.thm.min.js"
-                    //     // },
-                    //     {
-                    //         sources: ["main.js"],
-                    //         target: "main.min.js"
-                    //     }
-                    // ]),
-                    new ManifestPlugin({ output: 'manifest.js', useWxPlugin: useWxPlugin })
+                    new WxgamePlugin(false),
+                    // new UglifyPlugin([{
+                    //     sources: ["main.js"],
+                    //     target: "main.min.js"
+                    // }]),
+                    // new RenamePlugin({
+                    //     verbose: true, hash: 'crc32', matchers: [
+                    //         { from: "**/*.js", to: "[path][name]_[hash].[ext]" }
+                    //     ]
+                    // }),
+                    new ManifestPlugin({ output: "manifest.js" })
                 ]
             }
         }

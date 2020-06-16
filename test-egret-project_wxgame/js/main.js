@@ -148,7 +148,7 @@ var egret = window.egret;/******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./src/Main.ts","resource"]);
+/******/ 	deferredModules.push(["./src/Main.ts","loading"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
@@ -721,3 +721,4 @@ window['ThemeAdapter'] = ThemeAdapter;
 /***/ })
 
 /******/ });
+;window.Main = Main;

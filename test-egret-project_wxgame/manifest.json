@@ -8,8 +8,8 @@
 	],
 	"game": [
 		"js/default.thm.js",
+		"js/loading.js",
 		"js/main.js",
-		"js/resource.main.js",
 		"js/default.thm.js"
 	]
 }
