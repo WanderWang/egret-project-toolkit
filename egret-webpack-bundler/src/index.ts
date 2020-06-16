@@ -25,8 +25,20 @@ export type WebpackBundleOptions = {
     }
 
     typescript?: {
-        mode: "legacy" | "modern"
+        mode: "legacy" | "modern",
+
     }
+
+    subpackage?: { name: string, matcher: (filepath: string) => boolean }[]
+}
+
+
+const options: WebpackBundleOptions = {
+
+    libraryType: "debug",
+    subpackage: [
+        { name: "my-lib", matcher: (p) => p.indexOf("LoadingUI") >= 0 }
+    ]
 }
 
 
@@ -152,7 +164,25 @@ function generateConfig(
         resolve: {
             extensions: [".ts", ".js"]
         },
-        plugins: []
+        plugins: [],
+        optimization: {
+            // minimize: false,
+            splitChunks: {
+                // 分割文件
+                cacheGroups: {
+                    default: false,
+                    resource: {
+                        name: 'resource',
+                        chunks: 'initial',
+                        test(module) {
+                            return module.resource.indexOf('LoadingUI') >= 0;
+                            // return module.context.startsWith(path.join(context, 'src'));
+                        },
+                        minSize: 0,
+                    },
+                },
+            },
+        },
     };
     generateWebpackConfig_typescript(config, options, needSourceMap);
     generateWebpackConfig_exml(config, options);
