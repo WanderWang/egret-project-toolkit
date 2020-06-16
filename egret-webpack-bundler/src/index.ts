@@ -11,7 +11,7 @@ import { emitClassName } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
 const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const webpackMerge = require('webpack-merge');
 
 
 export type WebpackBundleOptions = {
@@ -29,16 +29,9 @@ export type WebpackBundleOptions = {
 
     }
 
-    subpackage?: { name: string, matcher: (filepath: string) => boolean }[]
-}
+    subpackage?: { name: string, matcher: (filepath: string) => boolean }[],
 
-
-const options: WebpackBundleOptions = {
-
-    libraryType: "debug",
-    subpackage: [
-        { name: "my-lib", matcher: (p) => p.indexOf("LoadingUI") >= 0 }
-    ]
+    webpackConfig?: webpack.Configuration | ((bundleWebpackConfig: webpack.Configuration) => webpack.Configuration)
 }
 
 
@@ -147,7 +140,7 @@ function generateConfig(
     const needSourceMap = devServer;
     const mode = 'development'
 
-    const config: webpack.Configuration = {
+    let config: webpack.Configuration = {
         stats: "minimal",
         entry: './src/Main.ts',
         target: 'web',
@@ -187,6 +180,10 @@ function generateConfig(
     generateWebpackConfig_typescript(config, options, needSourceMap);
     generateWebpackConfig_exml(config, options);
     generateWebpackConfig_html(config, options, target);
+    if (options.webpackConfig) {
+        const customWebpackConfig = typeof options.webpackConfig === 'function' ? options.webpackConfig(config) : options.webpackConfig;
+        config = webpackMerge(config, customWebpackConfig);
+    }
     return config;
 }
 

@@ -18,7 +18,8 @@
     "ts-loader": "^7.0.2",
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
-    "webpack-dev-middleware": "~3.7.2"
+    "webpack-dev-middleware": "~3.7.2",
+    "webpack-merge": "~4.2.2"
   },
   "author": "",
   "license": "ISC",
