@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.2",
+      "tag": "@egret/egret-webpack-bundler_v1.1.2",
+      "date": "Tue, 16 Jun 2020 06:53:28 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "添加 subpackages 功能"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.1",
       "tag": "@egret/egret-webpack-bundler_v1.1.1",
       "date": "Tue, 09 Jun 2020 10:09:34 GMT",

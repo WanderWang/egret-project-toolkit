@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Tue, 09 Jun 2020 10:09:34 GMT and should not be manually modified.
+This log was last generated on Tue, 16 Jun 2020 06:53:28 GMT and should not be manually modified.
+
+## 1.1.2
+Tue, 16 Jun 2020 06:53:28 GMT
+
+### Patches
+
+- 添加 subpackages 功能
 
 ## 1.1.1
 Tue, 09 Jun 2020 10:09:34 GMT
