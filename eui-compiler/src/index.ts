@@ -70,6 +70,8 @@ const debugEmitSolution: EmitSolution = (theme, transformers) => {
         theme.sort(exmlContents);
         // console.log(theme.data.exmls)
         // todo:保存
+        const content = JSON.stringify(theme.data, null, '\t');
+        fs.writeFileSync(theme.filePath, content);
     }
     const themeData = theme.data;
     const exmlFiles = themeData.exmls;
