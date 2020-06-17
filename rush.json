@@ -376,6 +376,10 @@
       "reviewCategory": "production"
     },
     {
+      "packageName": "egret-webpack-cli-project",
+      "projectFolder": "test-egret-project/webpack"
+    },
+    {
       "packageName": "@egret/egret-webpack-bundler",
       "projectFolder": "egret-webpack-bundler",
       "reviewCategory": "production",

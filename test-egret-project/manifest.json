@@ -8,7 +8,6 @@
 		"libs/modules/promise/promise.js"
 	],
 	"game": [
-		"main.js",
-		"resource.main.js"
+		"main.js"
 	]
 }

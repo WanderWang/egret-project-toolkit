@@ -127,7 +127,7 @@ export class EgretWebpackBundler {
 
 }
 
-function generateConfig(
+export function generateConfig(
     context: string,
     options: WebpackBundleOptions,
     target: string,

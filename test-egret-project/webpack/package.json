@@ -1,0 +1,12 @@
+{
+  "name": "egret-webpack-cli-project",
+  "version": "1.0.0",
+  "description": "egret-build-script-plugins",
+  "scripts": {
+    "build": "echo helloworld"
+  },
+  "dependencies": {
+    "@egret/egret-webpack-bundler": "^1.1.4",
+    "@egret/eui-compiler": "^1.4.4"
+  }
+}
