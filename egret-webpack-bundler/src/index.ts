@@ -204,6 +204,18 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
         test: /\.tsx?$/,
         loader: require.resolve('ts-loader')
     }
+    const compilerOptions: import("typescript").CompilerOptions = {
+        sourceMap: needSourceMap,
+        importHelpers: true,
+        baseUrl: "./",
+        paths: {
+            "tslib": [require.resolve("tslib")]
+        }
+        // importHelpers: true
+    };
+    config.resolve!.alias = {
+        'tslib': require.resolve("tslib")
+    }
     const rules = config.module!.rules!;
     const plugins = config.plugins!;
 
@@ -213,15 +225,15 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
         loader: require.resolve('./loaders/src-loader'),
     };
 
+
+
     const before = [emitClassName()];
 
     if (options.typescript?.mode === 'modern') {
         rules.push(typescriptLoaderRule)
         typescriptLoaderRule.options = {
             transpileOnly: true,
-            compilerOptions: {
-                sourceMap: needSourceMap
-            },
+            compilerOptions,
             getCustomTransformers: function () {
                 return ({
                     before
@@ -236,9 +248,7 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
         rules.push(typescriptLoaderRule);
         typescriptLoaderRule.options = {
             transpileOnly: false,
-            compilerOptions: {
-                sourceMap: needSourceMap
-            },
+            compilerOptions,
         }
     }
 }

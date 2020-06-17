@@ -19,7 +19,8 @@
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
     "webpack-dev-middleware": "~3.7.2",
-    "webpack-merge": "~4.2.2"
+    "webpack-merge": "~4.2.2",
+    "tslib": "~2.0.0"
   },
   "author": "",
   "license": "ISC",
