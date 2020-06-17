@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.5",
+      "tag": "@egret/egret-webpack-bundler_v1.1.5",
+      "date": "Wed, 17 Jun 2020 07:07:35 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "支持直接使用webpack调用"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.4",
       "tag": "@egret/egret-webpack-bundler_v1.1.4",
       "date": "Wed, 17 Jun 2020 06:47:26 GMT",
