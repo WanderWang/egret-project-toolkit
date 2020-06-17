@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Tue, 16 Jun 2020 06:53:28 GMT and should not be manually modified.
+This log was last generated on Wed, 17 Jun 2020 06:47:26 GMT and should not be manually modified.
+
+## 1.1.4
+Wed, 17 Jun 2020 06:47:26 GMT
+
+### Patches
+
+- 添加tslib,降低编译尺寸
 
 ## 1.1.2
 Tue, 16 Jun 2020 06:53:28 GMT
