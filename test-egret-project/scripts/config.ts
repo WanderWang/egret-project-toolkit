@@ -27,10 +27,14 @@ const config: ResourceManagerConfig = {
                     //     nameSelector: p => path.basename(p).replace(/\./gi, "_"),
                     //     groupSelector: p => "preload"
                     // }),
-                    new ExmlPlugin('debug'), // 非 EUI 项目关闭此设置
+                    // new ExmlPlugin('debug'), // 非 EUI 项目关闭此设置
                     // new IncrementCompilePlugin(),
-                    new EuiCompilerPlugin('debug'),
-                    new WebpackDevServerPlugin()
+                    // new EuiCompilerPlugin(),
+                    new WebpackDevServerPlugin({
+                        libraryType: "debug",
+                        defines: { DEBUG: true, RELEASE: false },
+                        typescript: { mode: 'legacy' }
+                    })
                 ]
             }
         }
@@ -41,9 +45,13 @@ const config: ResourceManagerConfig = {
                 commands: [
                     new CustomPlugin(),
                     // new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
-                    new WebpackBundlePlugin({ libraryType: "debug", defines: { DEBUG: false, RELEASE: true } }),
+                    new WebpackBundlePlugin({
+                        libraryType: "debug",
+                        defines: { DEBUG: false, RELEASE: true },
+                        typescript: { mode: 'legacy' }
+                    }),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
-                    new EuiCompilerPlugin('commonjs'),
+                    // new EuiCompilerPlugin('commonjs'),
                     // new UglifyPlugin([{
                     //     sources: ["main.js"],
                     //     target: "main.min.js"
