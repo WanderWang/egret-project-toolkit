@@ -16,22 +16,55 @@ const webpackMerge = require('webpack-merge');
 
 export type WebpackBundleOptions = {
 
+    /**
+     * 设置发布的库为 library.js 还是 library.min.js
+     */
     libraryType: "debug" | "release"
 
+    /**
+     * 编译宏常量定义
+     */
     defines?: any,
 
+    /**
+     * 是否启动 EXML 相关功能
+     */
     exml?: {
+        /**
+         * EXML增量编译
+         */
         watch: boolean
     }
 
+    /**
+     * TypeScript 相关配置
+     */
     typescript?: {
+        /**
+         * 编译模式
+         * modern 模式为完全ES6 Module的方式，底层实现采用 ts-loader
+         * legacy 模式为兼容现有代码的方式，底层在执行 ts-loader 之前先进行了其他内部处理
+         */
         mode: "legacy" | "modern",
 
     }
 
-    subpackage?: { name: string, matcher: (filepath: string) => boolean }[],
+    /**
+     * 是否发布子包及子包规则
+     */
+    subpackages?: { name: string, matcher: (filepath: string) => boolean }[],
 
+    /**
+     * 自定义的 webpack 配置
+     */
     webpackConfig?: webpack.Configuration | ((bundleWebpackConfig: webpack.Configuration) => webpack.Configuration)
+}
+
+export type WebpackDevServerOptions = {
+    /**
+     * 启动端口，默认值为3000
+     */
+    port?: number
 }
 
 
@@ -45,34 +78,27 @@ export class EgretWebpackBundler {
     }
 
 
-    startDevServer(options: WebpackBundleOptions) {
+    startDevServer(options: WebpackBundleOptions & WebpackDevServerOptions) {
         const libraryType = 'debug';
         const scripts = getLibsFileList('web', this.projectRoot, libraryType)
-
-
         const webpackStatsOptions = { colors: true, modules: false };
-
         const webpackConfig = generateConfig(this.projectRoot, options, this.target, true)
         const compiler = webpack(webpackConfig);
         const compilerApp = express();
         compilerApp.use(allowCrossDomain);
-
         const middlewareOptions: any = {
             stats: webpackStatsOptions,
             publicPath: undefined,
         };
-
         compilerApp.use(middleware(compiler, middlewareOptions));
-        startExpressServer(compilerApp, 3000);
+        const port = options.port || 3000;
+        startExpressServer(compilerApp, port);
         compilerApp.use(express.static(this.projectRoot));
-
         const manifestContent = JSON.stringify(
             { initial: scripts, game: ['main.js'] }, null, '\t'
         )
-        fs.writeFileSync(path.join(this.projectRoot, 'manifest.json'), manifestContent, 'utf-8')
-        openUrl('http://localhost:3000/index.html');
-
-
+        fs.writeFileSync(path.join(this.projectRoot, 'manifest.json'), manifestContent, 'utf-8');
+        openUrl(`http://localhost:${port}/index.html`);
     }
 
     build(options: WebpackBundleOptions): Promise<void> {
@@ -170,10 +196,10 @@ export function generateConfig(
 }
 
 function genrateWebpackConfig_subpackages(config: webpack.Configuration, options: WebpackBundleOptions) {
-    if (!options.subpackage) {
+    if (!options.subpackages) {
         return config;
     }
-    const items = options.subpackage.map(subpackage => {
+    const items = options.subpackages.map(subpackage => {
         return {
             name: subpackage.name,
             filename: subpackage.name + ".js",
