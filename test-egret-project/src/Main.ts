@@ -30,6 +30,8 @@
 
 // HEADER_INJECTION_PLACEHOLDER 注入global文件依赖的地方
 
+A;
+
 class Main extends eui.UILayer {
 
     protected createChildren(): void {
