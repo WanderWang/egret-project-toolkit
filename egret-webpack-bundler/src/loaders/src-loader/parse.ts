@@ -78,7 +78,7 @@ function isBlockScope(node: any): boolean {
  *             g
  *
  * forEachChild(A) 将逐步迭代 A b c d e F 节点，不会迭代 g 节点
- * 迭代到b时可以return false阻止迭代全部其子节点 d e，也可以return [ d ] 限制只迭代 d
+ * 迭代到b时可以return false阻止迭代其子节点 d e，也可以return [ d ] 限制只迭代 d
  */
 function forEachChild(node: any, callback: (node: any) => void|any[]|boolean) {
   const walk = (child: any) => {
@@ -188,13 +188,11 @@ function collectNodeDepenDencies(node: any, dependencies: Dependencies) {
       }
       break;
     case ts.SyntaxKind.PropertyAccessExpression:
-      {
-        const identifier = getExpression(node);
-        if (typeof identifier === 'string') {
-          addDependency(identifier, 'PropertyAccess');
-        } else if (identifier && identifier.kind) {
-          walkChildren = [ identifier ];
-        }
+      const identifier = getExpression(node);
+      if (typeof identifier === 'string') {
+        addDependency(identifier, 'PropertyAccess');
+      } else if (identifier && identifier.kind) {
+        walkChildren = [ identifier ];
       }
       break;
     case ts.SyntaxKind.ClassDeclaration:
@@ -249,14 +247,14 @@ function collectGlobals(scopes: Declarations[], dependencies: Dependencies): Dep
 }
 
 /**
- * 收集文件的全部依赖项目
+ * 收集文件的依赖项
  * 例如
  *  namespace A {
  *    console.log('aaa');
  *  }
  * 返回
  *  {
- *     "console@A": "console",
+ *     "console@A": {},
  *  }
  * @param {String} namespace 当前所在namespace
  * @param {Array<Object>} scopes 上级们作用域
@@ -294,7 +292,21 @@ function collectDependencies(node: any, namespace: string = '', scopes: Declarat
 }
 
 /**
- * 收集文件的全部定义项目
+ * 收集文件的导出项
+ * 例如
+ *  namespace A {
+ *    export const a;
+ *    const b;
+ *  }
+ *  function fn() {
+ *    let i;
+ *  }
+ * 返回
+ *  {
+ *    "A": {},
+ *    "A.a": {},
+ *    "fn": {},
+ *  }
  */
 function collectDefines(node: any, namespace: string = ''): Defines {
   const declarations: Declarations = {};
@@ -303,10 +315,16 @@ function collectDefines(node: any, namespace: string = ''): Defines {
   const defines: Defines = {};
   Object.keys(declarations).forEach(key => {
     const item = declarations[key];
-    if ((!namespace || item.ExportKeyword)
+    if (
+      // namespace 里没有export的不需要导出
+      !(namespace && !item.ExportKeyword)
+      // declare 不需要导出
       && !item.DeclareKeyword
+      // interface 不需要导出
       && item.type !== 'Interface'
-      && (item.type !== 'Enum' || !item.ConstKeyword)
+      // const enum 编译时会用常量代替
+      // Compiler Options preserveConstEnums default false
+      && !(item.type === 'Enum' && item.ConstKeyword)
     ) {
       defines[`${namespace}${key}`] = {
         type: item.type,
@@ -314,7 +332,7 @@ function collectDefines(node: any, namespace: string = ''): Defines {
     }
   });
 
-  // 收集namespace
+  // 收集namespace里的导出
   forEachChild(node, child => {
     if (ts.isModuleDeclaration(child)) {
       Object.assign(defines, collectDefines(child, `${namespace}${child.name.text}.`));
