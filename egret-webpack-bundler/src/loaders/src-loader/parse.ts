@@ -52,7 +52,10 @@ function getExpression(node: any): any {
       return pre;
 
     }
-    return node.expression; // 节点
+    // 例如
+    // console.log().name 时node.expression = console.log()依赖需收集console.log
+    // console['log']() 时依赖需收集console
+    return node.expression;
 
   }
   return null;
@@ -183,7 +186,8 @@ function collectNodeDepenDencies(node: any, dependencies: Dependencies) {
   // 只简单的分析一下最外层的依赖
   switch (node.kind) {
     case ts.SyntaxKind.Identifier:
-      if (node.parent.name !== node) { // 不能是别人的名字
+      // 当是别人的名字时说明是新定义而非依赖, 例如function fn(a, b) {}里a，b是参数声明
+      if (node.parent.name !== node) {
         addDependency(node.text, 'Identifier');
       }
       break;
