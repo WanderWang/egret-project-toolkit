@@ -11,6 +11,16 @@ function isDeclaration(node: ts.Node) {
     }
 }
 
+function hasExport(node: ts.Node) {
+    if (node.modifiers) {
+        return node.modifiers.some(m => m.kind === ts.SyntaxKind.ExportKeyword);
+    }
+    else {
+        return false;
+    }
+}
+
+
 function createGlobalExpression(text: string) {
     return ts.createIdentifier(`window["${text}"] = ${text};`);
 }
@@ -59,7 +69,7 @@ export function emitClassName() {
         }
 
         function visitVariableStatement(node: ts.VariableStatement) {
-            if (isDeclaration(node)) {
+            if (isDeclaration(node) || hasExport(node)) {
                 return node;
             }
 
