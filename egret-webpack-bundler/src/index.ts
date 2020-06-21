@@ -188,6 +188,10 @@ export function generateConfig(
     generateWebpackConfig_exml(config, options);
     generateWebpackConfig_html(config, options, target);
     genrateWebpackConfig_subpackages(config, options);
+    if (options.libraryType === 'debug') {
+        config.plugins!.push(new webpack.NamedModulesPlugin());
+        config.plugins!.push(new webpack.NamedChunksPlugin());
+    }
     if (options.webpackConfig) {
         const customWebpackConfig = typeof options.webpackConfig === 'function' ? options.webpackConfig(config) : options.webpackConfig;
         config = webpackMerge(config, customWebpackConfig);
@@ -284,10 +288,6 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
     }
     provide['__reflect'] = [path.join(__dirname, 'helper.js'), '__reflect']
     plugins.push(new webpack.ProvidePlugin(provide))
-
-
-    plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
-    plugins.push(new webpack.NoEmitOnErrorsPlugin())
 }
 
 function generateWebpackConfig_exml(config: webpack.Configuration, options: WebpackBundleOptions) {

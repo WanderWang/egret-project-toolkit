@@ -57,7 +57,7 @@ var egret = window.egret;/******/ (function(modules) { // webpackBootstrap
 /******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 	// Promise = chunk loading, 0 = chunk loaded
 /******/ 	var installedChunks = {
-/******/ 		0: 0
+/******/ 		"main": 0
 /******/ 	};
 /******/
 /******/ 	var deferredModules = [];
@@ -148,254 +148,14 @@ var egret = window.egret;/******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push([0,1]);
+/******/ 	deferredModules.push(["./src/Main.ts","loading"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/******/ ({
 
-/* WEBPACK VAR INJECTION */(function(__extends, __awaiter, __generator, __reflect) {//////////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (c) 2014-present, Egret Technology.
-//  All rights reserved.
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are met:
-//
-//     * Redistributions of source code must retain the above copyright
-//       notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above copyright
-//       notice, this list of conditions and the following disclaimer in the
-//       documentation and/or other materials provided with the distribution.
-//     * Neither the name of the Egret nor the
-//       names of its contributors may be used to endorse or promote products
-//       derived from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
-//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-//////////////////////////////////////////////////////////////////////////////////////
-__webpack_require__(4);
-__webpack_require__(5);
-__webpack_require__(6);
-__webpack_require__(7);
-__webpack_require__(8);
-__webpack_require__(9);
-
-A;
-var Main = /** @class */ (function (_super) {
-    __extends(Main, _super);
-    function Main() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Main.prototype.createChildren = function () {
-        _super.prototype.createChildren.call(this);
-        egret.lifecycle.addLifecycleListener(function (context) {
-            // custom lifecycle plugin
-        });
-        egret.lifecycle.onPause = function () {
-            egret.ticker.pause();
-        };
-        egret.lifecycle.onResume = function () {
-            egret.ticker.resume();
-        };
-        //inject the custom material parser
-        //注入自定义的素材解析器
-        var assetAdapter = new AssetAdapter();
-        egret.registerImplementation("eui.IAssetAdapter", assetAdapter);
-        egret.registerImplementation("eui.IThemeAdapter", new ThemeAdapter());
-        this.runGame().catch(function (e) {
-            console.log(e);
-        });
-    };
-    Main.prototype.runGame = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var result, userInfo;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.loadResource()];
-                    case 1:
-                        _a.sent();
-                        this.createGameScene();
-                        return [4 /*yield*/, RES.getResAsync("description_json")];
-                    case 2:
-                        result = _a.sent();
-                        this.startAnimation(result);
-                        return [4 /*yield*/, platform.login()];
-                    case 3:
-                        _a.sent();
-                        return [4 /*yield*/, platform.getUserInfo()];
-                    case 4:
-                        userInfo = _a.sent();
-                        console.log(userInfo);
-                        new TestCaseEgretIsFunction().run();
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    Main.prototype.loadResource = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var loadingView, e_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 4, , 5]);
-                        loadingView = new LoadingUI();
-                        this.stage.addChild(loadingView);
-                        return [4 /*yield*/, RES.loadConfig("resource/default.res.json", "resource/")];
-                    case 1:
-                        _a.sent();
-                        return [4 /*yield*/, this.loadTheme()];
-                    case 2:
-                        _a.sent();
-                        return [4 /*yield*/, RES.loadGroup("preload", 0, loadingView)];
-                    case 3:
-                        _a.sent();
-                        this.stage.removeChild(loadingView);
-                        return [3 /*break*/, 5];
-                    case 4:
-                        e_1 = _a.sent();
-                        console.error(e_1);
-                        return [3 /*break*/, 5];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    Main.prototype.loadTheme = function () {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            // load skin theme configuration file, you can manually modify the file. And replace the default skin.
-            //加载皮肤主题配置文件,可以手动修改这个文件。替换默认皮肤。
-            var theme = new eui.Theme("resource/default.thm.json", _this.stage);
-            theme.addEventListener(eui.UIEvent.COMPLETE, function () {
-                resolve();
-            }, _this);
-        });
-    };
-    /**
-     * 创建场景界面
-     * Create scene interface
-     */
-    Main.prototype.createGameScene = function () {
-        var sky = this.createBitmapByName("bg_jpg");
-        this.addChild(sky);
-        var stageW = this.stage.stageWidth;
-        var stageH = this.stage.stageHeight;
-        sky.width = stageW;
-        sky.height = stageH;
-        var topMask = new egret.Shape();
-        topMask.graphics.beginFill(0x000000, 0.5);
-        topMask.graphics.drawRect(0, 0, stageW, 172);
-        topMask.graphics.endFill();
-        topMask.y = 33;
-        this.addChild(topMask);
-        var icon = this.createBitmapByName("egret_icon_png");
-        this.addChild(icon);
-        icon.x = 26;
-        icon.y = 33;
-        var line = new egret.Shape();
-        line.graphics.lineStyle(2, 0xffffff);
-        line.graphics.moveTo(0, 0);
-        line.graphics.lineTo(0, 117);
-        line.graphics.endFill();
-        line.x = 172;
-        line.y = 61;
-        this.addChild(line);
-        var colorLabel = new egret.TextField();
-        colorLabel.textColor = 0xffffff;
-        colorLabel.width = stageW - 172;
-        colorLabel.textAlign = "center";
-        colorLabel.text = "Hello Egret";
-        colorLabel.size = 24;
-        colorLabel.x = 172;
-        colorLabel.y = 80;
-        this.addChild(colorLabel);
-        var textfield = new egret.TextField();
-        this.addChild(textfield);
-        textfield.alpha = 0;
-        textfield.width = stageW - 172;
-        textfield.textAlign = egret.HorizontalAlign.CENTER;
-        textfield.size = 24;
-        textfield.textColor = 0xffffff;
-        textfield.x = 172;
-        textfield.y = 135;
-        this.textfield = textfield;
-        var button = new eui.Button();
-        button.label = "Click!";
-        button.horizontalCenter = 0;
-        button.verticalCenter = 0;
-        this.addChild(button);
-        button.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
-    };
-    /**
-     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
-     * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
-     */
-    Main.prototype.createBitmapByName = function (name) {
-        var result = new egret.Bitmap();
-        var texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
-    };
-    /**
-     * 描述文件加载成功，开始播放动画
-     * Description file loading is successful, start to play the animation
-     */
-    Main.prototype.startAnimation = function (result) {
-        var _this = this;
-        var parser = new egret.HtmlTextParser();
-        var textflowArr = result.map(function (text) { return parser.parse(text); });
-        var textfield = this.textfield;
-        var count = -1;
-        var change = function () {
-            count++;
-            if (count >= textflowArr.length) {
-                count = 0;
-            }
-            var textFlow = textflowArr[count];
-            // 切换描述内容
-            // Switch to described content
-            textfield.textFlow = textFlow;
-            var tw = egret.Tween.get(textfield);
-            tw.to({ "alpha": 1 }, 200);
-            tw.wait(2000);
-            tw.to({ "alpha": 0 }, 200);
-            tw.call(change, _this);
-        };
-        change();
-    };
-    /**
-     * 点击按钮
-     * Click the button
-     */
-    Main.prototype.onButtonClick = function (e) {
-        var panel = new eui.Panel();
-        panel.title = "Title";
-        panel.horizontalCenter = 0;
-        panel.verticalCenter = 0;
-        this.addChild(panel);
-    };
-    return Main;
-}(eui.UILayer));
-__reflect(Main.prototype,"Main");
-window["Main"] = Main;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)["__extends"], __webpack_require__(1)["__awaiter"], __webpack_require__(1)["__generator"], __webpack_require__(3)["__reflect"]))
-
-/***/ }),
-/* 1 */
+/***/ "../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! *****************************************************************************
@@ -687,10 +447,11 @@ var __createBinding;
     exporter("__classPrivateFieldSet", __classPrivateFieldSet);
 });
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/webpack/4.43.0/node_modules/webpack/buildin/global.js")))
 
 /***/ }),
-/* 2 */
+
+/***/ "../common/temp/node_modules/.registry.npmjs.org/webpack/4.43.0/node_modules/webpack/buildin/global.js":
 /***/ (function(module, exports) {
 
 var g;
@@ -716,7 +477,8 @@ module.exports = g;
 
 
 /***/ }),
-/* 3 */
+
+/***/ "../egret-webpack-bundler/lib/helper.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -729,27 +491,8 @@ exports.__reflect = function (p, c, t) {
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__reflect) {
-
-function SimpleDecorator(target, name) {
-    // 这里可以根据name和target来做一些处理
-}
-window["SimpleDecorator"] = SimpleDecorator;
-var A = /** @class */ (function () {
-    function A() {
-    }
-    return A;
-}());
-__reflect(A.prototype,"A");
-window["A"] = A;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(3)["__reflect"]))
-
-/***/ }),
-/* 5 */
+/***/ "./src/AssetAdapter.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__decorate, __reflect) {
@@ -817,11 +560,274 @@ var AssetAdapter = /** @class */ (function () {
 __reflect(AssetAdapter.prototype,"AssetAdapter");
 window["AssetAdapter"] = AssetAdapter;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)["__decorate"], __webpack_require__(3)["__reflect"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__decorate"], __webpack_require__("../egret-webpack-bundler/lib/helper.js")["__reflect"]))
 
 /***/ }),
-/* 6 */,
-/* 7 */
+
+/***/ "./src/Main.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(__extends, __awaiter, __generator, __reflect) {//////////////////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (c) 2014-present, Egret Technology.
+//  All rights reserved.
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the Egret nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY EGRET AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
+//  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+//  IN NO EVENT SHALL EGRET AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;LOSS OF USE, DATA,
+//  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+__webpack_require__("./src/MyDecorators.ts");
+__webpack_require__("./src/AssetAdapter.ts");
+__webpack_require__("./src/LoadingUI.ts");
+__webpack_require__("./src/Platform.ts");
+__webpack_require__("./src/TestCaseEgretIsFunction.ts");
+__webpack_require__("./src/ThemeAdapter.ts");
+
+A;
+var Main = /** @class */ (function (_super) {
+    __extends(Main, _super);
+    function Main() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Main.prototype.createChildren = function () {
+        _super.prototype.createChildren.call(this);
+        egret.lifecycle.addLifecycleListener(function (context) {
+            // custom lifecycle plugin
+        });
+        egret.lifecycle.onPause = function () {
+            egret.ticker.pause();
+        };
+        egret.lifecycle.onResume = function () {
+            egret.ticker.resume();
+        };
+        //inject the custom material parser
+        //注入自定义的素材解析器
+        var assetAdapter = new AssetAdapter();
+        egret.registerImplementation("eui.IAssetAdapter", assetAdapter);
+        egret.registerImplementation("eui.IThemeAdapter", new ThemeAdapter());
+        this.runGame().catch(function (e) {
+            console.log(e);
+        });
+    };
+    Main.prototype.runGame = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, userInfo;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.loadResource()];
+                    case 1:
+                        _a.sent();
+                        this.createGameScene();
+                        return [4 /*yield*/, RES.getResAsync("description_json")];
+                    case 2:
+                        result = _a.sent();
+                        this.startAnimation(result);
+                        return [4 /*yield*/, platform.login()];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, platform.getUserInfo()];
+                    case 4:
+                        userInfo = _a.sent();
+                        console.log(userInfo);
+                        new TestCaseEgretIsFunction().run();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Main.prototype.loadResource = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var loadingView, e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        loadingView = new LoadingUI();
+                        this.stage.addChild(loadingView);
+                        return [4 /*yield*/, RES.loadConfig("resource/default.res.json", "resource/")];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.loadTheme()];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, RES.loadGroup("preload", 0, loadingView)];
+                    case 3:
+                        _a.sent();
+                        this.stage.removeChild(loadingView);
+                        return [3 /*break*/, 5];
+                    case 4:
+                        e_1 = _a.sent();
+                        console.error(e_1);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Main.prototype.loadTheme = function () {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            // load skin theme configuration file, you can manually modify the file. And replace the default skin.
+            //加载皮肤主题配置文件,可以手动修改这个文件。替换默认皮肤。
+            var theme = new eui.Theme("resource/default.thm.json", _this.stage);
+            theme.addEventListener(eui.UIEvent.COMPLETE, function () {
+                resolve();
+            }, _this);
+        });
+    };
+    /**
+     * 创建场景界面
+     * Create scene interface
+     */
+    Main.prototype.createGameScene = function () {
+        var sky = this.createBitmapByName("bg_jpg");
+        this.addChild(sky);
+        var stageW = this.stage.stageWidth;
+        var stageH = this.stage.stageHeight;
+        sky.width = stageW;
+        sky.height = stageH;
+        var topMask = new egret.Shape();
+        topMask.graphics.beginFill(0x000000, 0.5);
+        topMask.graphics.drawRect(0, 0, stageW, 172);
+        topMask.graphics.endFill();
+        topMask.y = 33;
+        this.addChild(topMask);
+        var icon = this.createBitmapByName("egret_icon_png");
+        this.addChild(icon);
+        icon.x = 26;
+        icon.y = 33;
+        var line = new egret.Shape();
+        line.graphics.lineStyle(2, 0xffffff);
+        line.graphics.moveTo(0, 0);
+        line.graphics.lineTo(0, 117);
+        line.graphics.endFill();
+        line.x = 172;
+        line.y = 61;
+        this.addChild(line);
+        var colorLabel = new egret.TextField();
+        colorLabel.textColor = 0xffffff;
+        colorLabel.width = stageW - 172;
+        colorLabel.textAlign = "center";
+        colorLabel.text = "Hello Egret";
+        colorLabel.size = 24;
+        colorLabel.x = 172;
+        colorLabel.y = 80;
+        this.addChild(colorLabel);
+        var textfield = new egret.TextField();
+        this.addChild(textfield);
+        textfield.alpha = 0;
+        textfield.width = stageW - 172;
+        textfield.textAlign = egret.HorizontalAlign.CENTER;
+        textfield.size = 24;
+        textfield.textColor = 0xffffff;
+        textfield.x = 172;
+        textfield.y = 135;
+        this.textfield = textfield;
+        var button = new eui.Button();
+        button.label = "Click!";
+        button.horizontalCenter = 0;
+        button.verticalCenter = 0;
+        this.addChild(button);
+        button.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
+    };
+    /**
+     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
+     * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
+     */
+    Main.prototype.createBitmapByName = function (name) {
+        var result = new egret.Bitmap();
+        var texture = RES.getRes(name);
+        result.texture = texture;
+        return result;
+    };
+    /**
+     * 描述文件加载成功，开始播放动画
+     * Description file loading is successful, start to play the animation
+     */
+    Main.prototype.startAnimation = function (result) {
+        var _this = this;
+        var parser = new egret.HtmlTextParser();
+        var textflowArr = result.map(function (text) { return parser.parse(text); });
+        var textfield = this.textfield;
+        var count = -1;
+        var change = function () {
+            count++;
+            if (count >= textflowArr.length) {
+                count = 0;
+            }
+            var textFlow = textflowArr[count];
+            // 切换描述内容
+            // Switch to described content
+            textfield.textFlow = textFlow;
+            var tw = egret.Tween.get(textfield);
+            tw.to({ "alpha": 1 }, 200);
+            tw.wait(2000);
+            tw.to({ "alpha": 0 }, 200);
+            tw.call(change, _this);
+        };
+        change();
+    };
+    /**
+     * 点击按钮
+     * Click the button
+     */
+    Main.prototype.onButtonClick = function (e) {
+        var panel = new eui.Panel();
+        panel.title = "Title";
+        panel.horizontalCenter = 0;
+        panel.verticalCenter = 0;
+        this.addChild(panel);
+    };
+    return Main;
+}(eui.UILayer));
+__reflect(Main.prototype,"Main");
+window["Main"] = Main;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__extends"], __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__awaiter"], __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__generator"], __webpack_require__("../egret-webpack-bundler/lib/helper.js")["__reflect"]))
+
+/***/ }),
+
+/***/ "./src/MyDecorators.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(__reflect) {
+
+function SimpleDecorator(target, name) {
+    // 这里可以根据name和target来做一些处理
+}
+window["SimpleDecorator"] = SimpleDecorator;
+var A = /** @class */ (function () {
+    function A() {
+    }
+    return A;
+}());
+__reflect(A.prototype,"A");
+window["A"] = A;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../egret-webpack-bundler/lib/helper.js")["__reflect"]))
+
+/***/ }),
+
+/***/ "./src/Platform.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__awaiter, __generator, __reflect) {
@@ -851,10 +857,11 @@ var platform = new DebugPlatform(), testMessage = "helloworld";
 window["platform"] = platform;
 window["testMessage"] = testMessage;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)["__awaiter"], __webpack_require__(1)["__generator"], __webpack_require__(3)["__reflect"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__awaiter"], __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__generator"], __webpack_require__("../egret-webpack-bundler/lib/helper.js")["__reflect"]))
 
 /***/ }),
-/* 8 */
+
+/***/ "./src/TestCaseEgretIsFunction.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__reflect, __extends) {
@@ -887,10 +894,11 @@ var __ClassB = /** @class */ (function (_super) {
 __reflect(__ClassB.prototype,"__ClassB");
 window["__ClassB"] = __ClassB;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(3)["__reflect"], __webpack_require__(1)["__extends"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../egret-webpack-bundler/lib/helper.js")["__reflect"], __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__extends"]))
 
 /***/ }),
-/* 9 */
+
+/***/ "./src/ThemeAdapter.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__reflect) {
@@ -992,7 +1000,8 @@ var ThemeAdapter = /** @class */ (function () {
 __reflect(ThemeAdapter.prototype,"ThemeAdapter");
 window["ThemeAdapter"] = ThemeAdapter;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(3)["__reflect"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../egret-webpack-bundler/lib/helper.js")["__reflect"]))
 
 /***/ })
-/******/ ]);
+
+/******/ });
