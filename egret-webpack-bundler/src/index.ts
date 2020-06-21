@@ -163,7 +163,7 @@ export function generateConfig(
 
     context = context.split("/").join(path.sep);
     const needSourceMap = devServer;
-    const mode = 'development'
+    const mode = 'none';
 
     let config: webpack.Configuration = {
         stats: "minimal",
@@ -284,6 +284,10 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
     }
     provide['__reflect'] = [path.join(__dirname, 'helper.js'), '__reflect']
     plugins.push(new webpack.ProvidePlugin(provide))
+
+
+    plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+    plugins.push(new webpack.NoEmitOnErrorsPlugin())
 }
 
 function generateWebpackConfig_exml(config: webpack.Configuration, options: WebpackBundleOptions) {

@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 const crypto = require('crypto');
 export class WxgamePlugin implements plugins.Command {
-    private useWxPlugin:boolean = false;
-    constructor(useWxPlugin:boolean) {
+    private useWxPlugin: boolean = false;
+    constructor(useWxPlugin: boolean) {
         this.useWxPlugin = useWxPlugin
     }
     md5Obj = {}
@@ -41,9 +41,6 @@ export class WxgamePlugin implements plugins.Command {
                     content += ';window.dragonBones = dragonBones';
                 }
                 content = "var egret = window.egret;" + content;
-                if (filename == 'main.js') {
-                    content += "\n;window.Main = Main;"
-                }
                 this.md5Obj[path.basename(filename)] = this.md5(content)
                 file.contents = new Buffer(content);
             }
@@ -97,22 +94,22 @@ export class WxgamePlugin implements plugins.Command {
         if (!gameJSONContent.plugins) {
             gameJSONContent.plugins = {}
         }
-        if(buildConfig.command == "publish" && this.useWxPlugin){
+        if (buildConfig.command == "publish" && this.useWxPlugin) {
             gameJSONContent.plugins["egret-library"] = {
                 "provider": "wx7e2186943221985d",
                 "version": engineVersion,
                 "path": "egret-library"
             }
-        }else{
+        } else {
             gameJSONContent.plugins = {}
         }
-        
+
         this.writeData(gameJSONContent, gameJSONPath)
 
         if (buildConfig.command !== "publish" || !this.useWxPlugin) {
             return
         }
-        
+
         let libDir = path.join(outputDir, "egret-library")
         fs.mkdirSync(libDir)
         let pluginData = { "main": "index.js" }

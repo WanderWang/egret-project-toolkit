@@ -1,10 +1,6 @@
-var egret = window.egret;(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["loading"],{
+var egret = window.egret;(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],{
 
-/***/ "./src/LoadingUI.ts":
-/*!**************************!*\
-  !*** ./src/LoadingUI.ts ***!
-  \**************************/
-/*! no static exports found */
+/***/ 6:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(__extends, __reflect) {
@@ -60,7 +56,7 @@ var LoadingUI = /** @class */ (function (_super) {
 __reflect(LoadingUI.prototype,"LoadingUI");
 window["LoadingUI"] = LoadingUI;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! tslib */ "../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__extends"], __webpack_require__(/*! ../egret-webpack-bundler/lib/helper.js */ "../egret-webpack-bundler/lib/helper.js")["__reflect"]))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)["__extends"], __webpack_require__(3)["__reflect"]))
 
 /***/ })
 
