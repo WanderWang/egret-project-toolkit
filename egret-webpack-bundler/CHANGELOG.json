@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.9",
+      "tag": "@egret/egret-webpack-bundler_v1.1.9",
+      "date": "Sun, 21 Jun 2020 12:21:40 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "优化输出代码体积"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.8",
       "tag": "@egret/egret-webpack-bundler_v1.1.8",
       "date": "Sun, 21 Jun 2020 09:40:22 GMT",
