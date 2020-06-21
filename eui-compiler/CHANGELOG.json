@@ -2,6 +2,18 @@
   "name": "@egret/eui-compiler",
   "entries": [
     {
+      "version": "1.4.5",
+      "tag": "@egret/eui-compiler_v1.4.5",
+      "date": "Sun, 21 Jun 2020 09:40:22 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "支持发布到 debug / commonjs2 两种模式"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.4",
       "tag": "@egret/eui-compiler_v1.4.4",
       "date": "Tue, 09 Jun 2020 08:03:17 GMT",
