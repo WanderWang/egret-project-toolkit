@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.11",
+      "tag": "@egret/egret-webpack-bundler_v1.1.11",
+      "date": "Sun, 21 Jun 2020 12:56:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "临时修复 modern 模式下的编译错误"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.10",
       "tag": "@egret/egret-webpack-bundler_v1.1.10",
       "date": "Sun, 21 Jun 2020 12:46:35 GMT",
