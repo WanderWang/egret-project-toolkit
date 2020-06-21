@@ -230,11 +230,7 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
     const compilerOptions: import("typescript").CompilerOptions = {
         sourceMap: needSourceMap,
         importHelpers: true,
-        baseUrl: "./",
-        paths: {
-            "tslib": [require.resolve("tslib")]
-        }
-        // importHelpers: true
+        noEmitHelpers: true
     };
     config.resolve!.alias = {
         'tslib': require.resolve("tslib")
@@ -279,6 +275,15 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
         rules.push(typescriptLoaderRule);
 
     }
+
+    const tslibFunctions = Object.keys(require('tslib'));
+
+    const provide: any = {};
+    for (let key of tslibFunctions) {
+        provide[key] = ['tslib', key];
+    }
+    provide['__reflect'] = [path.join(__dirname, 'helper.js'), '__reflect']
+    plugins.push(new webpack.ProvidePlugin(provide))
 }
 
 function generateWebpackConfig_exml(config: webpack.Configuration, options: WebpackBundleOptions) {

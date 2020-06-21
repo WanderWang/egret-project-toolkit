@@ -36,7 +36,7 @@ const config: ResourceManagerConfig = {
                     new CustomPlugin(),
                     // new CompilePlugin({ libraryType: "release", defines: { DEBUG: false, RELEASE: true } }),
                     new WebpackBundlePlugin({
-                        libraryType: "debug", defines: { DEBUG: false, RELEASE: true }, subpackage: [
+                        libraryType: "debug", defines: { DEBUG: false, RELEASE: true }, subpackages: [
                             { name: 'loading', matcher: (p) => p.indexOf("LoadingUI") >= 0 }
                         ]
                     }),
