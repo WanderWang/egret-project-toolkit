@@ -21,9 +21,11 @@ class DebugPlatform implements Platform {
     }
 }
 
+declare class TestClass {
 
+}
 
-const platform = new DebugPlatform();
+const platform = new DebugPlatform(), testMessage = "helloworld";
 
 
 

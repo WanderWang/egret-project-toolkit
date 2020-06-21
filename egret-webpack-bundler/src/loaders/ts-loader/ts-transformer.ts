@@ -1,0 +1,154 @@
+import * as ts from 'typescript';
+
+
+
+function isDeclaration(node: ts.Node) {
+    if (node.modifiers) {
+        return node.modifiers.some(m => m.kind === ts.SyntaxKind.DeclareKeyword);
+    }
+    else {
+        return false;
+    }
+}
+
+function createGlobalExpression(text: string) {
+    return ts.createIdentifier(`window["${text}"] = ${text};`);
+}
+
+
+export function emitClassName() {
+    return function (ctx: ts.TransformationContext) {
+        function visitClassDeclaration(node: ts.ClassDeclaration) {
+            if (isDeclaration(node)) {
+                return node;
+            }
+            const nameNode = node.name;
+            if (nameNode) {
+                const nameText = nameNode.getText();
+                const globalExpression = createGlobalExpression(nameText);
+                const reflectExpression = ts.createIdentifier(`__reflect(${nameText}.prototype,"${nameText}");`)
+                const arrays = [
+                    node,
+                    reflectExpression,
+                    globalExpression,
+                ];
+                return ts.createNodeArray(arrays);
+            }
+            else {
+                return node;
+            }
+        }
+
+        function visitFunctionDeclaration(node: ts.FunctionDeclaration) {
+            if (isDeclaration(node)) {
+                return node;
+            }
+            const nameNode = node.name;
+            if (nameNode) {
+                const nameText = nameNode!.getText();
+                const globalExpression = createGlobalExpression(nameText);
+                const arrays = [
+                    node,
+                    globalExpression,
+                ];
+                return ts.createNodeArray(arrays);
+            }
+            else {
+                return node;
+            }
+        }
+
+        function visitVariableStatement(node: ts.VariableStatement) {
+            if (isDeclaration(node)) {
+                return node;
+            }
+
+            const globalExpressions = node.declarationList.declarations.map(d => {
+                const nameNode = d.name;
+                const nameText = nameNode.getText();
+                const globalExpression = createGlobalExpression(nameText);
+                return globalExpression;
+            })
+
+            return ts.createNodeArray(
+                [node as ts.Node].concat(globalExpressions)
+            )
+        }
+
+        // 最外层变量需要挂载到全局对象上
+        let nestLevel = 0;
+
+        function visitor(node: ts.Node): any {
+
+            let result: ts.Node | ts.NodeArray<ts.Node>;
+
+            if (node.kind === ts.SyntaxKind.ClassDeclaration) {
+                result = visitClassDeclaration(node as ts.ClassDeclaration);
+            }
+            else if ((node.kind === ts.SyntaxKind.FunctionDeclaration) && nestLevel === 1) {
+
+                result = visitFunctionDeclaration(node as ts.FunctionDeclaration)
+            }
+            else if (node.kind === ts.SyntaxKind.VariableStatement && nestLevel === 1) {
+                result = visitVariableStatement(node as ts.VariableStatement)
+            }
+            else {
+                nestLevel++;
+                result = ts.visitEachChild(node, visitor, ctx);
+                nestLevel--;
+
+            }
+
+            return result;
+        };
+        return function (sf: ts.SourceFile) { return ts.visitNode(sf, visitor); };
+    };
+}
+
+function addDependency(moduleName: string) {
+    return function (ctx: ts.TransformationContext) {
+
+        function visitClassDeclaration(node: ts.ClassDeclaration) {
+            // const isExport = node.modifiers ? node.modifiers.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) : false;
+            var binaryExpression = ts.createIdentifier(`require("${moduleName}")`);
+            var arrays = [
+                binaryExpression,
+                node,
+
+            ];
+            return ts.createNodeArray(arrays);
+        }
+        function visitor(node: ts.Node): any {
+            if (node.kind === ts.SyntaxKind.ClassDeclaration) {
+                const clz = node as ts.ClassDeclaration;
+                if (clz.name && clz.name.getText() === "Main") {
+                    return visitClassDeclaration(node as ts.ClassDeclaration);
+                }
+                else {
+                    return ts.visitEachChild(node, visitor, ctx);
+                }
+
+            }
+            else {
+                return ts.visitEachChild(node, visitor, ctx);
+            }
+        };
+
+        function visitor2(node: ts.Node): any {
+            return ts.visitEachChild(node, visitor, ctx);
+        };
+
+        return function (sf: ts.SourceFile) {
+            if (sf.fileName.indexOf("Main.ts") >= 0) {
+                return ts.visitNode(sf, visitor);
+            }
+            else {
+                return ts.visitNode(sf, visitor2);
+            }
+
+
+
+        };
+    };
+
+}

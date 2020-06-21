@@ -6,8 +6,8 @@ import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
 import SrcLoaderPlugin from './loaders/src-loader/Plugin';
 import ThemePlugin from './loaders/theme';
+import { emitClassName } from './loaders/ts-loader/ts-transformer';
 import { openUrl } from './open';
-import { emitClassName } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
 const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -226,10 +226,7 @@ function genrateWebpackConfig_subpackages(config: webpack.Configuration, options
 
 function generateWebpackConfig_typescript(config: webpack.Configuration, options: WebpackBundleOptions, needSourceMap: boolean) {
 
-    const typescriptLoaderRule: webpack.RuleSetRule = {
-        test: /\.tsx?$/,
-        loader: require.resolve('ts-loader')
-    }
+
     const compilerOptions: import("typescript").CompilerOptions = {
         sourceMap: needSourceMap,
         importHelpers: true,
@@ -253,12 +250,15 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
 
 
 
-    const before = [emitClassName()];
+    const before = [
+        emitClassName(),
+    ];
 
-    if (options.typescript?.mode === 'modern') {
-        rules.push(typescriptLoaderRule)
-        typescriptLoaderRule.options = {
-            transpileOnly: true,
+    const typescriptLoaderRule: webpack.RuleSetRule = {
+        test: /\.tsx?$/,
+        loader: require.resolve('ts-loader'),
+        options: {
+            transpileOnly: false,
             compilerOptions,
             getCustomTransformers: function () {
                 return ({
@@ -266,16 +266,18 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
                 });
             }
         }
+    }
+
+    if (options.typescript?.mode === 'modern') {
         plugins.push(new ForkTsCheckerPlugin());
+        (typescriptLoaderRule.options as any).transpileOnly = true;
+        rules.push(typescriptLoaderRule);
     }
     else {
         plugins.push(new SrcLoaderPlugin())
         rules.push(srcLoaderRule);
         rules.push(typescriptLoaderRule);
-        typescriptLoaderRule.options = {
-            transpileOnly: false,
-            compilerOptions,
-        }
+
     }
 }
 
