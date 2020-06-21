@@ -2,6 +2,21 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.7",
+      "tag": "@egret/egret-webpack-bundler_v1.1.7",
+      "date": "Sun, 21 Jun 2020 08:54:25 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复装饰器排序错误的问题"
+          },
+          {
+            "comment": "修复 egret.is 返回错误结果的问题"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.6",
       "tag": "@egret/egret-webpack-bundler_v1.1.6",
       "date": "Thu, 18 Jun 2020 03:16:26 GMT",
