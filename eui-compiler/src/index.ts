@@ -1,12 +1,12 @@
-import * as path from 'path';
 import * as fs from 'fs';
+import * as glob from 'glob';
+import * as path from 'path';
 import { DeclarationEmitter, JavaScriptEmitter, JSONEmitter } from './emitter';
 import { getFilePathRelativeProjectRoot, getThemes, initilize } from './eui-config';
 import { AST_Skin } from './exml-ast';
 import { ThemeFile } from './theme';
 import { generateAST } from "./util/parser";
 import { initTypings } from './util/typings';
-import * as glob from 'glob';
 export const parser = require('./util/parser') as typeof import("./util/parser")
 export const emitter = {
     JavaScriptEmitter,
@@ -66,10 +66,7 @@ const debugEmitSolution: EmitSolution = (theme, transformers) => {
             const contents = fs.readFileSync(filename, 'utf-8');
             return { filename, contents }
         })
-        // console.log(theme.data.exmls)
         theme.sort(exmlContents);
-        // console.log(theme.data.exmls)
-        // todo:保存
         const content = JSON.stringify(theme.data, null, '\t');
         fs.writeFileSync(theme.filePath, content);
     }
@@ -85,7 +82,7 @@ const debugEmitSolution: EmitSolution = (theme, transformers) => {
         }
         emitter.emitSkinNode(filename, skinNode);
     }
-    const filename = 'libs/exmls.e.d.ts';
+    const filename = 'libs/exml.e.d.ts';
     const content = emitter.getResult();
     return { filename, content }
 }
