@@ -1,10 +1,11 @@
 import * as webpack from 'webpack';
 import * as utils from '../utils';
+import { SourceMapGenerator } from 'source-map';
 import SrcLoaderPlugn, { NSLoaderContext } from './Plugin';
 const { NS } = SrcLoaderPlugn;
 
 const srcLoader: webpack.loader.Loader = function (input) {
-  let content: string = input.toString();
+  const callback = this.async() as webpack.loader.loaderCallback;
   const compiler = this._compiler;
   const ns: NSLoaderContext = (this as any)[NS];
 
@@ -12,7 +13,7 @@ const srcLoader: webpack.loader.Loader = function (input) {
   // 不在扫描目录下
   // TODO loader配置了include=/src/ 但发现文件改动时libs下的文件也会走过来
   if (!info) {
-    return input;
+    return callback(null, input);
   }
   const { defines, isModule } = info;
   const isEntry = utils.isEntry(compiler, this.resourcePath);
@@ -85,30 +86,88 @@ const srcLoader: webpack.loader.Loader = function (input) {
   }
   */
 
-  const headerPlaceholder = /(^|\n)\s*\/\/\s*HEADER_INJECTION_PLACEHOLDER[^\n]*/;
-  const footerPlaceholder = /\n\s*\/\/\s*FOOTER_INJECTION_PLACEHOLDER[^\n]*/;
-  if (!headerPlaceholder.test(content)) {
-    content = `// HEADER_INJECTION_PLACEHOLDER\n${content}`;
-  }
-  if (!footerPlaceholder.test(content)) {
-    content = `${content}\n// FOOTER_INJECTION_PLACEHOLDER`;
-  }
-
-  return content
-    .replace(headerPlaceholder, [
-      '',
+  const { output, sourceMap } = injectLines(
+    input.toString(),
+    this,
+    [
       ...dependenciesRequires, // require语句
       ...namespaceDeclarations, // 命名空间声名
-      '',
-    ].join('\n'))
-    .replace(footerPlaceholder, [
-      '',
+    ],
+    [
       ...classNameDefines, // __class__
       // ...hots,
       ...defineAssignments, // window['Class'] = xxx
-      '',
-    ].join('\n'));
+    ]
+  );
+
+  callback(null, output, sourceMap as any);
 };
+
+function injectLines(content: string, context: webpack.loader.LoaderContext, headers: string[], footers: string[]) {
+  const { resourcePath } = context;
+  const lines = content.split(/\n/);
+  let headerInjectionIndex = -1;
+  let footerInjectionIndex = lines.length;
+
+  lines.forEach((line, index) => {
+    if (/^\s*\/\/\s*HEADER_INJECTION_PLACEHOLDER\b/.test(line)) {
+      headerInjectionIndex = index;
+    }
+    if (/^\s*\/\/\s*FOOTER_INJECTION_PLACEHOLDER\b/.test(line)) {
+      footerInjectionIndex = index;
+    }
+  });
+
+  if (headerInjectionIndex > footerInjectionIndex) {
+    throw new Error('HEADER_INJECTION_PLACEHOLDER should before FOOTER_INJECTION_PLACEHOLDER');
+  }
+
+  const newLines = [
+    ...(headerInjectionIndex === -1 ? [] : lines.slice(0, headerInjectionIndex)),
+    ...headers,
+    ...lines.slice(headerInjectionIndex + 1, footerInjectionIndex),
+    ...footers,
+    ...lines.slice(footerInjectionIndex + 1),
+  ];
+
+  let sourceMap: SourceMapGenerator|null = null;
+  if (context.sourceMap) { // 生成sourcemap
+    sourceMap = new SourceMapGenerator({
+      file: resourcePath,
+    });
+
+    for (let i = 0; i < lines.length; i++) {
+      if (i !== headerInjectionIndex && i !== footerInjectionIndex) {
+        let to ;
+        if (i < headerInjectionIndex) {
+          to = i;
+        } else if (i < footerInjectionIndex) {
+          to = i + headers.length + (headerInjectionIndex === -1 ? 0 : -1);
+        } else {
+          to = i + headers.length + (headerInjectionIndex === -1 ? 0 : -1) + footers.length - 1;
+        }
+        sourceMap.addMapping({
+          generated: {
+            line: to + 1, // line从1开始
+            column: 0, // column从0开始
+          },
+          original: {
+            line: i + 1,
+            column: 0
+          },
+          source: resourcePath,
+        });
+      }
+    }
+
+    sourceMap.setSourceContent(resourcePath, content);
+  }
+
+  return {
+    output: newLines.join('\n'),
+    sourceMap: sourceMap ? sourceMap.toJSON() : undefined,
+  };
+}
 
 export default srcLoader;
 export {
