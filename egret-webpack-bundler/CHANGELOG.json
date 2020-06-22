@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.2.1",
+      "tag": "@egret/egret-webpack-bundler_v1.2.1",
+      "date": "Mon, 22 Jun 2020 11:09:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复namespace在legacy模式下报错的问题"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.0",
       "tag": "@egret/egret-webpack-bundler_v1.2.0",
       "date": "Mon, 22 Jun 2020 09:18:12 GMT",
