@@ -1,10 +1,10 @@
 import * as webpack from 'webpack';
-import { SourceMapGenerator } from 'source-map';
+import { SourceMapGenerator, SourceMapConsumer, RawSourceMap } from 'source-map';
 import * as utils from '../utils';
 import SrcLoaderPlugn, { NSLoaderContext } from './Plugin';
 const { NS } = SrcLoaderPlugn;
 
-const srcLoader: webpack.loader.Loader = function (input) {
+const srcLoader: webpack.loader.Loader = function (input, upstreamSourceMap) {
   const callback = this.async() as webpack.loader.loaderCallback;
   const compiler = this._compiler;
   const ns: NSLoaderContext = (this as any)[NS];
@@ -18,20 +18,12 @@ const srcLoader: webpack.loader.Loader = function (input) {
   const { defines, isModule } = info;
   const isEntry = utils.isEntry(compiler, this.resourcePath);
 
-  const declares = [];
   let dependencies: string[] = [];
   // exml依赖
   // getSkinDependencies(defines, ns.skins).forEach(filePath => {
   // dependencies.push(filePath);
   // });
   if (isEntry) { // 入口文件
-    // require函数声名
-    if (isModule) {
-      declares.push('declare global { function require(path: string): any; }');
-    } else {
-      declares.push('declare function require(path: string): any;  ');
-    }
-
     // 导入未模块化的全部文件
     dependencies = dependencies.concat(ns.factory.sortUnmodules());
     // res thm等依赖文件
@@ -96,9 +88,9 @@ const srcLoader: webpack.loader.Loader = function (input) {
 
   const { output, sourceMap } = injectLines(
     input.toString(),
+    upstreamSourceMap,
     this,
     [
-      ...declares,
       ...dependenciesRequires, // require语句
       ...namespaceDeclarations, // 命名空间声名
     ],
@@ -109,12 +101,18 @@ const srcLoader: webpack.loader.Loader = function (input) {
     ]
   );
 
-  callback(null, output, sourceMap as any);
+  callback(null, output, sourceMap);
 };
 
-function injectLines(content: string, context: webpack.loader.LoaderContext, headers: string[], footers: string[]) {
+function injectLines(
+  input: string,
+  upstreamSourceMap: RawSourceMap|undefined, // 上级loader sourcemap
+  context: webpack.loader.LoaderContext,
+  headers: string[],
+  footers: string[]
+) {
   const { resourcePath } = context;
-  const lines = content.split(/\n/);
+  const lines = input.split(/\n/);
   let headerInjectionIndex = -1;
   let footerInjectionIndex = lines.length;
 
@@ -139,42 +137,70 @@ function injectLines(content: string, context: webpack.loader.LoaderContext, hea
     ...lines.slice(footerInjectionIndex + 1),
   ];
 
-  let sourceMap: SourceMapGenerator|null = null;
+  let sourceMap: SourceMapGenerator|undefined = undefined;
   if (context.sourceMap) { // 生成sourcemap
     sourceMap = new SourceMapGenerator({
       file: resourcePath,
     });
 
-    for (let i = 0; i < lines.length; i++) {
-      if (i !== headerInjectionIndex && i !== footerInjectionIndex) {
-        let to ;
-        if (i < headerInjectionIndex) {
-          to = i;
-        } else if (i < footerInjectionIndex) {
-          to = i + headers.length + (headerInjectionIndex === -1 ? 0 : -1);
-        } else {
-          to = i + headers.length + (headerInjectionIndex === -1 ? 0 : -1) + footers.length - 1;
+    const getGeneratedLineIndex = (i: number) => {
+      if (i < headerInjectionIndex) {
+        return i;
+      } else if (i < footerInjectionIndex) {
+        return i + headers.length + (headerInjectionIndex === -1 ? 0 : -1);
+      }
+      return i + headers.length + (headerInjectionIndex === -1 ? 0 : -1) + footers.length - 1;
+    };
+
+    // 有上级loader sourcemap
+    if (upstreamSourceMap && upstreamSourceMap.mappings && upstreamSourceMap.mappings.length) {
+      const upstreamSourceMapConsumer = new SourceMapConsumer(upstreamSourceMap);
+      upstreamSourceMapConsumer.eachMapping(mapping => {
+        if (mapping.source) {
+          sourceMap!.addMapping({
+            generated: {
+              line: getGeneratedLineIndex(mapping.generatedLine - 1) + 1, // 行号偏移计算
+              column: mapping.generatedColumn,
+            },
+            original: {
+              line: mapping.originalLine,
+              column: mapping.originalColumn,
+            },
+            source: mapping.source,
+            name: mapping.name,
+          });
         }
-        sourceMap.addMapping({
-          generated: {
-            line: to + 1, // line从1开始
-            column: 0, // column从0开始
-          },
-          original: {
-            line: i + 1,
-            column: 0
-          },
-          source: resourcePath,
+      });
+
+      if (upstreamSourceMap.sourcesContent) {
+        upstreamSourceMap.sourcesContent.forEach((sourceContent, i) => {
+          sourceMap!.setSourceContent(upstreamSourceMap.sources[i], sourceContent);
         });
       }
-    }
+    } else {
+      for (let i = 0; i < lines.length; i++) {
+        if (i !== headerInjectionIndex && i !== footerInjectionIndex) {
+          sourceMap!.addMapping({
+            generated: {
+              line: getGeneratedLineIndex(i) + 1, // line从1开始
+              column: 0, // column从0开始
+            },
+            original: {
+              line: i + 1,
+              column: 0
+            },
+            source: resourcePath,
+          });
+        }
+      }
 
-    sourceMap.setSourceContent(resourcePath, content);
+      sourceMap!.setSourceContent(resourcePath, input);
+    }
   }
 
   return {
     output: newLines.join('\n'),
-    sourceMap: sourceMap ? sourceMap.toJSON() : undefined,
+    sourceMap: sourceMap ? JSON.parse(sourceMap.toString()) : undefined,
   };
 }
 
