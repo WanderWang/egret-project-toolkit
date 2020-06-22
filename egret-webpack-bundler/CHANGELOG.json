@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.12",
+      "tag": "@egret/egret-webpack-bundler_v1.1.12",
+      "date": "Mon, 22 Jun 2020 02:54:14 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复全局枚举在 legacy 模式下无法访问的bug"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.11",
       "tag": "@egret/egret-webpack-bundler_v1.1.11",
       "date": "Sun, 21 Jun 2020 12:56:53 GMT",
