@@ -31,7 +31,6 @@
 // HEADER_INJECTION_PLACEHOLDER 注入global文件依赖的地方
 
 MyEnum111.a
-declare function require(path: string): any;
 
 class Main extends eui.UILayer {
 

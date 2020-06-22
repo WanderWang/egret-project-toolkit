@@ -1,6 +1,6 @@
 import * as webpack from 'webpack';
-import * as utils from '../utils';
 import { SourceMapGenerator } from 'source-map';
+import * as utils from '../utils';
 import SrcLoaderPlugn, { NSLoaderContext } from './Plugin';
 const { NS } = SrcLoaderPlugn;
 
@@ -18,12 +18,20 @@ const srcLoader: webpack.loader.Loader = function (input) {
   const { defines, isModule } = info;
   const isEntry = utils.isEntry(compiler, this.resourcePath);
 
+  const declares = [];
   let dependencies: string[] = [];
   // exml依赖
   // getSkinDependencies(defines, ns.skins).forEach(filePath => {
   // dependencies.push(filePath);
   // });
   if (isEntry) { // 入口文件
+    // require函数声名
+    if (isModule) {
+      declares.push('declare global { function require(path: string): any; }');
+    } else {
+      declares.push('declare function require(path: string): any;  ');
+    }
+
     // 导入未模块化的全部文件
     dependencies = dependencies.concat(ns.factory.sortUnmodules());
     // res thm等依赖文件
@@ -90,6 +98,7 @@ const srcLoader: webpack.loader.Loader = function (input) {
     input.toString(),
     this,
     [
+      ...declares,
       ...dependenciesRequires, // require语句
       ...namespaceDeclarations, // 命名空间声名
     ],
