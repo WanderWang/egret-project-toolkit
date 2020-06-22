@@ -2,6 +2,7 @@ dependencies:
   '@rush-temp/convert-egret-project-to-es6': 'file:projects/convert-egret-project-to-es6.tgz'
   '@rush-temp/egret-build-script-plugins': 'file:projects/egret-build-script-plugins.tgz'
   '@rush-temp/egret-webpack-bundler': 'file:projects/egret-webpack-bundler.tgz'
+  '@rush-temp/egret-webpack-cli-project': 'file:projects/egret-webpack-cli-project.tgz'
   '@rush-temp/eui-compiler': 'file:projects/eui-compiler.tgz'
   '@types/ajv': 1.0.0
   '@types/express': 4.17.6
@@ -23,6 +24,7 @@ dependencies:
   html-webpack-plugin: 4.3.0
   mocha: 6.2.3
   mock-fs: 4.12.0
+  source-map: 0.7.3
   trim-lines: 1.1.3
   ts-loader: 7.0.5
   ts-morph: 7.1.1
@@ -423,6 +425,15 @@ packages:
       ajv: ^6.0.0
     resolution:
       integrity: sha512-IR8uhRH0La4DweKHqBOVeoNo2prJ3bowWzGtNS3uDvYv5wKLgH/WQsoh6gHPVxTWXCGr+R+6I5vXDSXGAYnNPA==
+  /ajv-i18n/3.5.0/ajv@6.12.2:
+    dependencies:
+      ajv: 6.12.2
+    dev: false
+    id: registry.npmjs.org/ajv-i18n/3.5.0
+    peerDependencies:
+      ajv: ^6.0.0
+    resolution:
+      integrity: sha512-IR8uhRH0La4DweKHqBOVeoNo2prJ3bowWzGtNS3uDvYv5wKLgH/WQsoh6gHPVxTWXCGr+R+6I5vXDSXGAYnNPA==
   /ajv-keywords/3.4.1:
     dev: false
     peerDependencies:
@@ -430,7 +441,8 @@ packages:
     resolution:
       integrity: sha512-RO1ibKvd27e6FEShVFfPALuHI3WjSVNeK5FIsmme/LYRNxjKuNj+Dt7bucLa6NdSv3JcVTyMlm9kGR84z1XpaQ==
   /ajv-keywords/3.4.1/ajv@6.12.2:
-    dependencies: {}
+    dependencies:
+      ajv: 6.12.2
     dev: false
     id: registry.npmjs.org/ajv-keywords/3.4.1
     peerDependencies:
@@ -1180,7 +1192,7 @@ packages:
       p-limit: 2.3.0
       schema-utils: 1.0.0
       serialize-javascript: 2.1.2
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
       webpack-log: 2.0.0
     dev: false
     engines:
@@ -2278,7 +2290,7 @@ packages:
       pretty-error: 2.1.1
       tapable: 1.1.3
       util.promisify: 1.0.0
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
     dev: false
     engines:
       node: '>=6.9'
@@ -4165,6 +4177,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
+  /source-map/0.7.3:
+    dev: false
+    engines:
+      node: '>= 8'
+    resolution:
+      integrity: sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ==
   /spdy-transport/3.0.0:
     dependencies:
       debug: 4.1.1
@@ -4754,7 +4772,7 @@ packages:
       mime: 2.4.6
       mkdirp: 0.5.5
       range-parser: 1.2.1
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
       webpack-log: 2.0.0
     dev: false
     engines:
@@ -5023,7 +5041,7 @@ packages:
     dev: false
     name: '@rush-temp/egret-build-script-plugins'
     resolution:
-      integrity: sha512-5DundkfB8LF1TtYCLOgwjDwspbTsOrZ68WPZBgM9eIl1zVNsw3RhePVrDCq9Rk+sOTJGF7G0G1JyywfCibFWhQ==
+      integrity: sha512-kLRYu6NdCQbX4W4A07ts88MPLazwUVskCHS6fP8X8Luhp9jcddiO2klMYuuikPHTIzpr7Qhj7KDY1Q3Ex3rsuQ==
       tarball: 'file:projects/egret-build-script-plugins.tgz'
     version: 0.0.0
   'file:projects/egret-webpack-bundler.tgz':
@@ -5038,18 +5056,26 @@ packages:
       fork-ts-checker-webpack-plugin: 4.1.6
       glob: 7.1.6
       html-webpack-plugin: /html-webpack-plugin/4.3.0/webpack@4.43.0
+      source-map: 0.7.3
       ts-loader: /ts-loader/7.0.5/typescript@3.9.3
       tslib: 2.0.0
       typescript: 3.9.3
-      webpack: /webpack/4.43.0/webpack@4.43.0
+      webpack: 4.43.0
       webpack-dev-middleware: /webpack-dev-middleware/3.7.2/webpack@4.43.0
       webpack-dev-server: /webpack-dev-server/3.11.0/webpack@4.43.0
       webpack-merge: 4.2.2
     dev: false
     name: '@rush-temp/egret-webpack-bundler'
     resolution:
-      integrity: sha512-NhwAVPKcASbMPqF67mTyyO82xMSktbMtdmgz5uUNlQ1Y+7HzcoVVhn79tzAF3S30IrRZEnXuxZNxhMhUDVHgmQ==
+      integrity: sha512-DR8U2MvWyL6UUBLRU/9iEth6RDqGit0u8IUjtDKMCKkSSHVAkcgpEh19LKlGf8m0IZ6ub1f2avGIiXi0SEl1/Q==
       tarball: 'file:projects/egret-webpack-bundler.tgz'
+    version: 0.0.0
+  'file:projects/egret-webpack-cli-project.tgz':
+    dev: false
+    name: '@rush-temp/egret-webpack-cli-project'
+    resolution:
+      integrity: sha512-3b79B0BVuz9QztGxsRMNNhFBRDsa6z5WfnaqUTpnJAgo9Lvo47MPUr3WiWh/nC0C51YOfZLONbOSqWwHCW534Q==
+      tarball: 'file:projects/egret-webpack-cli-project.tgz'
     version: 0.0.0
   'file:projects/eui-compiler.tgz':
     dependencies:
@@ -5058,7 +5084,7 @@ packages:
       '@types/mocha': 7.0.2
       '@types/node': 11.15.14
       ajv: 6.12.2
-      ajv-i18n: 3.5.0
+      ajv-i18n: /ajv-i18n/3.5.0/ajv@6.12.2
       args: 5.0.1
       egret-node-utils: 0.0.7
       escodegen: 1.14.1
@@ -5082,6 +5108,7 @@ specifiers:
   '@rush-temp/convert-egret-project-to-es6': 'file:./projects/convert-egret-project-to-es6.tgz'
   '@rush-temp/egret-build-script-plugins': 'file:./projects/egret-build-script-plugins.tgz'
   '@rush-temp/egret-webpack-bundler': 'file:./projects/egret-webpack-bundler.tgz'
+  '@rush-temp/egret-webpack-cli-project': 'file:./projects/egret-webpack-cli-project.tgz'
   '@rush-temp/eui-compiler': 'file:./projects/eui-compiler.tgz'
   '@types/ajv': ^1.0.0
   '@types/express': ~4.17.6
@@ -5103,6 +5130,7 @@ specifiers:
   html-webpack-plugin: ^4.3.0
   mocha: ^6.2.2
   mock-fs: ^4.10.2
+  source-map: ^0.7.3
   trim-lines: ^1.1.2
   ts-loader: ^7.0.2
   ts-morph: ^7.0.3
