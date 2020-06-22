@@ -2,7 +2,7 @@ import * as ts from 'typescript';
 
 
 
-function isDeclaration(node: ts.Node) {
+function isTypeScriptDeclaration(node: ts.Node) {
     if (node.modifiers) {
         return node.modifiers.some(m => m.kind === ts.SyntaxKind.DeclareKeyword);
     }
@@ -29,7 +29,7 @@ function createGlobalExpression(text: string) {
 export function emitClassName() {
     return function (ctx: ts.TransformationContext) {
         function visitClassDeclaration(node: ts.ClassDeclaration) {
-            if (isDeclaration(node)) {
+            if (isTypeScriptDeclaration(node)) {
                 return node;
             }
             const nameNode = node.name;
@@ -49,8 +49,25 @@ export function emitClassName() {
             }
         }
 
-        function visitFunctionDeclaration(node: ts.FunctionDeclaration) {
-            if (isDeclaration(node)) {
+        function visitVariableStatement(node: ts.VariableStatement) {
+            if (isTypeScriptDeclaration(node) || hasExport(node)) {
+                return node;
+            }
+
+            const globalExpressions = node.declarationList.declarations.map(d => {
+                const nameNode = d.name;
+                const nameText = nameNode.getText();
+                const globalExpression = createGlobalExpression(nameText);
+                return globalExpression;
+            })
+
+            return ts.createNodeArray(
+                [node as ts.Node].concat(globalExpressions)
+            )
+        }
+
+        function visitFunctionOrEnumDeclaration(node: ts.NamedDeclaration) {
+            if (isTypeScriptDeclaration(node)) {
                 return node;
             }
             const nameNode = node.name;
@@ -68,23 +85,6 @@ export function emitClassName() {
             }
         }
 
-        function visitVariableStatement(node: ts.VariableStatement) {
-            if (isDeclaration(node) || hasExport(node)) {
-                return node;
-            }
-
-            const globalExpressions = node.declarationList.declarations.map(d => {
-                const nameNode = d.name;
-                const nameText = nameNode.getText();
-                const globalExpression = createGlobalExpression(nameText);
-                return globalExpression;
-            })
-
-            return ts.createNodeArray(
-                [node as ts.Node].concat(globalExpressions)
-            )
-        }
-
         // 最外层变量需要挂载到全局对象上
         let nestLevel = 0;
 
@@ -95,9 +95,12 @@ export function emitClassName() {
             if (node.kind === ts.SyntaxKind.ClassDeclaration) {
                 result = visitClassDeclaration(node as ts.ClassDeclaration);
             }
+            else if (node.kind === ts.SyntaxKind.EnumDeclaration) {
+                result = visitFunctionOrEnumDeclaration(node as ts.EnumDeclaration);
+            }
             else if ((node.kind === ts.SyntaxKind.FunctionDeclaration) && nestLevel === 1) {
 
-                result = visitFunctionDeclaration(node as ts.FunctionDeclaration)
+                result = visitFunctionOrEnumDeclaration(node as ts.FunctionDeclaration)
             }
             else if (node.kind === ts.SyntaxKind.VariableStatement && nestLevel === 1) {
                 result = visitVariableStatement(node as ts.VariableStatement)
