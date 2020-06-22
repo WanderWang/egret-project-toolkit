@@ -70,6 +70,8 @@ class Main extends eui.UILayer {
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
         new TestCaseEgretIsFunction().run();
+        console.log(mynamespace)
+        new mynamespace.BBB();
 
     }
 

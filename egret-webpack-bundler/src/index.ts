@@ -252,13 +252,9 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
         loader: require.resolve('./loaders/src-loader'),
     };
 
-
-
     const before = [
         emitClassName(),
     ];
-
-    console.log(options.typescript?.tsconfigPath)
 
     const typescriptLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
