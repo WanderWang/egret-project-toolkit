@@ -283,9 +283,8 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
     }
     else {
         plugins.push(new SrcLoaderPlugin())
-        rules.push(srcLoaderRule);
         rules.push(typescriptLoaderRule);
-
+        rules.push(srcLoaderRule);
     }
 
     const tslibFunctions = Object.keys(require('tslib'));
