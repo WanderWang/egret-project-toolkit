@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.2.0",
+      "tag": "@egret/egret-webpack-bundler_v1.2.0",
+      "date": "Mon, 22 Jun 2020 09:18:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "为 srcLoader添加sourcemap支持"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.13",
       "tag": "@egret/egret-webpack-bundler_v1.1.13",
       "date": "Mon, 22 Jun 2020 03:40:24 GMT",

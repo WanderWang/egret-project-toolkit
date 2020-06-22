@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Mon, 22 Jun 2020 03:40:24 GMT and should not be manually modified.
+This log was last generated on Mon, 22 Jun 2020 09:18:12 GMT and should not be manually modified.
+
+## 1.2.0
+Mon, 22 Jun 2020 09:18:12 GMT
+
+### Minor changes
+
+- 为 srcLoader添加sourcemap支持
 
 ## 1.1.13
 Mon, 22 Jun 2020 03:40:24 GMT
