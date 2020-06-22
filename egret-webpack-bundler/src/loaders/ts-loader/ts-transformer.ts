@@ -115,7 +115,6 @@ export function emitClassName() {
                 nestLevel++;
                 result = ts.visitEachChild(node, visitor, ctx);
                 nestLevel--;
-
             }
 
             return result;
