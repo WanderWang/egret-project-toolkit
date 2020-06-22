@@ -1,6 +1,54 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Thu, 18 Jun 2020 03:16:26 GMT and should not be manually modified.
+This log was last generated on Mon, 22 Jun 2020 03:40:24 GMT and should not be manually modified.
+
+## 1.1.13
+Mon, 22 Jun 2020 03:40:24 GMT
+
+### Patches
+
+- 添加 typescript.tsconfigPath 功能
+
+## 1.1.12
+Mon, 22 Jun 2020 02:54:14 GMT
+
+### Patches
+
+- 修复全局枚举在 legacy 模式下无法访问的bug
+
+## 1.1.11
+Sun, 21 Jun 2020 12:56:53 GMT
+
+### Patches
+
+- 临时修复 modern 模式下的编译错误
+
+## 1.1.10
+Sun, 21 Jun 2020 12:46:35 GMT
+
+### Patches
+
+- 进一步降低代码体积
+
+## 1.1.9
+Sun, 21 Jun 2020 12:21:40 GMT
+
+### Patches
+
+- 优化输出代码体积
+
+## 1.1.8
+Sun, 21 Jun 2020 09:40:22 GMT
+
+*Version update only*
+
+## 1.1.7
+Sun, 21 Jun 2020 08:54:25 GMT
+
+### Patches
+
+- 修复装饰器排序错误的问题
+- 修复 egret.is 返回错误结果的问题
 
 ## 1.1.6
 Thu, 18 Jun 2020 03:16:26 GMT

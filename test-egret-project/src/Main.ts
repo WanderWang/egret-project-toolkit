@@ -30,7 +30,7 @@
 
 // HEADER_INJECTION_PLACEHOLDER 注入global文件依赖的地方
 
-A;
+MyEnum111.a
 
 class Main extends eui.UILayer {
 
@@ -69,6 +69,7 @@ class Main extends eui.UILayer {
         await platform.login();
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
+        new TestCaseEgretIsFunction().run();
 
     }
 

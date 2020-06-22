@@ -1,7 +1,7 @@
 test-egret-project/bin-debug
 test-egret-project/libs
 test-egret-project/bin-release
-test-egret-project-2
+ignored-testcases
 
 # Logs
 *.log

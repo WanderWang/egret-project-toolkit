@@ -1,6 +1,6 @@
 {
   "name": "@egret/egret-webpack-bundler",
-  "version": "1.1.6",
+  "version": "1.1.13",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -9,7 +9,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@egret/eui-compiler": "1.4.4",
+    "@egret/eui-compiler": "1.4.5",
     "copy-webpack-plugin": "^5.1.1",
     "express": "~4.17.1",
     "fork-ts-checker-webpack-plugin": "^4.1.3",

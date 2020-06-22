@@ -2,6 +2,93 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.13",
+      "tag": "@egret/egret-webpack-bundler_v1.1.13",
+      "date": "Mon, 22 Jun 2020 03:40:24 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "添加 typescript.tsconfigPath 功能"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.12",
+      "tag": "@egret/egret-webpack-bundler_v1.1.12",
+      "date": "Mon, 22 Jun 2020 02:54:14 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复全局枚举在 legacy 模式下无法访问的bug"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.11",
+      "tag": "@egret/egret-webpack-bundler_v1.1.11",
+      "date": "Sun, 21 Jun 2020 12:56:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "临时修复 modern 模式下的编译错误"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.10",
+      "tag": "@egret/egret-webpack-bundler_v1.1.10",
+      "date": "Sun, 21 Jun 2020 12:46:35 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "进一步降低代码体积"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.9",
+      "tag": "@egret/egret-webpack-bundler_v1.1.9",
+      "date": "Sun, 21 Jun 2020 12:21:40 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "优化输出代码体积"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.8",
+      "tag": "@egret/egret-webpack-bundler_v1.1.8",
+      "date": "Sun, 21 Jun 2020 09:40:22 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@egret/eui-compiler\" from `1.4.4` to `1.4.5`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.1.7",
+      "tag": "@egret/egret-webpack-bundler_v1.1.7",
+      "date": "Sun, 21 Jun 2020 08:54:25 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复装饰器排序错误的问题"
+          },
+          {
+            "comment": "修复 egret.is 返回错误结果的问题"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.6",
       "tag": "@egret/egret-webpack-bundler_v1.1.6",
       "date": "Thu, 18 Jun 2020 03:16:26 GMT",

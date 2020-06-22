@@ -6,8 +6,8 @@ import { getLibsFileList } from './egretproject';
 import { Target_Type } from './egretproject/data';
 import SrcLoaderPlugin from './loaders/src-loader/Plugin';
 import ThemePlugin from './loaders/theme';
+import { emitClassName } from './loaders/ts-loader/ts-transformer';
 import { openUrl } from './open';
-import { emitClassName } from './ts-transformer';
 const middleware = require("webpack-dev-middleware");
 const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -46,6 +46,11 @@ export type WebpackBundleOptions = {
          * legacy 模式为兼容现有代码的方式，底层在执行 ts-loader 之前先进行了其他内部处理
          */
         mode: "legacy" | "modern",
+
+        /**
+         * 编译采用的 tsconfig.json 路径，默认为 tsconfig.json
+         */
+        tsconfigPath?: string
 
     }
 
@@ -163,7 +168,7 @@ export function generateConfig(
 
     context = context.split("/").join(path.sep);
     const needSourceMap = devServer;
-    const mode = 'development'
+    const mode = 'none';
 
     let config: webpack.Configuration = {
         stats: "minimal",
@@ -188,6 +193,10 @@ export function generateConfig(
     generateWebpackConfig_exml(config, options);
     generateWebpackConfig_html(config, options, target);
     genrateWebpackConfig_subpackages(config, options);
+    if (options.libraryType === 'debug') {
+        config.plugins!.push(new webpack.NamedModulesPlugin());
+        config.plugins!.push(new webpack.NamedChunksPlugin());
+    }
     if (options.webpackConfig) {
         const customWebpackConfig = typeof options.webpackConfig === 'function' ? options.webpackConfig(config) : options.webpackConfig;
         config = webpackMerge(config, customWebpackConfig);
@@ -226,18 +235,11 @@ function genrateWebpackConfig_subpackages(config: webpack.Configuration, options
 
 function generateWebpackConfig_typescript(config: webpack.Configuration, options: WebpackBundleOptions, needSourceMap: boolean) {
 
-    const typescriptLoaderRule: webpack.RuleSetRule = {
-        test: /\.tsx?$/,
-        loader: require.resolve('ts-loader')
-    }
+
     const compilerOptions: import("typescript").CompilerOptions = {
         sourceMap: needSourceMap,
         importHelpers: true,
-        baseUrl: "./",
-        paths: {
-            "tslib": [require.resolve("tslib")]
-        }
-        // importHelpers: true
+        noEmitHelpers: true
     };
     config.resolve!.alias = {
         'tslib': require.resolve("tslib")
@@ -253,12 +255,18 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
 
 
 
-    const before = [emitClassName()];
+    const before = [
+        emitClassName(),
+    ];
 
-    if (options.typescript?.mode === 'modern') {
-        rules.push(typescriptLoaderRule)
-        typescriptLoaderRule.options = {
-            transpileOnly: true,
+    console.log(options.typescript?.tsconfigPath)
+
+    const typescriptLoaderRule: webpack.RuleSetRule = {
+        test: /\.tsx?$/,
+        loader: require.resolve('ts-loader'),
+        options: {
+            transpileOnly: false,
+            configFile: options.typescript?.tsconfigPath || 'tsconfig.json',
             compilerOptions,
             getCustomTransformers: function () {
                 return ({
@@ -266,17 +274,28 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
                 });
             }
         }
+    }
+
+    if (options.typescript?.mode === 'modern') {
         plugins.push(new ForkTsCheckerPlugin());
+        (typescriptLoaderRule.options as any).transpileOnly = true;
+        rules.push(typescriptLoaderRule);
     }
     else {
         plugins.push(new SrcLoaderPlugin())
         rules.push(srcLoaderRule);
         rules.push(typescriptLoaderRule);
-        typescriptLoaderRule.options = {
-            transpileOnly: false,
-            compilerOptions,
-        }
+
     }
+
+    const tslibFunctions = Object.keys(require('tslib'));
+
+    const provide: any = {};
+    for (let key of tslibFunctions) {
+        provide[key] = ['tslib', key];
+    }
+    provide['__reflect'] = [path.join(__dirname, 'helper.js'), '__reflect']
+    plugins.push(new webpack.ProvidePlugin(provide))
 }
 
 function generateWebpackConfig_exml(config: webpack.Configuration, options: WebpackBundleOptions) {

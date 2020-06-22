@@ -3,7 +3,7 @@ import * as utils from '../utils';
 import SrcLoaderPlugn, { NSLoaderContext } from './Plugin';
 const { NS } = SrcLoaderPlugn;
 
-const srcLoader: webpack.loader.Loader = function(input) {
+const srcLoader: webpack.loader.Loader = function (input) {
   let content: string = input.toString();
   const compiler = this._compiler;
   const ns: NSLoaderContext = (this as any)[NS];
@@ -46,14 +46,14 @@ const srcLoader: webpack.loader.Loader = function(input) {
     const info = defines[name];
     // egret强依赖__class__
     if (info.type === 'Class') {
-      classNameDefines.push(`${name}.prototype['__class__'] = '${name}';`);
+      // classNameDefines.push(`${name}.prototype['__class__'] = '${name}';`);
     }
     // 模块化的不自动导出依赖
     if (!isModule && !name.includes('.')) {
       if (info.type === 'Namespace') {
         namespaceDeclarations.push(`var ${name} = window['${name}'];`);
       }
-      defineAssignments.push(`window['${name}'] = ${name};`);
+      // defineAssignments.push(`window['${name}'] = ${name};`);
     }
   });
 

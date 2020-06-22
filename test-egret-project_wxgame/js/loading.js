@@ -1,13 +1,9 @@
 var egret = window.egret;(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["loading"],{
 
 /***/ "./src/LoadingUI.ts":
-/*!**************************!*\
-  !*** ./src/LoadingUI.ts ***!
-  \**************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-
+/* WEBPACK VAR INJECTION */(function(__extends, __reflect) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -37,19 +33,6 @@ var egret = window.egret;(window["webpackJsonp"] = window["webpackJsonp"] || [])
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var LoadingUI = /** @class */ (function (_super) {
     __extends(LoadingUI, _super);
     function LoadingUI() {
@@ -70,9 +53,10 @@ var LoadingUI = /** @class */ (function (_super) {
     };
     return LoadingUI;
 }(egret.Sprite));
-LoadingUI.prototype['__class__'] = 'LoadingUI';
-window['LoadingUI'] = LoadingUI;
+__reflect(LoadingUI.prototype,"LoadingUI");
+window["LoadingUI"] = LoadingUI;
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("../common/temp/node_modules/.registry.npmjs.org/tslib/2.0.0/node_modules/tslib/tslib.js")["__extends"], __webpack_require__("../egret-webpack-bundler/lib/helper.js")["__reflect"]))
 
 /***/ })
 
