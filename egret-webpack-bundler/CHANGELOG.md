@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Mon, 22 Jun 2020 02:54:14 GMT and should not be manually modified.
+This log was last generated on Mon, 22 Jun 2020 03:40:24 GMT and should not be manually modified.
+
+## 1.1.13
+Mon, 22 Jun 2020 03:40:24 GMT
+
+### Patches
+
+- 添加 typescript.tsconfigPath 功能
 
 ## 1.1.12
 Mon, 22 Jun 2020 02:54:14 GMT

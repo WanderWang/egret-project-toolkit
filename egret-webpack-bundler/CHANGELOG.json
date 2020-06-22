@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.1.13",
+      "tag": "@egret/egret-webpack-bundler_v1.1.13",
+      "date": "Mon, 22 Jun 2020 03:40:24 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "添加 typescript.tsconfigPath 功能"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.12",
       "tag": "@egret/egret-webpack-bundler_v1.1.12",
       "date": "Mon, 22 Jun 2020 02:54:14 GMT",
