@@ -75,7 +75,6 @@ export type WebpackDevServerOptions = {
 
 export class EgretWebpackBundler {
 
-
     emitter: ((filename: string, data: Buffer) => void) | null = null;
 
     constructor(private projectRoot: string, private target: string) {
