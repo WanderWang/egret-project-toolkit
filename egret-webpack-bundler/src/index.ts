@@ -47,6 +47,11 @@ export type WebpackBundleOptions = {
          */
         mode: "legacy" | "modern",
 
+        /**
+         * 编译采用的 tsconfig.json 路径，默认为 tsconfig.json
+         */
+        tsconfigPath?: string
+
     }
 
     /**
@@ -254,11 +259,14 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
         emitClassName(),
     ];
 
+    console.log(options.typescript?.tsconfigPath)
+
     const typescriptLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
         loader: require.resolve('ts-loader'),
         options: {
             transpileOnly: false,
+            configFile: options.typescript?.tsconfigPath || 'tsconfig.json',
             compilerOptions,
             getCustomTransformers: function () {
                 return ({
