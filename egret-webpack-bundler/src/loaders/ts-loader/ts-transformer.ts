@@ -98,6 +98,12 @@ export function emitClassName() {
             else if (node.kind === ts.SyntaxKind.EnumDeclaration) {
                 result = visitFunctionOrEnumDeclaration(node as ts.EnumDeclaration);
             }
+            else if (node.kind === ts.SyntaxKind.ModuleDeclaration) {
+                nestLevel++;
+                result = ts.visitEachChild(node, visitor, ctx);
+                nestLevel--;
+                result = visitFunctionOrEnumDeclaration(result as ts.ModuleDeclaration)
+            }
             else if ((node.kind === ts.SyntaxKind.FunctionDeclaration) && nestLevel === 1) {
 
                 result = visitFunctionOrEnumDeclaration(node as ts.FunctionDeclaration)
@@ -109,7 +115,6 @@ export function emitClassName() {
                 nestLevel++;
                 result = ts.visitEachChild(node, visitor, ctx);
                 nestLevel--;
-
             }
 
             return result;
