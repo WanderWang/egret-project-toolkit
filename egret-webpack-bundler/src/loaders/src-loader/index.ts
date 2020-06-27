@@ -106,7 +106,7 @@ const srcLoader: webpack.loader.Loader = function (input, upstreamSourceMap) {
 
 function injectLines(
   input: string,
-  upstreamSourceMap: RawSourceMap|undefined, // 上级loader sourcemap
+  upstreamSourceMap: RawSourceMap | undefined, // 上级loader sourcemap
   context: webpack.loader.LoaderContext,
   headers: string[],
   footers: string[]
@@ -137,7 +137,7 @@ function injectLines(
     ...lines.slice(footerInjectionIndex + 1),
   ];
 
-  let sourceMap: SourceMapGenerator|undefined = undefined;
+  let sourceMap: SourceMapGenerator | undefined = undefined;
   if (context.sourceMap) { // 生成sourcemap
     sourceMap = new SourceMapGenerator({
       file: resourcePath,
