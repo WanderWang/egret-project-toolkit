@@ -1,0 +1,17 @@
+{
+  "name": "@egret/egret-library-installer",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "~3.9.5",
+    "@types/download": "~6.2.4"
+  },
+  "dependencies": {
+    "download": "~8.0.0"
+  }
+}

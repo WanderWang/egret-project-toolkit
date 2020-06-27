@@ -396,6 +396,10 @@
       "projectFolder": "packages/convert-egret-project-to-es6",
       "reviewCategory": "production",
       "shouldPublish": true
+    },
+    {
+      "packageName": "@egret/egret-library-installer",
+      "projectFolder": "packages/egret-library-installer"
     }
   ]
 }
