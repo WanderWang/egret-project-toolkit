@@ -52,7 +52,7 @@ const srcLoader: webpack.loader.Loader = function (input, upstreamSourceMap) {
     // 模块化的不自动导出依赖
     if (!isModule && !name.includes('.')) {
       if (info.type === 'Namespace') {
-        namespaceDeclarations.push(`var ${name} = window['${name}'];`);
+        // namespaceDeclarations.push(`var ${name} = window['${name}'];`);
       }
       // defineAssignments.push(`window['${name}'] = ${name};`);
     }

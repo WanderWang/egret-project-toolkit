@@ -97,6 +97,11 @@ export function emitClassName() {
                     node,
                     globalExpression,
                 ];
+                if (node.kind === ts.SyntaxKind.ModuleDeclaration) {
+                    arrays.unshift(
+                        ts.createIdentifier(`var ${nameText} = window['${nameText}'];`)
+                    )
+                }
                 return ts.createNodeArray(arrays);
             }
             else {
