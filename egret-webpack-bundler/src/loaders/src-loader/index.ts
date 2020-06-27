@@ -13,7 +13,7 @@ const srcLoader: webpack.loader.Loader = function (input, upstreamSourceMap) {
   // 不在扫描目录下
   // TODO loader配置了include=/src/ 但发现文件改动时libs下的文件也会走过来
   if (!info) {
-    return callback(null, input);
+    return callback(null, input, upstreamSourceMap);
   }
   const { defines, isModule } = info;
   const isEntry = utils.isEntry(compiler, this.resourcePath);
