@@ -33,6 +33,7 @@ export default class Factory {
       glob.sync('**/*.ts', {
         cwd: dir,
       })
+        .filter(item => !item.endsWith('.d.ts')) // ignore .d.ts
         .forEach(item => {
           files[path.join(dir, item)] = true;
         });
