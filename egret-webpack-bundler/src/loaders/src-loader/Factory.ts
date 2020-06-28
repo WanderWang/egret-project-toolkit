@@ -1,8 +1,7 @@
-import * as crypto from 'crypto';
 import * as _fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
-import parse, { Dependencies } from './parse';
+import parse, { Dependencies, Defines } from './parse';
 
 interface FactoryOptions {
   dirs: string[];
@@ -11,9 +10,21 @@ interface FactoryOptions {
 
 export default class Factory {
   private dirs: string[];
+
   private fs: typeof _fs;
-  public files: any;
-  public identifiers: any;
+
+  public files: {
+    [name: string]: {
+      mtime: number;
+      isModule: boolean;
+      dependencies: Dependencies;
+      defines: Defines;
+    };
+  };
+
+  public identifiers: {
+    [name: string]: Set<string>;
+  };
 
   constructor({ dirs, fs }: FactoryOptions) {
     this.dirs = dirs;
@@ -71,16 +82,17 @@ export default class Factory {
   }
 
   private add(fileName: string) {
-    const content = this.fs.readFileSync(fileName).toString();
+    const mtime = +this.fs.statSync(fileName).mtime;
 
-    const hash = crypto.createHash('md5').update(content).digest('hex');
     const { files } = this;
 
-    if (files[fileName] && files[fileName].hash === hash) {
+    if (files[fileName] && files[fileName].mtime === mtime) {
       return;
     }
 
     this.remove(fileName);
+
+    const content = this.fs.readFileSync(fileName).toString();
 
     const { defines, dependencies, isModule } = parse(fileName, content);
 
@@ -93,7 +105,7 @@ export default class Factory {
     });
 
     files[fileName] = {
-      hash,
+      mtime,
       isModule,
       dependencies,
       defines,
