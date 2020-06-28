@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Sat, 27 Jun 2020 12:16:20 GMT and should not be manually modified.
+This log was last generated on Sun, 28 Jun 2020 03:11:40 GMT and should not be manually modified.
+
+## 1.2.3
+Sun, 28 Jun 2020 03:11:40 GMT
+
+### Patches
+
+- 修复 src 文件夹下包含了 .d.ts 导致编译报错的问题
 
 ## 1.2.2
 Sat, 27 Jun 2020 12:16:20 GMT

@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.2.3",
+      "tag": "@egret/egret-webpack-bundler_v1.2.3",
+      "date": "Sun, 28 Jun 2020 03:11:40 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复 src 文件夹下包含了 .d.ts 导致编译报错的问题"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.2",
       "tag": "@egret/egret-webpack-bundler_v1.2.2",
       "date": "Sat, 27 Jun 2020 12:16:20 GMT",
