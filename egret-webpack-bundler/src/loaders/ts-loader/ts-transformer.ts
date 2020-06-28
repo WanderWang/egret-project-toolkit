@@ -20,6 +20,22 @@ function hasExport(node: ts.Node) {
     }
 }
 
+function getFullClassName(classNode: ts.ClassDeclaration) {
+    let node: ts.Node = classNode;
+    let moduleNames: string[] = [classNode.name!.getText()];
+    while (node.parent) {
+        node = node.parent;
+        if (node.kind === ts.SyntaxKind.ModuleDeclaration) {
+            const m = node as ts.ModuleDeclaration;
+            moduleNames.unshift(m.name.getText())
+        }
+    }
+    return {
+        fullname: moduleNames.join('.'),
+        hasNamespace: moduleNames.length > 1
+    }
+}
+
 
 function createGlobalExpression(text: string) {
     return ts.createIdentifier(`window["${text}"] = ${text};`);
@@ -34,14 +50,17 @@ export function emitClassName() {
             }
             const nameNode = node.name;
             if (nameNode) {
-                const nameText = nameNode.getText();
-                const globalExpression = createGlobalExpression(nameText);
-                const reflectExpression = ts.createIdentifier(`__reflect(${nameText}.prototype,"${nameText}");`)
-                const arrays = [
+                const result = getFullClassName(node);
+                const arrays: ts.Node[] = [
                     node,
-                    reflectExpression,
-                    globalExpression,
                 ];
+                if (!result.hasNamespace) {
+                    const globalExpression = createGlobalExpression(result.fullname);
+                    arrays.push(globalExpression)
+                }
+
+                const reflectExpression = ts.createIdentifier(`__reflect(${nameNode.getText()}.prototype,"${result.fullname}");`)
+                arrays.push(reflectExpression);
                 return ts.createNodeArray(arrays);
             }
             else {
@@ -78,6 +97,11 @@ export function emitClassName() {
                     node,
                     globalExpression,
                 ];
+                if (node.kind === ts.SyntaxKind.ModuleDeclaration) {
+                    arrays.unshift(
+                        ts.createIdentifier(`var ${nameText} = window['${nameText}'];`)
+                    )
+                }
                 return ts.createNodeArray(arrays);
             }
             else {

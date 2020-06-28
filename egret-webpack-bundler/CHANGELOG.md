@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Mon, 22 Jun 2020 11:09:06 GMT and should not be manually modified.
+This log was last generated on Sat, 27 Jun 2020 12:16:20 GMT and should not be manually modified.
+
+## 1.2.2
+Sat, 27 Jun 2020 12:16:20 GMT
+
+### Patches
+
+- 修复 namespace 中的 class 生成的 reflect 错误的问题
 
 ## 1.2.1
 Mon, 22 Jun 2020 11:09:06 GMT

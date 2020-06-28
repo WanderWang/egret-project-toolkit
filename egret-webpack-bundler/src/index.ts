@@ -167,7 +167,7 @@ export function generateConfig(
 
     context = context.split("/").join(path.sep);
     const needSourceMap = devServer;
-    const mode = 'none';
+    const mode = devServer ?"development" : "production";
 
     let config: webpack.Configuration = {
         stats: "minimal",
@@ -186,6 +186,9 @@ export function generateConfig(
         resolve: {
             extensions: [".ts", ".js"]
         },
+        optimization: {
+            minimize: false,
+          },
         plugins: []
     };
     generateWebpackConfig_typescript(config, options, needSourceMap);

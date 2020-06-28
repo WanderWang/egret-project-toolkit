@@ -118,7 +118,7 @@ export function isEntry(compiler: webpack.Compiler, resourcePath: string) {
       p = p.replace(/^.*!/, '');
       // TODO 如果文件没有后缀将判断失误 例如 './src/Main'
       if (!path.isAbsolute(p)) {
-        p = path.join(process.cwd(), p);
+        p = path.join(compiler.context, p);
       }
       return p === resourcePath;
     });
