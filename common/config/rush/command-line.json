@@ -121,13 +121,6 @@
     //    */
     //   "shellCommand": "node common/scripts/my-global-command.js"
     // }
-    {
-      "commandKind": "global",
-      "name": "deploy",
-      "summary": "deploy projects",
-      "description": "This is a custom command that deploy project whose publish is true.",
-      "shellCommand": "node common/scripts/deploy-rush.js"
-    }
   ],
   /**
    * Custom "parameters" introduce new parameters for specified Rush command-line commands.
