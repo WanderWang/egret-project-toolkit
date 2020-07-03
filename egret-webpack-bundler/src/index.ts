@@ -70,6 +70,11 @@ export type WebpackDevServerOptions = {
      * 启动端口，默认值为3000
      */
     port?: number
+
+    /**
+     * 编译完成后打开浏览器
+     */
+    open?: boolean
 }
 
 
@@ -102,7 +107,9 @@ export class EgretWebpackBundler {
             { initial: scripts, game: ['main.js'] }, null, '\t'
         )
         fs.writeFileSync(path.join(this.projectRoot, 'manifest.json'), manifestContent, 'utf-8');
-        openUrl(`http://localhost:${port}/index.html`);
+        if (options.open) {
+            openUrl(`http://localhost:${port}/index.html`);
+        }
     }
 
     build(options: WebpackBundleOptions): Promise<void> {

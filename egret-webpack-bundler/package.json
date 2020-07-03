@@ -6,7 +6,8 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "test": "node ./test/index.js"
   },
   "dependencies": {
     "@egret/eui-compiler": "1.4.5",
