@@ -41,6 +41,20 @@ function createGlobalExpression(text: string) {
     return ts.createIdentifier(`window["${text}"] = ${text};`);
 }
 
+function getInterfaces(node: ts.ClassDeclaration) {
+    const result: string[] = [];
+    if (node.heritageClauses) {
+        for (let h of node.heritageClauses) {
+            if (h.token === ts.SyntaxKind.ImplementsKeyword) {
+                for (let type of h.types) {
+                    result.push(type.expression.getText());
+                }
+            }
+        }
+    }
+    return result;
+}
+
 
 export function emitClassName() {
     return function (ctx: ts.TransformationContext) {
@@ -56,11 +70,12 @@ export function emitClassName() {
                 ];
                 if (!result.hasNamespace) {
                     const globalExpression = createGlobalExpression(result.fullname);
-                    arrays.push(globalExpression)
+                    arrays.push(globalExpression);
                 }
-
-                const reflectExpression = ts.createIdentifier(`__reflect(${nameNode.getText()}.prototype,"${result.fullname}");`)
+                const interfaces = getInterfaces(node).map(item => `"${item}"`).join(",");
+                const reflectExpression = ts.createIdentifier(`__reflect(${nameNode.getText()}.prototype,"${result.fullname}",[${interfaces}]); `);
                 arrays.push(reflectExpression);
+
                 return ts.createNodeArray(arrays);
             }
             else {
@@ -99,7 +114,7 @@ export function emitClassName() {
                 ];
                 if (node.kind === ts.SyntaxKind.ModuleDeclaration) {
                     arrays.unshift(
-                        ts.createIdentifier(`var ${nameText} = window['${nameText}'];`)
+                        ts.createIdentifier(`var ${nameText} = window['${nameText}']; `)
                     )
                 }
                 return ts.createNodeArray(arrays);
