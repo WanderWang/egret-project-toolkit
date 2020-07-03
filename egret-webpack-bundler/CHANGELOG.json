@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.2.4",
+      "tag": "@egret/egret-webpack-bundler_v1.2.4",
+      "date": "Fri, 03 Jul 2020 07:24:28 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修复 egret.is 的判断错误的问题"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.3",
       "tag": "@egret/egret-webpack-bundler_v1.2.3",
       "date": "Sun, 28 Jun 2020 03:11:40 GMT",
