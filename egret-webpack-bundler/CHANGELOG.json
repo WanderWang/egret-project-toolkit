@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.2.5",
+      "tag": "@egret/egret-webpack-bundler_v1.2.5",
+      "date": "Mon, 06 Jul 2020 09:37:01 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@egret/eui-compiler\" from `1.4.5` to `1.4.6`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.4",
       "tag": "@egret/egret-webpack-bundler_v1.2.4",
       "date": "Fri, 03 Jul 2020 07:24:28 GMT",

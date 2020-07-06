@@ -2,6 +2,18 @@
   "name": "@egret/eui-compiler",
   "entries": [
     {
+      "version": "1.4.6",
+      "tag": "@egret/eui-compiler_v1.4.6",
+      "date": "Mon, 06 Jul 2020 09:37:01 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "添加 javascript 输出负数报错的bug"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.5",
       "tag": "@egret/eui-compiler_v1.4.5",
       "date": "Sun, 21 Jun 2020 09:40:22 GMT",

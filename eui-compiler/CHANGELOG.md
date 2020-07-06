@@ -1,6 +1,13 @@
 # Change Log - @egret/eui-compiler
 
-This log was last generated on Sun, 21 Jun 2020 09:40:22 GMT and should not be manually modified.
+This log was last generated on Mon, 06 Jul 2020 09:37:01 GMT and should not be manually modified.
+
+## 1.4.6
+Mon, 06 Jul 2020 09:37:01 GMT
+
+### Patches
+
+- 添加 javascript 输出负数报错的bug
 
 ## 1.4.5
 Sun, 21 Jun 2020 09:40:22 GMT
