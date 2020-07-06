@@ -1,34 +1,21 @@
-// class Main {
+class Main {
 
-//     constructor() {
-//         new aa.A();
-//         new aa.B();
-//     }
-// }
+}
 
-module aa {
 
-    export class Main1 {
+interface InterfaceA {
 
-        static a: number = 0;
+}
 
-        constructor() {
-            // new A();
-            // new B();
-            new C();
-        }
+namespace m {
+
+    export interface InterfaceB {
+
     }
 }
 
 
-// class Main {
 
-//     constructor() {
-//         console.log('hello')
-//     }
-// }
-new aa.Main1();
+class MyComponent implements InterfaceA, m.InterfaceB {
 
-// new Main();
-
-console.log('helloworld')
+}

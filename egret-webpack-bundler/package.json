@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "node ./test/index.js"
+    "test": "mocha"
   },
   "dependencies": {
     "@egret/eui-compiler": "1.4.5",
@@ -22,7 +22,8 @@
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
     "webpack-dev-middleware": "~3.7.2",
-    "webpack-merge": "~4.2.2"
+    "webpack-merge": "~4.2.2",
+    "mocha": "~8.0.1"
   },
   "author": "",
   "license": "ISC",
@@ -31,6 +32,7 @@
     "@types/express": "~4.17.6",
     "@types/node": "^12.11.6",
     "@types/tapable": "^1.0.5",
-    "@types/glob": "~7.1.2"
+    "@types/glob": "~7.1.2",
+    "@types/mocha": "~7.0.2"
   }
 }
