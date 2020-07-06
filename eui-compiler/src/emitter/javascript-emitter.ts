@@ -324,8 +324,22 @@ function createStringLiteral(value: string): JS_AST.Literal {
     }
 }
 
-function createNumberOrBooleanLiteral(value: number | boolean): JS_AST.Literal {
+function createNumberOrBooleanLiteral(value: number | boolean): any {
 
+    if (typeof value === 'number') {
+        if (value < 0 || (value === 0 && 1 / value < 0)) {
+            return {
+                "type": "UnaryExpression",
+                "operator": "-",
+                "argument": {
+                    type: "Literal",
+                    value: -value,
+                    raw: -value.toString()
+                },
+                "prefix": true
+            }
+        }
+    }
     return {
         type: "Literal",
         value,

@@ -37,7 +37,7 @@ describe('emitter', () => {
 
         })
 
-        it('declaration-emitter', () => {
+        it(`declaration-emitter-${dir}`, () => {
             process.chdir(path.join(baselineDir, dir));
             const content = fs.readFileSync('input.exml', 'utf-8');
             const skinNode = parser.generateAST(content)
@@ -50,7 +50,7 @@ describe('emitter', () => {
             assert.equal(outputDeclaration, result);
         })
 
-        it('json-emitter', () => {
+        it(`json-emitter-${dir}`, () => {
             process.chdir(path.join(baselineDir, dir));
             const content = fs.readFileSync('input.exml', 'utf-8');
             const skinNode = parser.generateAST(content)
