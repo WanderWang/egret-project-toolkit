@@ -1,8 +1,6 @@
-import os = require('os');
-import crypto = require('crypto');
-import _path = require("path");
-import cp = require('child_process');
 import * as fs from 'fs';
+import * as _path from 'path';
+import { getApi } from './api';
 
 
 export type Target_Type = "web" | "native" | "mygame" | "wxgame" | "baidugame" | "qgame" | "oppogame" | "vivogame" | 'bricks' | 'ios' | 'android' | "any" | "none"
@@ -154,27 +152,15 @@ class EgretProjectData {
     private getModulePath2(m: EgretPropertyModule) {
         let p = m.path;
         if (!p) {
-
             const engineVersion = m.version || this.egretProperties.engineVersion
             const versions = launcher.getEgretToolsInstalledByVersion(engineVersion);
             return _path.join(versions, 'build', m.name);
-        }
-        let egretLibs;
-        if (process.platform === 'linux') {
-            egretLibs = _path.resolve(__dirname, '../../');
-        } else {
-            egretLibs = getAppDataEnginesRootPath();
-        }
-        let keyword = '${EGRET_APP_DATA}';
-        if (p.indexOf(keyword) >= 0) {
-            p = p.replace(keyword, egretLibs);
         }
         return p;
 
     }
 
     private getAbsolutePath(p: string) {
-        // getAbsolutePath
         if (_path.isAbsolute(p)) {
             return p.split("\\").join("/")
         }
@@ -267,135 +253,21 @@ class EgretProjectData {
 }
 
 
+export const projectData = new EgretProjectData();
 
-export var projectData = new EgretProjectData();
-
-
-
-type LauncherAPI = {
-
-
-    getAllEngineVersions(): any
-
-    getInstalledTools(): { name: string, version: string, path: string }[];
-
-    getTarget(targetName: string): string
-
-    getUserID(): string;
-
-    sign(templatePath: string, uid: string): void;
-
-
-}
-
-type LauncherAPI_MinVersion = { [P in keyof LauncherAPI]: string }
 
 class EgretLauncherProxy {
 
-    getMinVersion(): LauncherAPI_MinVersion {
-
-        return {
-            getAllEngineVersions: '1.0.24',
-            getInstalledTools: '1.0.24',
-            getTarget: "1.0.45",
-            getUserID: "1.0.46",
-            sign: "1.0.46"
-        }
-    }
-
-    private proxy!: LauncherAPI;
-
     getEgretToolsInstalledByVersion(checkVersion: string) {
-        if (process.platform === 'linux') {
-            return _path.resolve(__dirname, '../../');
-        }
-        const egretjs = this.getLauncherLibrary();
-        const data = egretjs.getAllEngineVersions() as any[];
+        const egretjs = getApi();
+        const data = egretjs.getAllEngineVersions();
         const versions: { version: string, path: string }[] = [];
-        for (let key in data) {
-            const item = data[key];
-            versions.push({ version: item.version, path: item.root })
+        const result = data[checkVersion];
+        if (!result) {
+            throw `找不到指定的 egret 版本: ${checkVersion}`;
         }
-        for (let versionInfo of versions) {
-            if (versionInfo.version == checkVersion) {
-                return versionInfo.path;
-            }
-        }
-        throw `找不到指定的 egret 版本: ${checkVersion}`;
+        return result.root;
     }
-
-    getLauncherLibrary(): LauncherAPI {
-        const egretjspath = _path.join(getEgretLauncherPath(), "egret.js");
-        const minVersions = this.getMinVersion() as any;
-        const m = require(egretjspath);
-        const selector: LauncherAPI = m.selector;
-        if (!this.proxy) {
-            this.proxy = new Proxy(selector, {
-                get: (target: any, p: string, receiver) => {
-                    const result = target[p];
-                    if (!result) {
-                        const minVersion = minVersions[p];
-                        throw `找不到 LauncherAPI:${p},请安装最新的白鹭引擎启动器客户端解决此问题,最低版本要求:${minVersion},下载地址:https://egret.com/products/engine.html`//i18n
-                    }
-                    return result.bind(target)
-                }
-            });
-        }
-        return this.proxy;
-    }
-}
-
-function getAppDataPath(): string {
-    var result: string = ""
-    switch (process.platform) {
-        case 'darwin':
-            var home = process.env.HOME || ("/Users/" + (process.env.NAME || process.env.LOGNAME));
-            if (!home)
-                return '';
-            result = `${home}/Library/Application Support/`;//Egret/engine/`;
-            break;
-        case 'win32':
-            var appdata = process.env.AppData || `${process.env.USERPROFILE}/AppData/Roaming/`;
-            result = appdata.split("\\").join("/")
-            break;
-        default:
-            ;
-    }
-
-    if (!fs.existsSync(result)) {
-        throw 'missing appdata path'
-    }
-    return result;
-}
-
-
-function getAppDataEnginesRootPath() {
-    const result = _path.join(getAppDataPath(), "Egret/engine/");
-    if (!fs.existsSync(result)) {
-        throw `找不到 ${result}，请在 Egret Launcher 中执行修复引擎`;//todo i18n
-    }
-    return result;
-}
-
-function getEgretLauncherPath() {
-    let npmEgretPath;
-    if (process.platform === 'darwin') {
-        let basicPath = '/usr/local';
-        if (!fs.existsSync(basicPath)) {//some mac doesn't have path '/usr/local'
-            basicPath = '/usr';
-        }
-        npmEgretPath = _path.join(basicPath, 'lib/node_modules/egret/EgretEngine');
-    }
-    else {
-        npmEgretPath = _path.join(getAppDataPath(), 'npm/node_modules/egret/EgretEngine');
-
-    }
-    if (!fs.existsSync(npmEgretPath)) {
-        throw `找不到  ${npmEgretPath}，请在 Egret Launcher 中执行修复引擎`;//todo i18n
-    }
-    const launcherPath = _path.join(fs.readFileSync(npmEgretPath, 'utf-8'), "../");
-    return launcherPath;
-
 }
 
 export var launcher = new EgretLauncherProxy();
@@ -406,31 +278,4 @@ function searchPath(searchPaths: string[]): string | null {
         }
     }
     return null;
-}
-
-function getEgretRoot() {
-    var path = require("path");
-    var egretRoot: string;
-    var globalpath = module['paths'].concat();
-    var existsFlag = false;
-    for (var i = 0; i < globalpath.length; i++) {
-        var prefix = globalpath[i];
-        var url = path.join(prefix, '../');
-        if (fs.existsSync(_path.join(url, 'tools/bin/egret'))) {
-            existsFlag = true;
-            break;
-        }
-        url = prefix;
-        if (fs.existsSync(_path.join(url, 'tools/bin/egret'))) {
-            existsFlag = true;
-            break;
-        }
-    }
-    if (!existsFlag) {
-        throw new Error("can't find Egret");
-    }
-
-
-    egretRoot = url;
-    return _path.join(egretRoot, '/').split("\\").join("/")
 }
