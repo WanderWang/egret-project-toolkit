@@ -1,6 +1,6 @@
 {
   "name": "@egret/egret-library-installer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "bin": {
     "egret-install": "./bin/cli.js"
