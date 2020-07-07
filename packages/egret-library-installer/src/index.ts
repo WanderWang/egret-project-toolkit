@@ -1,10 +1,10 @@
 import axios from 'axios';
 import * as fs from 'fs-extra-promise';
+import * as os from 'os';
 import * as path from 'path';
 import { Unzip } from 'zip-lib';
 const progress = require('request-progress');
 const request = require('request');
-
 
 type EngineList = { version: string, date: string, url: string, type: number }[];
 
@@ -18,7 +18,7 @@ export async function downloadEngine(version: string) {
     const engineData = data.find(item => item.version === version);
     if (engineData) {
         const root = getAppDataPath();
-        const zipFilePath = path.join(root, 'Egret/lib/', `egret-core-${version}.zip`)
+        const zipFilePath = path.join(root, 'lib', `egret-core-${version}.zip`)
         await downloadFile(engineData.url, zipFilePath);
     }
     else {
@@ -28,9 +28,9 @@ export async function downloadEngine(version: string) {
 
 export async function extractEngine(version: string) {
     const root = getAppDataPath();
-    const zipFilePath = path.join(root, 'Egret/lib/', `egret-core-${version}.zip`)
-    const extractTempFilePath = path.join(root, 'Egret/temp/');
-    const targetPath = path.join(root, 'Egret/engine', version);
+    const zipFilePath = path.join(root, 'lib/', `egret-core-${version}.zip`)
+    const extractTempFilePath = path.join(root, 'temp');
+    const targetPath = path.join(root, 'engine', version);
 
     await clearDirectory(extractTempFilePath)
     await clearDirectory(targetPath);
@@ -78,14 +78,17 @@ function getAppDataPath() {
     switch (process.platform) {
         case 'darwin':
             var home = process.env.HOME || ("/Users/" + (process.env.NAME || process.env.LOGNAME));
-            result = home + "/Library/Application Support";
+            result = home + "/Library/Application Support/";
             break;
         case 'win32':
             result = process.env.AppData || process.env.USERPROFILE + "/AppData/Roaming/";
+            break;
+        case 'linux':
+            result = os.homedir() + "/" + '.egret';
             break;
         default:
             throw new Error();
             ;
     }
-    return result;
+    return result + "Egret"
 }

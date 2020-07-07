@@ -399,7 +399,8 @@
     },
     {
       "packageName": "@egret/egret-library-installer",
-      "projectFolder": "packages/egret-library-installer"
+      "projectFolder": "packages/egret-library-installer",
+      "shouldPublish": true
     }
   ]
 }
