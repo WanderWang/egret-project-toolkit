@@ -72,7 +72,7 @@ async function fetch() {
 async function extractZipFile(zipPath: string, target: string): Promise<void> {
     await fs.ensureDirAsync(target);
     const unzip = new Unzip();
-    unzip.extract(zipPath, target);
+    return unzip.extract(zipPath, target);
 }
 
 function getAppDataPath() {
