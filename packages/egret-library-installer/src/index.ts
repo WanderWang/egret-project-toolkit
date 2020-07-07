@@ -29,15 +29,15 @@ export async function downloadEngine(version: string) {
 export async function extractEngine(version: string) {
     const root = getAppDataPath();
     const zipFilePath = path.join(root, 'lib/', `egret-core-${version}.zip`)
-    const extractTempFilePath = path.join(root, 'temp');
+    const extractTempDirPath = path.join(root, 'temp');
     const targetPath = path.join(root, 'engine', version);
 
-    await clearDirectory(extractTempFilePath)
+    await clearDirectory(extractTempDirPath)
     await clearDirectory(targetPath);
-    await extractZipFile(zipFilePath, extractTempFilePath);
-    await fs.mkdirpAsync(targetPath);
-    await fs.copyAsync(path.join(extractTempFilePath, `egret-core-${version}`), targetPath);
-    await clearDirectory(extractTempFilePath)
+    await extractZipFile(zipFilePath, extractTempDirPath);
+    await fs.ensureDirAsync(targetPath);
+    await fs.copyAsync(path.join(extractTempDirPath, `egret-core-${version}`), targetPath);
+    await clearDirectory(extractTempDirPath)
 }
 
 async function clearDirectory(directory: string) {
@@ -48,6 +48,7 @@ async function clearDirectory(directory: string) {
 }
 
 async function downloadFile(url: string, dist: string) {
+    await fs.ensureDirAsync(path.dirname(dist));
     return new Promise((resolve, reject) => {
         progress(request(url))
             .on('progress', (state: any) => {
@@ -69,6 +70,7 @@ async function fetch() {
 }
 
 async function extractZipFile(zipPath: string, target: string): Promise<void> {
+    await fs.ensureDirAsync(target);
     const unzip = new Unzip();
     unzip.extract(zipPath, target);
 }
@@ -78,10 +80,10 @@ function getAppDataPath() {
     switch (process.platform) {
         case 'darwin':
             var home = process.env.HOME || ("/Users/" + (process.env.NAME || process.env.LOGNAME));
-            result = home + "/Library/Application Support/";
+            result = home + "/Library/Application Support/Egret";
             break;
         case 'win32':
-            result = process.env.AppData || process.env.USERPROFILE + "/AppData/Roaming/";
+            result = process.env.AppData || process.env.USERPROFILE + "/AppData/Roaming/Egret";
             break;
         case 'linux':
             result = os.homedir() + "/" + '.egret';
@@ -90,5 +92,5 @@ function getAppDataPath() {
             throw new Error();
             ;
     }
-    return result + "Egret"
+    return result;
 }
