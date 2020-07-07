@@ -2,6 +2,18 @@
   "name": "@egret/egret-library-installer",
   "entries": [
     {
+      "version": "1.1.1",
+      "tag": "@egret/egret-library-installer_v1.1.1",
+      "date": "Tue, 07 Jul 2020 06:29:25 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "添加 LauncherAPI，支持 Linux 平台的构建"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.6",
       "tag": "@egret/egret-library-installer_v1.0.6",
       "date": "Tue, 07 Jul 2020 04:01:15 GMT",

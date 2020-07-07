@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Mon, 06 Jul 2020 09:37:01 GMT and should not be manually modified.
+This log was last generated on Tue, 07 Jul 2020 06:29:25 GMT and should not be manually modified.
+
+## 1.2.6
+Tue, 07 Jul 2020 06:29:25 GMT
+
+### Patches
+
+- 重构 LauncherAPI，支持 Linux 平台的构建
 
 ## 1.2.5
 Mon, 06 Jul 2020 09:37:01 GMT
