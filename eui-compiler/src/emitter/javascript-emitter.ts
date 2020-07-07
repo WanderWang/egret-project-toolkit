@@ -1,8 +1,23 @@
 import * as codegen from 'escodegen';
 import { BaseEmitter } from '.';
 import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE } from "../exml-ast";
+import { brotliCompressSync } from 'zlib';
+
+
+class Host {
+
+    list: any[] = [];
+
+    add(x: any) {
+        this.list.push(x);
+    }
+
+}
+
 
 export class JavaScriptEmitter extends BaseEmitter {
+
+
 
     private mapping: { [index: string]: EmitterFunction } = {
         number: createNumberOrBooleanLiteral,
@@ -10,7 +25,8 @@ export class JavaScriptEmitter extends BaseEmitter {
         string: createStringLiteral,
         any: createStringLiteral,
         'egret.Rectangle': createNewRectangle,
-        'object': this.createNewObject.bind(this)
+        'object': this.createNewObject.bind(this),
+        skinName: createSkinName,
     }
 
     private javascript = '';
@@ -41,7 +57,15 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
 
     generateJavaScriptAST(skinNode: AST_Skin) {
 
+        const code = this.createSkinNodeAst(skinNode);
+
+        return createProgram([createExpressionStatment(code)]);
+    }
+
+    createSkinNodeAst(skinNode: AST_Skin) {
         const ids: string[] = [];
+
+        const host = new Host();
 
         const states: { name: string, items: (AST_STATE & { context: number })[] }[] = [];
 
@@ -68,11 +92,11 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         visitChildren(skinNode as any as AST_Node)
 
         const className = createIdentifier(skinNode.classname);
-        const namespace = createIdentifier(skinNode.namespace);
+        const namespace = skinNode.namespace ? createIdentifier(skinNode.namespace) : null;
         this.writeToBody(emitSkinPart(ids));
         const context = createIdentifier('_this');
-        this.emitAttributes(context, skinNode)
-        this.emitChildren(context, skinNode);
+        this.emitAttributes(context, skinNode, host)
+        this.emitChildren(context, skinNode, host);
         if (skinNode.states.length > 0) {
             this.writeToBody(
                 createExpressionStatment(
@@ -97,7 +121,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
                                                     [
                                                         createStringLiteral(`a${item.context}`),
                                                         createStringLiteral(item.attribute.key),
-                                                        this.mapping[item.attribute.type](item.attribute.value)
+                                                        this.mapping[item.attribute.type](item.attribute.value, host)
                                                     ]
                                                 )
                                             }
@@ -127,17 +151,15 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
                 )
             )
         }
-        const code = createExpressionStatment(
-            createAssignmentExpression(
-                createMemberExpression(namespace, className),
-                createClass(className, this.body)
-            )
-        );
-
-        return createProgram([code]);
+        const body = namespace ? createAssignmentExpression(
+            createMemberExpression(namespace, className),
+            createClass(className, this.body, host)
+        ) : createVariableDeclaration(className, createClass(className, this.body, host))
+        return body
     }
 
-    private emitNode(node: AST_Node) {
+
+    private emitNode(node: AST_Node, host: Host) {
         const context = createVarIndexIdentifier(node)
         this.writeToBody(
             emitCreateNode(
@@ -165,30 +187,30 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
                 )
             )
         }
-        this.emitAttributes(context, node)
-        this.emitChildren(context, node);
+        this.emitAttributes(context, node, host)
+        this.emitChildren(context, node, host);
     }
 
-    private emitChildren(context: JS_AST.Identifier, node: AST_NodeBase) {
+    private emitChildren(context: JS_AST.Identifier, node: AST_NodeBase, host: Host) {
         if (node.children.length == 0) {
             return;
         }
         for (let child of node.children) {
-            this.emitNode(child)
+            this.emitNode(child, host)
         }
         this.writeToBody(emitElementsContent(context.name, node.children.map(createVarIndexIdentifier)))
     }
 
-    private emitAttributes(context: JS_AST.Identifier, node: AST_NodeBase) {
+    private emitAttributes(context: JS_AST.Identifier, node: AST_NodeBase, host: Host) {
         for (const attribute of node.attributes) {
-            this.writeToBody(this.emitAttribute(context, attribute))
+            this.writeToBody(this.emitAttribute(context, attribute, host))
         };
     }
 
-    private createNewObject(value: AST_Node): JS_AST.Node {
+    private createNewObject(value: AST_Node, host: Host): JS_AST.Node {
 
         const varIndexIdentifer = createIdentifier(`a${value.varIndex}`)
-        this.emitNode(value);
+        this.emitNode(value, host);
         return varIndexIdentifer
     }
 
@@ -197,7 +219,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         this.body.push(node);
     }
 
-    private emitAttribute(context: JS_AST.Identifier, attribute: AST_Attribute): JS_AST.Node {
+    private emitAttribute(context: JS_AST.Identifier, attribute: AST_Attribute, host: Host): JS_AST.Node {
 
         const emitterFunction = this.mapping[attribute.type];
         if (!emitterFunction) {
@@ -212,7 +234,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
                         context,
                         createIdentifier(attribute.key)
                     ),
-                    emitterFunction(attribute.value)
+                    emitterFunction(attribute.value, host)
                 )
             )
         }
@@ -273,7 +295,7 @@ function emitSkinPart(skins: string[]): JS_AST.Node {
     )
 }
 
-type EmitterFunction = (value: any) => JS_AST.Node
+type EmitterFunction = (value: any, host: Host) => JS_AST.Node
 
 
 
@@ -322,6 +344,13 @@ function createStringLiteral(value: string): JS_AST.Literal {
         value,
         raw: "\"" + value + "\""
     }
+}
+
+function createSkinName(value: AST_Skin, host: Host) {
+
+    const emitter = new JavaScriptEmitter();
+    host.add(emitter.createSkinNodeAst(value))
+    return createIdentifier(value.classname)
 }
 
 function createNumberOrBooleanLiteral(value: number | boolean): any {
@@ -413,49 +442,47 @@ function createProgram(body: JS_AST.Node[]) {
     }
 }
 
-
-function createClass(className: JS_AST.Identifier, constractorBody: any[]) {
-
-    const superCall = {
+function createVariableDeclaration(left: JS_AST.Identifier, right: any) {
+    return {
         "type": "VariableDeclaration",
         "declarations": [
             {
                 "type": "VariableDeclarator",
-                "id": {
-                    "type": "Identifier",
-                    "name": "_this"
-                },
-                "init": {
-                    "type": "LogicalExpression",
-                    "operator": "||",
-                    "left": {
-                        "type": "CallExpression",
-                        "callee": {
-                            "type": "MemberExpression",
-                            "computed": false,
-                            "object": {
-                                "type": "Identifier",
-                                "name": "_super"
-                            },
-                            "property": {
-                                "type": "Identifier",
-                                "name": "call"
-                            }
-                        },
-                        "arguments": [
-                            {
-                                "type": "ThisExpression"
-                            }
-                        ]
-                    },
-                    "right": {
-                        "type": "ThisExpression"
-                    }
-                }
+                "id": left,
+                "init": right
             }
         ],
         "kind": "var"
-    };
+    }
+}
+
+function createThis() {
+    return {
+        "type": "ThisExpression"
+    }
+}
+
+function createClass(className: JS_AST.Identifier, constractorBody: any[], host: Host) {
+
+    const superCall = createVariableDeclaration(
+        createIdentifier('_this'),
+        {
+            "type": "LogicalExpression",
+            "operator": "||",
+            "left": {
+                "type": "CallExpression",
+                "callee": createMemberExpression(
+                    createIdentifier('_super'),
+                    createIdentifier('call')
+                ),
+                "arguments": [
+                    createThis()
+                ]
+            },
+            "right": createThis()
+        }
+    );
+
 
     const returnStatement: any = {
         "type": "ReturnStatement",
@@ -471,6 +498,42 @@ function createClass(className: JS_AST.Identifier, constractorBody: any[]) {
         )
     ];
 
+    const extendExpression = {
+        "type": "ExpressionStatement",
+        "expression": {
+            "type": "CallExpression",
+            "callee": {
+                "type": "Identifier",
+                "name": "__extends"
+            },
+            "arguments": [
+                className,
+                {
+                    "type": "Identifier",
+                    "name": "_super"
+                }
+            ]
+        }
+    };
+
+    const classAsFunction = {
+        "type": "FunctionDeclaration",
+        "id": className,
+        "params": [],
+        "body": {
+            "type": "BlockStatement",
+            "body": fullConstractorBody
+        },
+        "generator": false,
+        "expression": false,
+        "async": false
+    };
+
+    const returnExpression = {
+        "type": "ReturnStatement",
+        "argument": className
+    };
+    const body = ([extendExpression] as any[]).concat(host.list).concat([classAsFunction, returnExpression]);
     return {
         "type": "CallExpression",
         "callee": {
@@ -484,41 +547,7 @@ function createClass(className: JS_AST.Identifier, constractorBody: any[]) {
             ],
             "body": {
                 "type": "BlockStatement",
-                "body": [
-                    {
-                        "type": "ExpressionStatement",
-                        "expression": {
-                            "type": "CallExpression",
-                            "callee": {
-                                "type": "Identifier",
-                                "name": "__extends"
-                            },
-                            "arguments": [
-                                className,
-                                {
-                                    "type": "Identifier",
-                                    "name": "_super"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "type": "FunctionDeclaration",
-                        "id": className,
-                        "params": [],
-                        "body": {
-                            "type": "BlockStatement",
-                            "body": fullConstractorBody
-                        },
-                        "generator": false,
-                        "expression": false,
-                        "async": false
-                    },
-                    {
-                        "type": "ReturnStatement",
-                        "argument": className
-                    }
-                ]
+                "body": body
             },
             "generator": false,
             "expression": false,

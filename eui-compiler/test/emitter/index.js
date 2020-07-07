@@ -15,7 +15,7 @@ describe('emitter', () => {
 
 
     const baselineDir = path.join(__dirname, 'baselines')
-    const dirs = ['nested-skin'];//fs.readdirSync(baselineDir)
+    const dirs = fs.readdirSync(baselineDir)
     // const dirs = ['simple']
     const cwd = process.cwd();
     afterEach(function () {

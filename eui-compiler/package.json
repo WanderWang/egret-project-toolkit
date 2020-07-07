@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "mocha -t 5000"
+    "test": "mocha -t 5000 ./test/emitter/index.js"
   },
   "repository": {
     "type": "git",
