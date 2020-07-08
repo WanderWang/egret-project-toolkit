@@ -5,25 +5,30 @@ skins.MyComponent1 = function (_super) {
 		function TestSkin0() {
 			var _this = _super.call(this) || this;
 			_this.skinParts = [];
-	        var a1 = new eui.Image();
+			var a1 = new eui.Image();
+			_this.a1 = a1;
 			a1.percentHeight = 100;
 			a1.percentWidth = 100;
-            _this.elementsContent = [a1];
+			_this.elementsContent = [a1];
+			_this.states = [
+				new eui.State('up', [new eui.SetProperty('a1', 'percentWidth', 90)]),
+				new eui.State('down', [new eui.SetProperty('a1', 'percentWidth', 100)])
+			];
 			return _this;
 		}
 		return TestSkin0;
 	}(eui.Skin);
 
 	function MyComponent1() {
-	    var _this = _super.call(this) || this;
+		var _this = _super.call(this) || this;
 		_this.skinParts = [];
 		_this.width = 400;
-        var a1 = new eui.Group();
-        var a2 = new eui.Button();
-        a2.skinName = TestSkin0;
-        a1.elementsContent = [a2];
+		var a1 = new eui.Group();
+		var a2 = new eui.Button();
+		a2.skinName = TestSkin0;
+		a1.elementsContent = [a2];
 		_this.elementsContent = [a1];
-        return _this;
+		return _this;
 	}
 	return MyComponent1;
 }(eui.Skin);

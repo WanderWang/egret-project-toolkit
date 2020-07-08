@@ -4,11 +4,11 @@ import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE } from "../e
 import { brotliCompressSync } from 'zlib';
 
 
-class Host {
+class EmitterHost {
 
     list: any[] = [];
 
-    add(x: any) {
+    insertOnClassDeclaration(x: any) {
         this.list.push(x);
     }
 
@@ -65,7 +65,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
     createSkinNodeAst(skinNode: AST_Skin) {
         const ids: string[] = [];
 
-        const host = new Host();
+        const host = new EmitterHost();
 
         const states: { name: string, items: (AST_STATE & { context: number })[] }[] = [];
 
@@ -159,7 +159,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
     }
 
 
-    private emitNode(node: AST_Node, host: Host) {
+    private emitNode(node: AST_Node, host: EmitterHost) {
         const context = createVarIndexIdentifier(node)
         this.writeToBody(
             emitCreateNode(
@@ -191,7 +191,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         this.emitChildren(context, node, host);
     }
 
-    private emitChildren(context: JS_AST.Identifier, node: AST_NodeBase, host: Host) {
+    private emitChildren(context: JS_AST.Identifier, node: AST_NodeBase, host: EmitterHost) {
         if (node.children.length == 0) {
             return;
         }
@@ -201,13 +201,13 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         this.writeToBody(emitElementsContent(context.name, node.children.map(createVarIndexIdentifier)))
     }
 
-    private emitAttributes(context: JS_AST.Identifier, node: AST_NodeBase, host: Host) {
+    private emitAttributes(context: JS_AST.Identifier, node: AST_NodeBase, host: EmitterHost) {
         for (const attribute of node.attributes) {
             this.writeToBody(this.emitAttribute(context, attribute, host))
         };
     }
 
-    private createNewObject(value: AST_Node, host: Host): JS_AST.Node {
+    private createNewObject(value: AST_Node, host: EmitterHost): JS_AST.Node {
 
         const varIndexIdentifer = createIdentifier(`a${value.varIndex}`)
         this.emitNode(value, host);
@@ -219,7 +219,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         this.body.push(node);
     }
 
-    private emitAttribute(context: JS_AST.Identifier, attribute: AST_Attribute, host: Host): JS_AST.Node {
+    private emitAttribute(context: JS_AST.Identifier, attribute: AST_Attribute, host: EmitterHost): JS_AST.Node {
 
         const emitterFunction = this.mapping[attribute.type];
         if (!emitterFunction) {
@@ -295,7 +295,7 @@ function emitSkinPart(skins: string[]): JS_AST.Node {
     )
 }
 
-type EmitterFunction = (value: any, host: Host) => JS_AST.Node
+type EmitterFunction = (value: any, host: EmitterHost) => JS_AST.Node
 
 
 
@@ -346,10 +346,10 @@ function createStringLiteral(value: string): JS_AST.Literal {
     }
 }
 
-function createSkinName(value: AST_Skin, host: Host) {
+function createSkinName(value: AST_Skin, host: EmitterHost) {
 
     const emitter = new JavaScriptEmitter();
-    host.add(emitter.createSkinNodeAst(value))
+    host.insertOnClassDeclaration(emitter.createSkinNodeAst(value))
     return createIdentifier(value.classname)
 }
 
@@ -462,7 +462,7 @@ function createThis() {
     }
 }
 
-function createClass(className: JS_AST.Identifier, constractorBody: any[], host: Host) {
+function createClass(className: JS_AST.Identifier, constractorBody: any[], host: EmitterHost) {
 
     const superCall = createVariableDeclaration(
         createIdentifier('_this'),

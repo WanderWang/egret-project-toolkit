@@ -40,7 +40,7 @@ describe('emitter', () => {
             assert.deepEqual(formattedOutput, formattedResult)
 
         })
-        continue;
+
         it(`declaration-emitter-${dir}`, () => {
             process.chdir(path.join(baselineDir, dir));
             const content = fs.readFileSync('input.exml', 'utf-8');
@@ -53,7 +53,7 @@ describe('emitter', () => {
             outputDeclaration = outputDeclaration.split('\r').join('');
             assert.equal(outputDeclaration, result);
         })
-
+        continue;
         it(`json-emitter-${dir}`, () => {
             process.chdir(path.join(baselineDir, dir));
             const content = fs.readFileSync('input.exml', 'utf-8');
