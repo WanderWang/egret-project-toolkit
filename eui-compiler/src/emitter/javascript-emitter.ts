@@ -18,6 +18,7 @@ export class JavaScriptEmitter extends BaseEmitter {
         'egret.Rectangle': createNewRectangle,
         'object': this.createNewObject.bind(this),
         skinName: createSkinName,
+        itemRendererSkinName: createSkinName
     }
 
     private javascript = '';

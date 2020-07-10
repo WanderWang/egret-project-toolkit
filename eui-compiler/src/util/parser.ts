@@ -10,7 +10,7 @@ class EuiParser {
 
 
     private currentSkinNode!: AST_Skin;
-    private skinNameIndex = 0;
+    private skinNameIndex = 1;
 
     parseText(filecontent: string): AST_Skin {
         const data = convert.xml2js(filecontent) as convert.Element;
@@ -29,7 +29,7 @@ class EuiParser {
             && rootExmlElement.attributes
             && rootExmlElement.attributes.class
 
-        const fullname = isRootSkin ? rootExmlElement.attributes!.class as string : 'skins.MyComponent1$Skin1'
+        const fullname = isRootSkin ? rootExmlElement.attributes!.class as string : `skins.MyComponent1$Skin${this.skinNameIndex}`
         // : `TestSkin${this.skinNameIndex++}`;
         const x = fullname.split(".");
         const namespace = x[1] ? x[0] : "";
@@ -128,7 +128,7 @@ class EuiParser {
                 }
                 else {
                     const key = nodeType.name;
-                    if (key === 'skinName') {
+                    if (key === 'skinName' || key === 'itemRendererSkinName') {
                         const parser = new EuiParser();
                         const value = parser.createSkinNode(element.elements![0]);
                         const attribute: AST_Attribute = {
