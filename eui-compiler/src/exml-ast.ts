@@ -15,6 +15,8 @@ export interface AST_Skin extends AST_NodeBase {
 
     classname: string;
 
+    fullname: string
+
     states: string[]
 
 }

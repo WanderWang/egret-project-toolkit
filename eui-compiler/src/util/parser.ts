@@ -25,21 +25,18 @@ class EuiParser {
         let varIndex = 0;
         const childrenExmlElement = getExmlChildren(rootExmlElement);
 
-        const hasNamespace = rootExmlElement
+        const isRootSkin = rootExmlElement
             && rootExmlElement.attributes
             && rootExmlElement.attributes.class
 
-        const fullclassname = hasNamespace
-            ? rootExmlElement.attributes!.class as string
-            : `TestSkin${this.skinNameIndex++}`;
-        const x = fullclassname.split(".");
-        const namespace = hasNamespace ? x[0] : "";
-        const classname = hasNamespace ? x[1] : x[0];
-
-
-
+        const fullname = isRootSkin ? rootExmlElement.attributes!.class as string : 'skins.MyComponent1$Skin1'
+        // : `TestSkin${this.skinNameIndex++}`;
+        const x = fullname.split(".");
+        const namespace = x[1] ? x[0] : "";
+        const classname = x[1] ? x[1] : x[0];
 
         this.currentSkinNode = {
+            fullname,
             namespace,
             stateAttributes: [],
             classname,

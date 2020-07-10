@@ -1,18 +1,9 @@
 import * as codegen from 'escodegen';
 import { BaseEmitter } from '.';
 import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE } from "../exml-ast";
-import { brotliCompressSync } from 'zlib';
+import { EmitterHost } from './host';
 
 
-class EmitterHost {
-
-    list: any[] = [];
-
-    insertOnClassDeclaration(x: any) {
-        this.list.push(x);
-    }
-
-}
 
 
 export class JavaScriptEmitter extends BaseEmitter {
@@ -59,7 +50,7 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
 
         const code = this.createSkinNodeAst(skinNode);
 
-        return createProgram([createExpressionStatment(code)]);
+        return createProgram([code]);
     }
 
     createSkinNodeAst(skinNode: AST_Skin) {
@@ -151,10 +142,12 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
                 )
             )
         }
-        const body = namespace ? createAssignmentExpression(
-            createMemberExpression(namespace, className),
-            createClass(className, this.body, host)
-        ) : createVariableDeclaration(className, createClass(className, this.body, host))
+        const body = namespace ?
+            createExpressionStatment(
+                createAssignmentExpression(
+                    createMemberExpression(namespace, className),
+                    createClass(className, this.body, host)
+                )) : createVariableDeclaration(className, createClass(className, this.body, host))
         return body
     }
 
@@ -349,8 +342,10 @@ function createStringLiteral(value: string): JS_AST.Literal {
 function createSkinName(value: AST_Skin, host: EmitterHost) {
 
     const emitter = new JavaScriptEmitter();
-    host.insertOnClassDeclaration(emitter.createSkinNodeAst(value))
-    return createIdentifier(value.classname)
+    host.insertClassDeclaration(
+        emitter.createSkinNodeAst(value)
+    );
+    return createIdentifier(value.fullname);
 }
 
 function createNumberOrBooleanLiteral(value: number | boolean): any {
