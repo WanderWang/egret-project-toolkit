@@ -65,11 +65,21 @@ class EuiParser {
             const attribute = createAttribute(key, type, value);
             this.currentSkinNode.attributes.push(attribute);
         }
-        this.currentSkinNode.children = childrenExmlElement.map(createAST_Node);
+
+        for (let childElement of childrenExmlElement) {
+            const child = createAST_Node(childElement);
+            if (child) {
+                this.currentSkinNode.children.push(child);
+            }
+        }
         return this.currentSkinNode;
 
 
-        function createAST_Node(nodeExmlElement: convert.Element): AST_Node {
+        function createAST_Node(nodeExmlElement: convert.Element): AST_Node | null {
+
+            if (nodeExmlElement.name === 'w:Config') {
+                return null;
+            }
 
             const childrenExmlElement = getExmlChildren(nodeExmlElement);
 
@@ -110,8 +120,11 @@ class EuiParser {
                 // 不一定全是 node.children
                 // 也有可能是 attribute
                 if (nodeType.type === AST_FullName_Type.ELEMENT) {
-                    const child = createAST_Node(element)
-                    node.children.push(child);
+                    const child = createAST_Node(element);
+                    if (child) {
+                        node.children.push(child);
+                    }
+
                 }
                 else {
                     const key = nodeType.name;
@@ -129,7 +142,7 @@ class EuiParser {
                         const attribute: AST_Attribute = {
                             type: 'object',
                             key: key,
-                            value: createAST_Node(element)
+                            value: createAST_Node(element)!
                         }
                         node.attributes.push(attribute);
                     }
@@ -137,7 +150,7 @@ class EuiParser {
                         const attribute: AST_Attribute = {
                             type: 'object',
                             key: key,
-                            value: createAST_Node(element.elements![0])
+                            value: createAST_Node(element.elements![0])!
                         }
                         node.attributes.push(attribute);
 
