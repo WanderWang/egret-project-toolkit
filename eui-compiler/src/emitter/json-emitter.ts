@@ -1,8 +1,27 @@
 import { BaseEmitter } from ".";
-import { AST_Skin, AST_NodeBase, AST_Node } from "../exml-ast";
+import { AST_Node, AST_NodeBase, AST_Skin } from "../exml-ast";
+
+type OutputDataFormat_State = {
+    $ssP?: { target: string, name: string, value: any }[],
+    $saI?: { target: string, property: string, position: number, relativeTo: string }[]
+}
+
+
+type OutputDataFormat = {
+
+    $path: string
+
+    $sP?: string[]
+
+    $sC: "$eSk"
+
+    $s?: {
+        [stateName: string]: OutputDataFormat_State
+    }
+}
 
 export class JSONEmitter extends BaseEmitter {
-    private json: string = '';
+    private jsonContent: string = '';
 
     private euiNormalizeNames = {
         "$eBL": "eui.BitmapLabel",
@@ -41,11 +60,10 @@ export class JSONEmitter extends BaseEmitter {
     private elementContents: any = {};
     private elementIds: string[] = [];
     private skinParts: string[] = [];
-    private states: any = {};
     private nodeMap: { [id: string]: AST_NodeBase } = {};
 
     getResult(): string {
-        return this.json;
+        return this.jsonContent;
     }
     emitHeader(themeData: any): void {
     }
@@ -54,27 +72,23 @@ export class JSONEmitter extends BaseEmitter {
         this.elementContents = {};
         this.elementIds = [];
         this.skinParts = [];
-        this.states = [];
         this.nodeMap = {};
-        const key = skinNode.namespace ? `${skinNode.namespace}.${skinNode.classname}` : skinNode.classname;
-        const item = {};
+        const key = skinNode.fullname;
+        const item: OutputDataFormat = {
+            $sC: "$eSk",
+            $path: filename
+        };
         json[key] = item;
         this.nodeMap[key] = skinNode;
-        this.setPath(filename, item);
         this.setBaseState(skinNode, item);
         Object.assign(item, this.elementContents);
         if (this.skinParts.length > 0) {
-            item['$sP'] = this.skinParts;
+            item.$sP = this.skinParts;
         }
         this.setStates(skinNode, item);
-        item['$sC'] = "$eSk";
-
-        this.json = JSON.stringify(json, null, 4);
+        this.jsonContent = JSON.stringify(json, null, 4);
     }
 
-    setPath(filename: string, json: any) {
-        json['$path'] = filename;
-    }
 
     setBaseState(node: AST_NodeBase, json: any, key: string = '$bs') {
         const base = {};
@@ -96,27 +110,27 @@ export class JSONEmitter extends BaseEmitter {
         sIds.length > 0 && (base['$sId'] = sIds);
     }
 
-    setStates(skinNode: AST_Skin, json: any) {
+    setStates(skinNode: AST_Skin, json: OutputDataFormat) {
         if (skinNode.states.length === 0) {
             return;
         }
-        json['$s'] = {};
+        json.$s = {};
         for (const state of skinNode.states) {
-            json['$s'][state] = {};
+            json.$s[state] = {};
         }
-        this.getStatesAttribute(skinNode, json["$s"]);
+        this.getStatesAttribute(skinNode, json.$s);
     }
 
-    getStatesAttribute(node: AST_NodeBase, json: any) {
-        const target = this.getNodeId(node);
+    getStatesAttribute(node: AST_NodeBase, json: NonNullable<OutputDataFormat['$s']>) {
+        const target = this.getNodeId(node)!;
         for (const attr of node.stateAttributes) {
             switch (attr.type) {
                 case 'set': {
                     if (attr.name in json) {
-                        if (!json[attr.name]['$ssP']) {
-                            json[attr.name]['$ssP'] = [];
+                        if (!json[attr.name].$ssP) {
+                            json[attr.name].$ssP = [];
                         }
-                        json[attr.name]['$ssP'].push({
+                        json[attr.name].$ssP!.push({
                             target,
                             name: attr.attribute.key,
                             value: attr.attribute.value
@@ -125,10 +139,10 @@ export class JSONEmitter extends BaseEmitter {
                 } break;
                 case 'add': {
                     if (attr.name in json) {
-                        if (!json[attr.name]['$saI']) {
-                            json[attr.name]['$saI'] = [];
+                        if (!json[attr.name].$saI) {
+                            json[attr.name].$saI = [];
                         }
-                        json[attr.name]['$saI'].push({
+                        json[attr.name].$saI!.push({
                             target,
                             property: "",
                             position: 1,
