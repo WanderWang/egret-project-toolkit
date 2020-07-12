@@ -16,12 +16,16 @@ describe('emitter', () => {
 
     const baselineDir = path.join(__dirname, 'baselines')
     const dirs = fs.readdirSync(baselineDir)
+    const ignoreList = ['animation'];
     // const dirs = ['simple']
     const cwd = process.cwd();
     afterEach(function () {
         process.chdir(cwd);
     });
     for (const dir of dirs) {
+        if (ignoreList.includes(dir)) {
+            continue;
+        }
         it(`javascript-emitter-${dir}`, () => {
 
             process.chdir(path.join(baselineDir, dir));
