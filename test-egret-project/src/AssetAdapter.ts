@@ -28,10 +28,10 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-class AssetAdapter implements eui.IAssetAdapter {
+export class AssetAdapter implements eui.IAssetAdapter {
 
 
-    @SimpleDecorator
+    // @SimpleDecorator
     private property: any;
     /**
      * @language zh_CN

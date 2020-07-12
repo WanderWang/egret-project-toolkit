@@ -21,11 +21,7 @@ class DebugPlatform implements Platform {
     }
 }
 
-declare class TestClass {
-
-}
-
-const platform = new DebugPlatform(), testMessage = "helloworld";
+export const platform = new DebugPlatform(), testMessage = "helloworld";
 
 
 
