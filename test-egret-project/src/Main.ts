@@ -73,8 +73,8 @@ export class Main extends eui.UILayer {
         await platform.login();
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
-        console.log(mynamespace)
-        new mynamespace.BBB();
+        // console.log(mynamespace)
+        // new mynamespace.BBB();
 
     }
 
