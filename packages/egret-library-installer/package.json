@@ -1,6 +1,6 @@
 {
   "name": "@egret/setup",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "",
   "main": "./lib/index.js",
   "bin": {
@@ -25,6 +25,7 @@
     "os-locale": "^5.0.0",
     "request": "~2.88.2",
     "request-progress": "~3.0.0",
-    "zip-lib": "~0.7.1"
+    "zip-lib": "~0.7.1",
+    "args": "~5.0.1"
   }
 }

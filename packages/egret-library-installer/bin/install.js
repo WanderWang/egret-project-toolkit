@@ -30,12 +30,16 @@ async function run() {
         lib.downloadAndInstall(engineVersion);
     }, ["i"]);
     args.command("list", listInfo, () => {
-        console.log(lib.launcherapi.getAllEngineVersions());
+        const data = lib.launcherapi.getAllEngineVersions();
+        for (let version in data) {
+            console.log('Egret Engine ' + version, data[version].root)
+        }
     }, ["l"]);
     args.command("remote", remoteInfo, async () => {
         const response = await axios.get('http://tool.egret-labs.org/EgretCore/enginelist.json', { responseType: "json" });
         const data = response.data.engine;
-        console.log(data);
+        const versions = data.map(item => item.version);
+        console.log(versions.join("\n"));
     }, ["r"]);
 
     const flags = args.parse(process.argv);
