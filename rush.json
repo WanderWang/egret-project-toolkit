@@ -398,6 +398,10 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@egret/ts-minify-transformer",
+      "projectFolder": "packages/ts-minify-transformer"
+    },
+    {
       "packageName": "@egret/setup",
       "projectFolder": "packages/egret-library-installer",
       "shouldPublish": true

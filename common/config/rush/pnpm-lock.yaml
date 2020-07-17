@@ -5,6 +5,7 @@ dependencies:
   '@rush-temp/egret-webpack-cli-project': 'file:projects/egret-webpack-cli-project.tgz'
   '@rush-temp/eui-compiler': 'file:projects/eui-compiler.tgz'
   '@rush-temp/setup': 'file:projects/setup.tgz'
+  '@rush-temp/ts-minify-transformer': 'file:projects/ts-minify-transformer.tgz'
   '@types/ajv': 1.0.0
   '@types/express': 4.17.6
   '@types/glob': 7.1.2
@@ -12,7 +13,6 @@ dependencies:
   '@types/webpack': 4.41.18
   ajv: 6.12.2
   ajv-i18n: 3.5.0_ajv@6.12.2
-  args: 5.0.1
   axios: 0.19.2
   copy-webpack-plugin: 5.1.1_webpack@4.43.0
   egret-node-utils: 0.0.7
@@ -5185,6 +5185,14 @@ packages:
     resolution:
       integrity: sha1-WG8NujAM3ovlLdGsT34QCcGxPzY=
       tarball: typescript/download/typescript-3.9.5.tgz?cache=0&sync_timestamp=1593419000295&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftypescript%2Fdownload%2Ftypescript-3.9.5.tgz
+  /typescript/3.9.7:
+    dev: false
+    engines:
+      node: '>=4.2.0'
+    hasBin: true
+    resolution:
+      integrity: sha1-mNYApevcOPQMsndSLxLcgA6eJfo=
+      tarball: typescript/download/typescript-3.9.7.tgz
   /unc-path-regex/0.1.2:
     dev: false
     engines:
@@ -5681,6 +5689,7 @@ packages:
     dependencies:
       '@types/fs-extra-promise': 1.0.9
       '@types/node': 14.0.14
+      args: 5.0.1
       axios: 0.19.2
       fs-extra-promise: 1.0.1
       os-locale: 5.0.0
@@ -5691,8 +5700,18 @@ packages:
     dev: false
     name: '@rush-temp/setup'
     resolution:
-      integrity: sha512-gpNwApJpJ187RvGxiOW8rPBexqUEYQOt6WETWkCHkkSEIXZeD3zUqjQfDcMi2IuPZPzVGDGTvwqEwTha7FWL+g==
+      integrity: sha512-miG0FfwGHJ04CjxAy2jMKkN1JUSy+S3rm+IjlNjgy73amkNEH8cyzAZpfoIWymKfmfCVIwoZ7jrX6bViEBZ7Dw==
       tarball: 'file:projects/setup.tgz'
+    version: 0.0.0
+  'file:projects/ts-minify-transformer.tgz':
+    dependencies:
+      mocha: 8.0.1
+      typescript: 3.9.7
+    dev: false
+    name: '@rush-temp/ts-minify-transformer'
+    resolution:
+      integrity: sha512-7EPi30nnwM2qc3prv5WroIcb3WHu42AIW0zhU7ed0ugcY/9aiw9obWTuokns5mwmUasYV0tcRBsz7zqpOqlcWQ==
+      tarball: 'file:projects/ts-minify-transformer.tgz'
     version: 0.0.0
 registry: ''
 specifiers:
@@ -5702,6 +5721,7 @@ specifiers:
   '@rush-temp/egret-webpack-cli-project': 'file:./projects/egret-webpack-cli-project.tgz'
   '@rush-temp/eui-compiler': 'file:./projects/eui-compiler.tgz'
   '@rush-temp/setup': 'file:./projects/setup.tgz'
+  '@rush-temp/ts-minify-transformer': 'file:./projects/ts-minify-transformer.tgz'
   '@types/ajv': ^1.0.0
   '@types/express': ~4.17.6
   '@types/glob': ~7.1.2
@@ -5709,7 +5729,6 @@ specifiers:
   '@types/webpack': ~4.41.16
   ajv: ^6.12.0
   ajv-i18n: ^3.5.0
-  args: ^5.0.1
   axios: ~0.19.2
   copy-webpack-plugin: ^5.1.1
   egret-node-utils: 0.0.7
