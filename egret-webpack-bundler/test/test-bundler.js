@@ -14,7 +14,6 @@ module.exports.compile = function compile(projectRoot, context) {
 
     return bundler.build({ libraryType: "debug", typescript: { mode: "legacy" } }).then(() => {
         const mainJsContent = store['main.js'].toString();
-
         context.console = console;
 
         const code = `

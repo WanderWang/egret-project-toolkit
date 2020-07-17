@@ -20,14 +20,13 @@ function hasExport(node: ts.Node) {
     }
 }
 
-function getFullClassName(classNode: ts.ClassDeclaration) {
-    let node: ts.Node = classNode;
-    let moduleNames: string[] = [classNode.name!.getText()];
+function getFullName(namedNode: ts.NamedDeclaration) {
+    let node: ts.Node = namedNode;
+    let moduleNames: string[] = [namedNode.name!.getText()];
     while (node.parent) {
         node = node.parent;
-        if (node.kind === ts.SyntaxKind.ModuleDeclaration) {
-            const m = node as ts.ModuleDeclaration;
-            moduleNames.unshift(m.name.getText())
+        if (ts.isModuleDeclaration(node)) {
+            moduleNames.unshift(node.name.getText())
         }
     }
     return {
@@ -35,6 +34,18 @@ function getFullClassName(classNode: ts.ClassDeclaration) {
         hasNamespace: moduleNames.length > 1
     }
 }
+
+function isGlobalVariable(node: ts.Node) {
+    let n = node;
+    while (n.parent) {
+        n = n.parent;
+        if (ts.isModuleDeclaration(n)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 
 function createGlobalExpression(text: string) {
@@ -64,7 +75,7 @@ export function emitClassName() {
             }
             const nameNode = node.name;
             if (nameNode) {
-                const result = getFullClassName(node);
+                const result = getFullName(node);
                 const arrays: ts.Node[] = [
                     node,
                 ];
@@ -138,22 +149,17 @@ export function emitClassName() {
                 result = visitFunctionOrEnumDeclaration(node as ts.EnumDeclaration);
             }
             else if (node.kind === ts.SyntaxKind.ModuleDeclaration) {
-                nestLevel++;
                 result = ts.visitEachChild(node, visitor, ctx);
-                nestLevel--;
                 result = visitFunctionOrEnumDeclaration(result as ts.ModuleDeclaration)
             }
-            else if ((node.kind === ts.SyntaxKind.FunctionDeclaration) && nestLevel === 1) {
-
+            else if ((node.kind === ts.SyntaxKind.FunctionDeclaration) && isGlobalVariable(node)) {
                 result = visitFunctionOrEnumDeclaration(node as ts.FunctionDeclaration)
             }
-            else if (node.kind === ts.SyntaxKind.VariableStatement && nestLevel === 1) {
+            else if (node.kind === ts.SyntaxKind.VariableStatement && isGlobalVariable(node)) {
                 result = visitVariableStatement(node as ts.VariableStatement)
             }
             else {
-                nestLevel++;
                 result = ts.visitEachChild(node, visitor, ctx);
-                nestLevel--;
             }
 
             return result;
