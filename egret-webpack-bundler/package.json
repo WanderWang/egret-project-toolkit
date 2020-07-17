@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "mocha"
+    "test": "mocha -t 5000"
   },
   "dependencies": {
     "@egret/eui-compiler": "1.4.6",
