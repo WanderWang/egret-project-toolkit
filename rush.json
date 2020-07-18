@@ -376,6 +376,10 @@
       "reviewCategory": "production"
     },
     {
+      "packageName": "@egret/library-project-example",
+      "projectFolder": "test-egret-lib"
+    },
+    {
       "packageName": "egret-webpack-cli-project",
       "projectFolder": "test-egret-project/webpack"
     },

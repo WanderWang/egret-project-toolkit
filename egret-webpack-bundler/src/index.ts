@@ -54,6 +54,10 @@ export type WebpackBundleOptions = {
 
     }
 
+    html?: {
+        templateFilePath: string
+    }
+
     /**
      * 是否发布子包及子包规则
      */
@@ -161,7 +165,6 @@ export class EgretWebpackBundler {
         })
 
     }
-
 }
 
 export function generateConfig(
@@ -202,6 +205,10 @@ export function generateConfig(
     generateWebpackConfig_exml(config, options);
     generateWebpackConfig_html(config, options, target);
     genrateWebpackConfig_subpackages(config, options);
+    if (target === 'lib') {
+        config.output!.library = 'xxx';
+        config.output!.libraryTarget = 'umd';
+    }
     if (options.libraryType === 'debug') {
         config.plugins!.push(new webpack.NamedModulesPlugin());
         config.plugins!.push(new webpack.NamedChunksPlugin());
@@ -304,9 +311,10 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
 
 function generateWebpackConfig_exml(config: webpack.Configuration, options: WebpackBundleOptions) {
 
-    if (options.exml) {
-        // before.push(addDependency('../resource/default.thm.js'));
+    if (!options.exml) {
+        return;
     }
+    // before.push(addDependency('../resource/default.thm.js'));
 
     const exmlLoaderRule: webpack.RuleSetRule = {
         test: /\.exml/,
@@ -329,11 +337,14 @@ function generateWebpackConfig_exml(config: webpack.Configuration, options: Webp
 }
 
 function generateWebpackConfig_html(config: webpack.Configuration, options: WebpackBundleOptions, target: string) {
+    if (!options.html) {
+        return;
+    }
     if (['web', 'ios', 'android'].indexOf(target) >= 0) {
         config.plugins?.push(
             new HtmlWebpackPlugin({
                 inject: false,
-                template: 'template/web/index.html'
+                template: options.html.templateFilePath
             }))
     }
 }
