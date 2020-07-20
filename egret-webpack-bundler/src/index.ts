@@ -8,6 +8,8 @@ import SrcLoaderPlugin from './loaders/src-loader/Plugin';
 import ThemePlugin from './loaders/theme';
 import { emitClassName } from './loaders/ts-loader/ts-transformer';
 import { openUrl } from './open';
+import * as ts from 'typescript';
+import { myTransformer } from '@egret/ts-minify-transformer';
 const middleware = require("webpack-dev-middleware");
 const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -51,6 +53,8 @@ export type WebpackBundleOptions = {
          * 编译采用的 tsconfig.json 路径，默认为 tsconfig.json
          */
         tsconfigPath?: string
+
+        minify?: import("@egret/ts-minify-transformer").TransformOptions
 
     }
 
@@ -269,9 +273,6 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
         loader: require.resolve('./loaders/src-loader'),
     };
 
-    const before = [
-        emitClassName(),
-    ];
 
     const typescriptLoaderRule: webpack.RuleSetRule = {
         test: /\.tsx?$/,
@@ -280,10 +281,23 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
             transpileOnly: false,
             configFile: options.typescript?.tsconfigPath || 'tsconfig.json',
             compilerOptions,
-            getCustomTransformers: function () {
-                return ({
-                    before
-                });
+            getCustomTransformers: function (program: ts.Program) {
+                if (options.typescript?.minify) {
+                    return ({
+                        before: [
+                            emitClassName(),
+                            myTransformer(program, options.typescript.minify)
+                        ]
+                    });
+                }
+                else {
+                    return ({
+                        before: [
+                            emitClassName(),
+                        ]
+                    });
+                }
+
             }
         }
     }
@@ -314,8 +328,6 @@ function generateWebpackConfig_exml(config: webpack.Configuration, options: Webp
     if (!options.exml) {
         return;
     }
-    // before.push(addDependency('../resource/default.thm.js'));
-
     const exmlLoaderRule: webpack.RuleSetRule = {
         test: /\.exml/,
         use: [

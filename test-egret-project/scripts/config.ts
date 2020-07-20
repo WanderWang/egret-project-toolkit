@@ -33,7 +33,7 @@ const config: ResourceManagerConfig = {
                     new WebpackDevServerPlugin({
                         libraryType: "debug",
                         defines: { DEBUG: true, RELEASE: false },
-                        typescript: { mode: 'legacy', tsconfigPath: 'tsconfig.debug.json' },
+                        typescript: { mode: 'legacy', tsconfigPath: 'tsconfig.debug.json', minify: { mode: 'debug' } },
                         open: true
                     })
                 ]

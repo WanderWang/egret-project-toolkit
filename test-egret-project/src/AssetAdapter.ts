@@ -32,7 +32,7 @@ export class AssetAdapter implements eui.IAssetAdapter {
 
 
     // @SimpleDecorator
-    private property: any;
+    // private property: any;
     /**
      * @language zh_CN
      * 解析素材

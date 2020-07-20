@@ -1,90 +1,91 @@
 import * as ts from "typescript";
 
 
-type Options = {
+export type TransformOptions = {
     mode: "debug" | "release"
 }
 
-export const myTransformer = (program: ts.Program, options: Options) => {
+export const myTransformer = (program: ts.Program, options: TransformOptions) => {
 
     return function (context: ts.TransformationContext) {
 
-        function visitClassDeclaration(classNode: ts.ClassDeclaration) {
+        return (sf: ts.SourceFile) => {
 
-            const renameMappings: {
-                originalNameNode: ts.PropertyName
-                newName: string
-            }[] = [];
+            function visitClassDeclaration(classNode: ts.ClassDeclaration) {
 
-            let renameCount = 1;
-            for (let child of classNode.members) {
-                if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
+                const renameMappings: {
+                    originalNameNode: ts.PropertyName
+                    newName: string
+                }[] = [];
 
-                    if (child.modifiers && child.modifiers[0].kind === ts.SyntaxKind.PrivateKeyword) {
-                        let name = ''
+                let renameCount = 1;
+                for (let child of classNode.members) {
+                    if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
 
-                        switch (options.mode) {
-                            case 'release':
-                                name = 'a' + renameCount
-                                break
-                            case 'debug':
-                                name = '$$' + child.name.getText() + '$$'
+                        if (child.modifiers && child.modifiers[0].kind === ts.SyntaxKind.PrivateKeyword) {
+                            let name = ''
 
+                            switch (options.mode) {
+                                case 'release':
+                                    name = 'a' + renameCount
+                                    break
+                                case 'debug':
+                                    name = '$$' + child.name.getText(sf) + '$$'
+
+                            }
+                            renameMappings.push({
+                                originalNameNode: child.name,
+                                newName: name
+                            })
+                            child.name = ts.createIdentifier(name)
+                            renameCount++
                         }
-                        renameMappings.push({
-                            originalNameNode: child.name,
-                            newName: name
-                        })
-                        child.name = ts.createIdentifier(name)
-                        renameCount++
                     }
+
                 }
 
-            }
-
-            function visitClassDeclarationChildren(node: ts.Node): any {
-                if (ts.isPropertyAccessExpression(node)) {
-                    for (const word of renameMappings) {
-                        if (word.originalNameNode.getText() === node.name.getText()) {
-                            const typeChecker = program.getTypeChecker();
-                            const origin = typeChecker.getSymbolAtLocation(word.originalNameNode);
-                            const target = typeChecker.getSymbolAtLocation(node.name)
-                            if (origin === target) {
-                                return ts.updatePropertyAccess(node, node.expression, ts.createIdentifier(word.newName))
+                function visitClassDeclarationChildren(node: ts.Node): any {
+                    if (ts.isPropertyAccessExpression(node)) {
+                        for (const word of renameMappings) {
+                            if (word.originalNameNode.getText(sf) === node.name.getText(sf)) {
+                                const typeChecker = program.getTypeChecker();
+                                const origin = typeChecker.getSymbolAtLocation(word.originalNameNode);
+                                const target = typeChecker.getSymbolAtLocation(node.name)
+                                if (origin === target) {
+                                    return ts.updatePropertyAccess(node, node.expression, ts.createIdentifier(word.newName))
+                                }
                             }
                         }
                     }
+
+                    return ts.visitEachChild(node, visitClassDeclarationChildren, context);
                 }
 
-                return ts.visitEachChild(node, visitClassDeclarationChildren, context);
+
+                return ts.visitEachChild(classNode, visitClassDeclarationChildren, context);
             }
 
 
-            return ts.visitEachChild(classNode, visitClassDeclarationChildren, context);
-        }
+            function visitor(node: ts.Node): any {
+                if (ts.isClassDeclaration(node)) {
+                    validateField(node)
+                    return visitClassDeclaration(node);
+                }
+                return ts.visitEachChild(node, visitor, context);
+            };
 
-
-        function visitor(node: ts.Node): any {
-            if (ts.isClassDeclaration(node)) {
-                validateField(node)
-                return visitClassDeclaration(node);
-            }
-            return ts.visitEachChild(node, visitor, context);
-        };
-
-        function validateField(node: ts.ClassDeclaration): any {
-            for (let child of node.members) {
-                if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
-                    const replaceWord = (child.name as ts.Identifier).escapedText.toString().replace(/^a\d*$/, '')
-                    if (replaceWord !== (child.name as ts.Identifier).escapedText.toString()) {
-                        const message = `class ${node.name?.getText()} 中存在名为a{number}的变量名，请重命名该变量`
-                        throw new Error(message);
+            function validateField(node: ts.ClassDeclaration): any {
+                for (let child of node.members) {
+                    if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
+                        const replaceWord = (child.name as ts.Identifier).escapedText.toString().replace(/^a\d*$/, '')
+                        if (replaceWord !== (child.name as ts.Identifier).escapedText.toString()) {
+                            const message = `class ${node.name?.getText(sf)} 中存在名为a{number}的变量名，请重命名该变量`
+                            throw new Error(message);
+                        }
                     }
                 }
             }
-        }
 
-        return (sf: ts.SourceFile) => {
             return ts.visitNode(sf, visitor);
         };
     }
