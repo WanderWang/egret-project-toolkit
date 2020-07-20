@@ -1,43 +1,66 @@
 //@ts-check
 const myTransformer = require('../').myTransformer;
 const ts = require('typescript');
+const fs = require('fs-extra-plus')
+const path = require("path")
+const assert = require('assert');
 
-function compile(fileNames) {
-
-    const compileOptions = {
-        noEmitOnError: true,
-        noImplicitAny: true,
-        target: ts.ScriptTarget.ES2015,
-        module: ts.ModuleKind.CommonJS
-    }
-
-    let program = ts.createProgram(fileNames, compileOptions);
-
-    const customTransformer = {
-        before: [
-            myTransformer(program,'develop')
-        ]
-    }
-
-
-    let emitResult = program.emit(undefined, undefined, undefined, undefined, customTransformer);
-
-    let allDiagnostics = ts
-        .getPreEmitDiagnostics(program)
-        .concat(emitResult.diagnostics);
-
-    allDiagnostics.forEach(diagnostic => {
-        if (diagnostic.file) {
-            let { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-            let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
-            console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-        } else {
-            console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
-        }
-    });
-    let exitCode = emitResult.emitSkipped ? 1 : 0;
-    console.log(`Process exiting with code '${exitCode}'.`);
-
+const options = {
+    mode: 'debug'
+    // mode: 'debug'
 }
 
-compile(['test/a.ts']);
+
+
+// @ts-ignore
+describe('transformer', () => {
+
+    const dirs = fs.readdirSync('./test/baselines/');
+    for (const dir of dirs){
+        it(`transformer-${dir}`,async ()=>{
+            const fulldir = path.join("./test/baselines",dir)
+            const compiledResult = formatter(await compile(fulldir));
+            const expectOutputContent = fs.readFileSync(path.join(fulldir,'expect-output.js'),'utf-8')
+            const expectedResult = formatter(expectOutputContent);
+            assert.equal(compiledResult,expectedResult);
+        })
+    }
+})
+
+
+
+function compile(dir) {
+
+    return new Promise((resolve,reject)=>{
+        const compileOptions = {
+            noEmitOnError: true,
+            noImplicitAny: true,
+            target: ts.ScriptTarget.ES2015,
+            module: ts.ModuleKind.CommonJS
+        }
+    
+        let program = ts.createProgram([path.join(dir,'input.ts')], compileOptions);
+    
+        const customTransformer = {
+            before: [
+                myTransformer(program, options)
+            ]
+        }
+        let emitResult = program.emit(undefined, (filename,data)=>{
+            if (filename.indexOf("input.js") >= 0){
+                resolve(data);
+            }
+        }, undefined, undefined, customTransformer);
+    })
+}
+
+
+function formatter(data) {
+    const ts = require('typescript');
+    const inputFile = ts.createSourceFile('./a.ts', data, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
+    const outputFile = ts.createSourceFile('./someFileName.ts', '', ts.ScriptTarget.Latest, false, ts.ScriptKind.TS)
+    const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed })
+    const result = printer.printNode(ts.EmitHint.Unspecified, inputFile, outputFile);
+    return result;
+}
+
