@@ -11,13 +11,15 @@ function compile(fileNames) {
         module: ts.ModuleKind.CommonJS
     }
 
+    let program = ts.createProgram(fileNames, compileOptions);
+
     const customTransformer = {
         before: [
-            myTransformer
+            myTransformer(program,'develop')
         ]
     }
 
-    let program = ts.createProgram(fileNames, compileOptions);
+
     let emitResult = program.emit(undefined, undefined, undefined, undefined, customTransformer);
 
     let allDiagnostics = ts
