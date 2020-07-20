@@ -49,6 +49,7 @@ export const myTransformer = (program: ts.Program, options: Options) => {
                             const typeChecker = program.getTypeChecker();
                             const origin = typeChecker.getSymbolAtLocation(word.originalNameNode);
                             const target = typeChecker.getSymbolAtLocation(node.name)
+                            console.log(word.originalNameNode)
                             if (origin === target) {
                                 return ts.updatePropertyAccess(node, node.expression, ts.createIdentifier(word.newName))
                             }

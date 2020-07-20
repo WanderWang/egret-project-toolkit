@@ -1,11 +1,13 @@
 class AAAA {
 
 
-    public dosomething(){
-        this.runGame();
-    }
+    
 
     private runGame(){
 
+    }
+
+    public dosomething(){
+        this.runGame();
     }
 }
