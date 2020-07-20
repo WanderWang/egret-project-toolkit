@@ -96,12 +96,10 @@ export const myTransformer = (program: ts.Program, mode: string) => {
             if (ts.isClassDeclaration(node)) {
                 for (let child of node.members) {
                     if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
-                        const replaceWord = (child.name as ts.Identifier).escapedText.toString().replace(/^a\d+/, '')
+                        const replaceWord = (child.name as ts.Identifier).escapedText.toString().replace(/^a\d*$/, '')
                         if (replaceWord !== (child.name as ts.Identifier).escapedText.toString()) {
                             //console.log(replaceWord, (child.name as ts.Identifier).escapedText.toString())
                             throw ('不可存在变量名为a+数字的组合')
-                        } else if ((child.name as ts.Identifier).escapedText.toString() == 'a') {
-                            throw ('不可存在变量名为a')
                         }
                     }
                 }
