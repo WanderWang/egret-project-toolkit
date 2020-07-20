@@ -1,5 +1,6 @@
 {
 	"name": "@egret/library-project-example",
+	"version": "1.0.0",
 	"compilerVersion": "5.2.33",
 	"main": "./dist/main.js",
 	"typings": "./dist/Main.d.ts",
@@ -7,6 +8,6 @@
 		"build": "echo helloworld"
 	},
 	"dependencies": {
-		"@egret/egret-webpack-bundler": "1.2.6"
+		"@egret/egret-webpack-bundler": "1.2.8"
 	}
 }

@@ -2,6 +2,18 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.2.8",
+      "tag": "@egret/egret-webpack-bundler_v1.2.8",
+      "date": "Mon, 20 Jul 2020 11:18:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "添加 minify 功能"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.6",
       "tag": "@egret/egret-webpack-bundler_v1.2.6",
       "date": "Tue, 07 Jul 2020 06:29:25 GMT",
