@@ -1,4 +1,6 @@
 class AAAA {
-    aaa = 1;
-    a1 = 2;
+    constructor() {
+        this.aaa = 1;
+        this.$$bbb$$ = 2;
+    }
 }
