@@ -4,25 +4,22 @@ const ts = require('typescript');
 const fs = require('fs-extra-plus')
 const path = require("path")
 const assert = require('assert');
+const { describe, it } = require('mocha');
 
 const options = {
     mode: 'debug'
-    // mode: 'debug'
 }
 
-
-
-// @ts-ignore
 describe('transformer', () => {
 
     const dirs = fs.readdirSync('./test/baselines/');
-    for (const dir of dirs){
-        it(`transformer-${dir}`,async ()=>{
-            const fulldir = path.join("./test/baselines",dir)
+    for (const dir of dirs) {
+        it(`transformer-${dir}`, async () => {
+            const fulldir = path.join("./test/baselines", dir)
             const compiledResult = formatter(await compile(fulldir));
-            const expectOutputContent = fs.readFileSync(path.join(fulldir,'expect-output.js'),'utf-8')
+            const expectOutputContent = fs.readFileSync(path.join(fulldir, 'expect-output.js'), 'utf-8')
             const expectedResult = formatter(expectOutputContent);
-            assert.equal(compiledResult,expectedResult);
+            assert.equal(compiledResult, expectedResult);
         })
     }
 })
@@ -31,23 +28,24 @@ describe('transformer', () => {
 
 function compile(dir) {
 
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve, reject) => {
         const compileOptions = {
             noEmitOnError: true,
             noImplicitAny: true,
             target: ts.ScriptTarget.ES2015,
             module: ts.ModuleKind.CommonJS
         }
-    
-        let program = ts.createProgram([path.join(dir,'input.ts')], compileOptions);
-    
+
+        let program = ts.createProgram([path.join(dir, 'input.ts')], compileOptions);
+
         const customTransformer = {
             before: [
+                // @ts-ignore
                 myTransformer(program, options)
             ]
         }
-        let emitResult = program.emit(undefined, (filename,data)=>{
-            if (filename.indexOf("input.js") >= 0){
+        let emitResult = program.emit(undefined, (filename, data) => {
+            if (filename.indexOf("input.js") >= 0) {
                 resolve(data);
             }
         }, undefined, undefined, customTransformer);

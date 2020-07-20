@@ -4,6 +4,7 @@ dependencies:
   '@rush-temp/egret-webpack-bundler': 'file:projects/egret-webpack-bundler.tgz'
   '@rush-temp/egret-webpack-cli-project': 'file:projects/egret-webpack-cli-project.tgz'
   '@rush-temp/eui-compiler': 'file:projects/eui-compiler.tgz'
+  '@rush-temp/library-project-example': 'file:projects/library-project-example.tgz'
   '@rush-temp/setup': 'file:projects/setup.tgz'
   '@rush-temp/ts-minify-transformer': 'file:projects/ts-minify-transformer.tgz'
   '@types/ajv': 1.0.0
@@ -20,9 +21,11 @@ dependencies:
   esprima: 4.0.1
   express: 4.17.1
   fork-ts-checker-webpack-plugin: 4.1.3
+  fs-extra-plus: 0.5.18
   html-webpack-plugin: 4.3.0_webpack@4.43.0
   mock-fs: 4.12.0
   os-locale: 5.0.0
+  path: 0.12.7
   request: 2.88.2
   request-progress: 3.0.0
   source-map: 0.6.1
@@ -154,6 +157,13 @@ packages:
     resolution:
       integrity: sha1-DfmGZKWyfprf21Fk+dC9R1GVaII=
       tarball: '@types/fs-extra/download/@types/fs-extra-4.0.11.tgz'
+  /@types/fs-extra/9.0.1:
+    dependencies:
+      '@types/node': 14.0.14
+    dev: false
+    resolution:
+      integrity: sha1-kcj8TFH21dvkTCypqwkxC9AMeRg=
+      tarball: '@types/fs-extra/download/@types/fs-extra-9.0.1.tgz'
   /@types/glob/7.1.2:
     dependencies:
       '@types/minimatch': 3.0.3
@@ -2227,6 +2237,17 @@ packages:
     resolution:
       integrity: sha1-i/tVAr3kpNNs/e6gB/zKIdfjgq8=
       tarball: from2/download/from2-2.3.0.tgz
+  /fs-extra-plus/0.5.18:
+    dependencies:
+      '@types/fs-extra': 9.0.1
+      fast-glob: 3.2.4
+      fs-extra: 9.0.1
+    dev: false
+    engines:
+      node: '>=8.0.0'
+    resolution:
+      integrity: sha1-w8akGLX20JMRfkzU/+xBdfG4frQ=
+      tarball: fs-extra-plus/download/fs-extra-plus-0.5.18.tgz
   /fs-extra-promise/0.4.1:
     dependencies:
       bluebird: 3.7.2
@@ -4035,6 +4056,14 @@ packages:
     resolution:
       integrity: sha1-zvMdyOCho7sNEFwM2Xzzv0f0428=
       tarball: path-type/download/path-type-3.0.0.tgz
+  /path/0.12.7:
+    dependencies:
+      process: 0.11.10
+      util: 0.10.3
+    dev: false
+    resolution:
+      integrity: sha1-1NwqUGxM4hl+tIHr/NWzbAFAsQ8=
+      tarball: path/download/path-0.12.7.tgz?cache=0&sync_timestamp=1595238818583&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fpath%2Fdownload%2Fpath-0.12.7.tgz
   /pathval/1.1.0:
     dev: false
     resolution:
@@ -5304,7 +5333,7 @@ packages:
     dev: false
     resolution:
       integrity: sha1-evsa/lCAUkZInj23/g7TeTNqwPk=
-      tarball: util/download/util-0.10.3.tgz?cache=0&sync_timestamp=1588240359509&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Futil%2Fdownload%2Futil-0.10.3.tgz
+      tarball: util/download/util-0.10.3.tgz
   /util/0.11.1:
     dependencies:
       inherits: 2.0.3
@@ -5652,7 +5681,7 @@ packages:
     dev: false
     name: '@rush-temp/egret-webpack-bundler'
     resolution:
-      integrity: sha512-tbhJDbqX/ki+Oxzxp8ND+7x0w/TF7XS0ZPxD01mppZKDP+6DRWU17dpqUOGA8vUIyGXm0LI4sV6X9aBLp4Ohcw==
+      integrity: sha512-/+Xs+I56RFzrhaG2PeH0UVRjbRXO8FskvvSszCQF3I6TjXqTMz3xihe8kwoqJf/jRNeULbmfU1M4LN5nkZ3e4Q==
       tarball: 'file:projects/egret-webpack-bundler.tgz'
     version: 0.0.0
   'file:projects/egret-webpack-cli-project.tgz':
@@ -5685,6 +5714,13 @@ packages:
       integrity: sha512-TN/1SpXfEQstaeQot3+aV1n6ZwSmdWGIdXpJayMX5Y+jB5pp9bfpgdutCWq4kYm205IL7O2AaAKTXkpD4n9npw==
       tarball: 'file:projects/eui-compiler.tgz'
     version: 0.0.0
+  'file:projects/library-project-example.tgz':
+    dev: false
+    name: '@rush-temp/library-project-example'
+    resolution:
+      integrity: sha512-RguGetDNgC+ILijRzrJVvlYF1N0zx9Te1428tnw8vLEFe6umzVc4VztfoAfaDVHNsqMXKnOHDZmDQd3hJtucFQ==
+      tarball: 'file:projects/library-project-example.tgz'
+    version: 0.0.0
   'file:projects/setup.tgz':
     dependencies:
       '@types/fs-extra-promise': 1.0.9
@@ -5705,12 +5741,14 @@ packages:
     version: 0.0.0
   'file:projects/ts-minify-transformer.tgz':
     dependencies:
+      fs-extra-plus: 0.5.18
       mocha: 8.0.1
+      path: 0.12.7
       typescript: 3.9.7
     dev: false
     name: '@rush-temp/ts-minify-transformer'
     resolution:
-      integrity: sha512-7EPi30nnwM2qc3prv5WroIcb3WHu42AIW0zhU7ed0ugcY/9aiw9obWTuokns5mwmUasYV0tcRBsz7zqpOqlcWQ==
+      integrity: sha512-5XnGndyBzmPm6Q6ZJ3TAW14Y3XHnqvqW7GkKIZCZVndS781pOQGW2vCQojDJcwnBaiXld3aGc4klS3zvvMdG3A==
       tarball: 'file:projects/ts-minify-transformer.tgz'
     version: 0.0.0
 registry: ''
@@ -5720,6 +5758,7 @@ specifiers:
   '@rush-temp/egret-webpack-bundler': 'file:./projects/egret-webpack-bundler.tgz'
   '@rush-temp/egret-webpack-cli-project': 'file:./projects/egret-webpack-cli-project.tgz'
   '@rush-temp/eui-compiler': 'file:./projects/eui-compiler.tgz'
+  '@rush-temp/library-project-example': 'file:./projects/library-project-example.tgz'
   '@rush-temp/setup': 'file:./projects/setup.tgz'
   '@rush-temp/ts-minify-transformer': 'file:./projects/ts-minify-transformer.tgz'
   '@types/ajv': ^1.0.0
@@ -5736,9 +5775,11 @@ specifiers:
   esprima: ^4.0.1
   express: ~4.17.1
   fork-ts-checker-webpack-plugin: 4.1.3
+  fs-extra-plus: ^0.5.18
   html-webpack-plugin: ^4.3.0
   mock-fs: ^4.10.2
   os-locale: ^5.0.0
+  path: ^0.12.7
   request: ~2.88.2
   request-progress: ~3.0.0
   source-map: ^0.6.1

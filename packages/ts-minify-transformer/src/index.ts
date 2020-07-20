@@ -13,56 +13,75 @@ export const myTransformer = (program: ts.Program, options: TransformOptions) =>
 
             function visitClassDeclaration(classNode: ts.ClassDeclaration) {
 
-                const renameMappings: {
-                    originalNameNode: ts.PropertyName
-                    newName: string
-                }[] = [];
 
-                let renameCount = 1;
-                for (let child of classNode.members) {
-                    if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
 
-                        if (child.modifiers && child.modifiers[0].kind === ts.SyntaxKind.PrivateKeyword) {
-                            let name = ''
+                function generateDeclarationMappings(classNode: ts.ClassDeclaration) {
+                    const declarationMappings: {
+                        declarationNode: ts.PropertyDeclaration | ts.MethodDeclaration
+                        newName: string
+                    }[] = [];
+                    let renameCount = 1;
+                    for (let child of classNode.members) {
+                        if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
 
-                            switch (options.mode) {
-                                case 'release':
-                                    name = 'a' + renameCount
-                                    break
-                                case 'debug':
-                                    name = '$$' + child.name.getText(sf) + '$$'
+                            if (child.modifiers && child.modifiers[0].kind === ts.SyntaxKind.PrivateKeyword) {
+                                let name = ''
 
+                                switch (options.mode) {
+                                    case 'release':
+                                        name = 'a' + renameCount
+                                        break
+                                    case 'debug':
+                                        name = '$$' + child.name.getText(sf) + '$$'
+
+                                }
+                                declarationMappings.push({
+                                    declarationNode: child,
+                                    newName: name
+                                })
+                                renameCount++
                             }
-                            renameMappings.push({
-                                originalNameNode: child.name,
-                                newName: name
-                            })
-                            child.name = ts.createIdentifier(name)
-                            renameCount++
                         }
                     }
-
+                    return declarationMappings;
                 }
 
-                function visitClassDeclarationChildren(node: ts.Node): any {
-                    if (ts.isPropertyAccessExpression(node)) {
-                        for (const word of renameMappings) {
-                            if (word.originalNameNode.getText(sf) === node.name.getText(sf)) {
-                                const typeChecker = program.getTypeChecker();
-                                const origin = typeChecker.getSymbolAtLocation(word.originalNameNode);
-                                const target = typeChecker.getSymbolAtLocation(node.name)
-                                if (origin === target) {
-                                    return ts.updatePropertyAccess(node, node.expression, ts.createIdentifier(word.newName))
+                function generatePropertyAccessMappings(classNode: ts.ClassDeclaration) {
+
+                    const propertyAccessMappings: {
+                        propertyAccessNode: ts.PropertyAccessExpression,
+                        newName: string
+                    }[] = [];
+                    ts.visitEachChild(classNode, visitClassDeclarationChildren, context);
+
+                    function visitClassDeclarationChildren(node: ts.Node): any {
+                        if (ts.isPropertyAccessExpression(node)) {
+                            for (const declaration of mappings1) {
+                                if (declaration.declarationNode.name.getText(sf) === node.name.getText(sf)) {
+                                    const typeChecker = program.getTypeChecker();
+                                    const origin = typeChecker.getSymbolAtLocation(declaration.declarationNode.name);
+                                    const target = typeChecker.getSymbolAtLocation(node.name)
+                                    if (origin === target) {
+                                        propertyAccessMappings.push({ propertyAccessNode: node, newName: declaration.newName })
+                                    }
                                 }
                             }
                         }
+                        return ts.visitEachChild(node, visitClassDeclarationChildren, context);
                     }
 
-                    return ts.visitEachChild(node, visitClassDeclarationChildren, context);
+                    return propertyAccessMappings;
                 }
 
-
-                return ts.visitEachChild(classNode, visitClassDeclarationChildren, context);
+                const mappings1 = generateDeclarationMappings(classNode);
+                const mappings2 = generatePropertyAccessMappings(classNode);
+                for (let mapping of mappings1) {
+                    mapping.declarationNode.name = ts.createIdentifier(mapping.newName)
+                }
+                for (let mapping of mappings2) {
+                    mapping.propertyAccessNode.name = ts.createIdentifier(mapping.newName)
+                }
+                return classNode;
             }
 
 
