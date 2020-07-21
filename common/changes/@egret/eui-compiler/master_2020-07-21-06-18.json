@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/eui-compiler",
+      "comment": "update testcase",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/eui-compiler",
+  "email": "185713114@qq.com"
+}

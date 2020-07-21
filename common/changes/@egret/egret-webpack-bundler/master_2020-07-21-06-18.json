@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/egret-webpack-bundler",
+      "comment": "update minify",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/egret-webpack-bundler",
+  "email": "185713114@qq.com"
+}
