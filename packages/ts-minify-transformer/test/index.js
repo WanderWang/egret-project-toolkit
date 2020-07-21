@@ -1,5 +1,5 @@
 //@ts-check
-const myTransformer = require('../').myTransformer;
+const minifyTransformer = require('../').minifyTransformer;
 const ts = require('typescript');
 const fs = require('fs-extra-plus')
 const path = require("path")
@@ -30,7 +30,7 @@ function compile(dir) {
 
     return new Promise((resolve, reject) => {
         const compileOptions = {
-            noEmitOnError: true,
+            noEmitOnError: false,
             noImplicitAny: true,
             target: ts.ScriptTarget.ES2015,
             module: ts.ModuleKind.CommonJS
@@ -41,7 +41,7 @@ function compile(dir) {
         const customTransformer = {
             before: [
                 // @ts-ignore
-                myTransformer(program, options)
+                minifyTransformer(program, options)
             ]
         }
         let emitResult = program.emit(undefined, (filename, data) => {

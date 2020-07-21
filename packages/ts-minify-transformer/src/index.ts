@@ -5,7 +5,8 @@ export type TransformOptions = {
     mode: "debug" | "release"
 }
 
-export const myTransformer = (program: ts.Program, options: TransformOptions) => {
+
+export const minifyTransformer = (program: ts.Program, options: TransformOptions) => {
 
     return function (context: ts.TransformationContext) {
 
@@ -29,11 +30,14 @@ export const myTransformer = (program: ts.Program, options: TransformOptions) =>
 
                                 switch (options.mode) {
                                     case 'release':
-                                        name = 'a' + renameCount
+                                        name = 'a' + renameCount;
                                         break
                                     case 'debug':
-                                        name = '$$' + child.name.getText(sf) + '$$'
-
+                                        name = '$$' + child.name.getText(sf) + '$$';
+                                        break;
+                                    default:
+                                        name = '$$' + child.name.getText(sf) + '$$';
+                                        break;
                                 }
                                 declarationMappings.push({
                                     declarationNode: child,
@@ -111,3 +115,8 @@ export const myTransformer = (program: ts.Program, options: TransformOptions) =>
 
 
 }
+
+/**
+ * @deprecated
+ */
+export const myTransformer = minifyTransformer;
