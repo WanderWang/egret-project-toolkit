@@ -1,6 +1,6 @@
 {
   "name": "@egret/eui-compiler",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "",
   "main": "./lib/index.js",
   "bin": {

@@ -1,6 +1,13 @@
-# Change Log - @egret/egret-library-installer
+# Change Log - @egret/setup
 
-This log was last generated on Tue, 07 Jul 2020 06:29:25 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jul 2020 06:20:28 GMT and should not be manually modified.
+
+## 1.1.3
+Tue, 21 Jul 2020 06:20:28 GMT
+
+### Patches
+
+- update docs
 
 ## 1.1.1
 Tue, 07 Jul 2020 06:29:25 GMT
