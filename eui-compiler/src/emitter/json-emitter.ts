@@ -1,6 +1,5 @@
 import { BaseEmitter } from ".";
 import { AST_Node, AST_NodeBase, AST_Skin } from "../exml-ast";
-import fs = require('fs');
 
 type OutputDataFormat_State = {
     $ssP?: { target: string, name: string, value: any }[],
