@@ -63,7 +63,6 @@ export class JSONEmitter extends BaseEmitter {
     private nodeMap: { [id: string]: AST_NodeBase } = {};
 
     private otherNodeMap: any[] = [];
-    private createClassResult: any[] = [];
 
     getResult(): string {
         return this.jsonContent;
