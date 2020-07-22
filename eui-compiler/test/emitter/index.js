@@ -16,7 +16,8 @@ describe('emitter', () => {
 
     const baselineDir = path.join(__dirname, 'baselines')
     const dirs = fs.readdirSync(baselineDir)
-    const ignoreList = ['animation', 'button', 'data-binding', 'ignore', 'layout', 'negative-number', 'scroller', 'simple', 'states'];
+    //const ignoreList = ['animation', 'button', 'data-binding', 'ignore', 'layout', 'negative-number', 'scroller', 'simple', 'states'];
+    const ignoreList = ['animation', 'button', 'data-binding', 'ignore'];
     // const dirs = ['simple']
     const cwd = process.cwd();
     afterEach(function () {
