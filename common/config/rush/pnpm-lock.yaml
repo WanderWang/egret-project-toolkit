@@ -36,6 +36,7 @@ dependencies:
   ts-loader: 7.0.5
   ts-morph: 7.1.2
   tslib: 2.0.0
+  walk: 2.3.14
   webpack: 4.43.0_webpack@4.43.0
   webpack-dev-middleware: 3.7.2_webpack@4.43.0
   webpack-merge: 4.2.2
@@ -2250,6 +2251,11 @@ packages:
     resolution:
       integrity: sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
       tarball: for-in/download/for-in-1.0.2.tgz
+  /foreachasync/3.0.0:
+    dev: false
+    resolution:
+      integrity: sha1-VQKYfchxS+M5IJfzLgBxyd7gfPY=
+      tarball: foreachasync/download/foreachasync-3.0.0.tgz
   /forever-agent/0.6.1:
     dev: false
     resolution:
@@ -5564,6 +5570,13 @@ packages:
     resolution:
       integrity: sha1-eGQcSIuObKkadfUR56OzKobl3aA=
       tarball: vm-browserify/download/vm-browserify-1.1.2.tgz
+  /walk/2.3.14:
+    dependencies:
+      foreachasync: 3.0.0
+    dev: false
+    resolution:
+      integrity: sha1-YOyGMc/SMnauHnNjzhHWJkUuHvM=
+      tarball: walk/download/walk-2.3.14.tgz
   /watchpack-chokidar2/2.0.0:
     dependencies:
       chokidar: 2.1.8
@@ -5919,10 +5932,11 @@ packages:
     dependencies:
       '@rushstack/node-core-library': 3.25.0
       compressing: 1.5.1
+      walk: 2.3.14
     dev: false
     name: '@rush-temp/npm-package-pack'
     resolution:
-      integrity: sha512-wTEEKCSIF+/8g9KyGm9X62KdWHsbZd4hiANilpRytREC1aXb+oCk3+ImENIuR/swRzOUGhUhOBATK12RncSWsA==
+      integrity: sha512-m8fGbmW64fU61hF0WJbMm7Egqr7MLcD5uxHaQklhKqcuatA//hQs+yZw2TCJeBTc6gZbGDI0Q3igVjnOx38hKg==
       tarball: 'file:projects/npm-package-pack.tgz'
     version: 0.0.0
   'file:projects/setup.tgz':
@@ -5994,6 +6008,7 @@ specifiers:
   ts-loader: ^7.0.2
   ts-morph: ^7.0.3
   tslib: ~2.0.0
+  walk: ~2.3.14
   webpack: ^4.43.0
   webpack-dev-middleware: ~3.7.2
   webpack-merge: ~4.2.2

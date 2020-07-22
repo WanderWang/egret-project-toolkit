@@ -2,82 +2,77 @@ const core = require('@rushstack/node-core-library');
 const path = require('path');
 const fs = require('fs')
 const compressing = require('compressing')
+const walk = require('walk');
 
 const target = path.resolve(__dirname, '__bundle');
 const root = path.resolve(__dirname, '../../../');
 
-publishPackage('egret-webpack-bundler')
 
+async function run() {
+    await publishPackage('egret-webpack-bundler')
+    await installDependency('egret-webpack-bundler')
+    await clear('egret-webpack-bundler')
+}
+
+run();
+
+async function clear(packagePath) {
+    const sourcePackagePath = path.join(target, packagePath);
+    return new Promise((resolve, reject) => {
+        const walker = walk.walk(sourcePackagePath);
+        walker.on('file', (root, fileStats, next) => {
+
+            const ignoreFiles = [
+                'license',
+                'authors',
+                '.travis.yml',
+                '.npmignore',
+                '.editorconfig',
+                '.eslintrc',
+                'thirdPartyNoticeText.txt',
+                'CopyrightNotice.txt',
+                'package-lock.json',
+                //--------typescript-----------
+                'tsc.js',
+                'tsserver.js',
+                'tsserverlibrary.js',
+                'typescriptServices.js',
+                'typesMap.json',
+                'typingsInstaller.js',
+                'watchGuard.js',
+
+
+            ].map((item) => item.toLowerCase());
+
+            const filename = path.join(root, fileStats.name);
+            const extname = path.extname(fileStats.name).toLowerCase();
+            const ignoreExtname = ['.md', '.log', '.lock'];
+            if (ignoreExtname.includes(extname) ||
+                ignoreFiles.includes(fileStats.name.toLocaleLowerCase())
+                // ignoreFiles.indexOf(fileStats.name.toLowerCase()) >= 0
+            ) {
+                core.FileSystem.deleteFile(filename);
+            }
+            next();
+        });
+        walker.on('end', () => {
+            resolve();
+        });
+    });
+}
 
 
 async function installDependency(packagePath) {
     const sourcePackagePath = path.join(target, packagePath);
-    const cp = core.Executable.spawnSync('npm', ['install', '--production', '--registry=https://registry.npm.taobao.org/'], { currentWorkingDirectory: sourcePackagePath });
+    const cp = core.Executable.spawnSync('npm', ['install', '--production',
+        '--registry=https://registry.npmjs.org/'
+        //  '--registry=https://registry.npm.taobao.org/'
+    ], { currentWorkingDirectory: sourcePackagePath });
     if (cp.error) {
-        console.error(cp.stderr);
         return Promise.reject(cp.stderr);
     }
     else {
-
-
-        return new Promise((resolve, reject) => {
-            const walker = walk.walk(path.join(target, 'toolkit'));
-            walker.on('file', (root, fileStats, next) => {
-                const ignoreFiles = [
-                    'license',
-                    'authors',
-                    '.travis.yml',
-                    '.npmignore',
-                    '.editorconfig',
-                    '.eslintrc',
-                    'thirdPartyNoticeText',
-                    'CopyrightNotice',
-                    //--------typescript-----------
-                    'tsc.js',
-                    'tsserver.js',
-                    'tsserverlibrary.js',
-                    'typescriptServices.js',
-                    'typesMap.json',
-                    'typingsInstaller.js',
-                    'watchGuard.js'
-
-
-                ].map((item) => item.toLowerCase());
-
-                const addRule = [
-                    {
-                        folder: 'toolkit/compiler/node_modules/typescript/lib',
-                        extend: 'd.ts'
-                    }
-                ];
-                // console.log(root)
-                const extname = path.extname(fileStats.name).toLowerCase();
-                if (
-                    ['.md', '.ts', '.log', '.lock'].indexOf(extname) >= 0 ||
-                    ignoreFiles.indexOf(fileStats.name.toLowerCase()) >= 0
-                ) {
-                    const filename = path.join(root, fileStats.name);
-                    let needadd = false;
-                    for (const r of addRule) {
-
-                        if (filename.replace(/\\/g, '/').indexOf(r.folder.toLowerCase()) !== -1 && fileStats.name.indexOf(r.extend) !== -1) {
-                            needadd = true;
-                        }
-                    }
-                    if (!needadd) {
-                        core.FileSystem.deleteFile(filename);
-                    } else {
-                        //console.log('add:' + filename);
-                    }
-
-                }
-                // console.log(fileStats.name);
-                next();
-            });
-            walker.on('end', () => {
-                resolve();
-            });
-        });
+        return Promise.resolve();
     }
 }
 

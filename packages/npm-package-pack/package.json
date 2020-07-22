@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@rushstack/node-core-library": "^3.25.0",
-    "compressing": "~1.5.1"
+    "compressing": "~1.5.1",
+    "walk": "~2.3.14"
   }
 }
