@@ -98,7 +98,7 @@ export class EuiCompiler {
 
     private _transformers: EuiAstTransformer[] = [];
 
-    constructor(root: string, private mode = 'commonjs') {
+    constructor(root: string, private mode = 'commonjs2') {
         initilize(root)
         initTypings();
     }

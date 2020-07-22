@@ -1,5 +1,6 @@
 import { BaseEmitter } from ".";
 import { AST_Node, AST_NodeBase, AST_Skin } from "../exml-ast";
+import fs = require('fs');
 
 type OutputDataFormat_State = {
     $ssP?: { target: string, name: string, value: any }[],
@@ -62,6 +63,9 @@ export class JSONEmitter extends BaseEmitter {
     private skinParts: string[] = [];
     private nodeMap: { [id: string]: AST_NodeBase } = {};
 
+    private otherNodeMap: any[] = [];
+    private createClassResult: any[] = [];
+
     getResult(): string {
         return this.jsonContent;
     }
@@ -80,12 +84,51 @@ export class JSONEmitter extends BaseEmitter {
         };
         json[key] = item;
         this.nodeMap[key] = skinNode;
+
+        //console.log(1000111, this.nodeMap)
+        console.log(filename)
+        fs.writeFileSync('222.log', JSON.stringify(this.nodeMap, null, ' '), 'utf-8')
+
+        if (this.otherNodeMap.length == 0) {
+            //console.log(123, this.nodeMap)
+            // if (this.nodeMap.hasOwnProperty('skins.MyComponent1')) {
+            //     this.catchClass(this.nodeMap['this.catchClass(this.nodeMap)'])
+            // }
+            // else {
+            //     this.catchClass(this.nodeMap)
+            // }
+            for (const key of Object.keys(this.nodeMap)) {
+                this.catchClass(this.nodeMap[key])
+            }
+
+        }
+        if (this.otherNodeMap.length > 0) {
+            this.createClass()
+        }
         this.setBaseState(skinNode, item);
+
+        //console.log(111111, skinNode)
+
         Object.assign(item, this.elementContents);
+        //console.log(11112222, this.elementContents)
         if (this.skinParts.length > 0) {
             item.$sP = this.skinParts;
+            console.log('item', item)
         }
+        //console.log(2222222, json)
         this.setStates(skinNode, item);
+
+        if (this.nodeMap.hasOwnProperty('skins.MyComponent1')) {
+            //console.log(this.createClassResult)
+            for (let item of this.createClassResult) {
+                const key = Object.keys(item)[0]
+                delete item[key].$path
+                delete item[key].$s
+                //console.log(77777777777, item)
+                Object.assign(json, item)
+            }
+            console.log(55555, json)
+        }
         this.jsonContent = JSON.stringify(json, null, 4);
     }
 
@@ -101,11 +144,17 @@ export class JSONEmitter extends BaseEmitter {
         }
         const elementContents: string[] = [];
         const sIds: string[] = [];
+        // console.log('node', node)
+
         for (const child of node.children) {
+
             const id = this.parseNode(child);
+
+            //console.log('child', child)
             this.hasAddType(child) ? sIds.push(id) : elementContents.push(id);
             this.setBaseState(child, this.elementContents, id);
         }
+        //console.log('child', this.elementContents)
         elementContents.length > 0 && (base['$eleC'] = elementContents);
         sIds.length > 0 && (base['$sId'] = sIds);
     }
@@ -214,4 +263,51 @@ export class JSONEmitter extends BaseEmitter {
         return "$eSk";
     }
 
+    catchClass(nodeMap: any) {
+        // if (nodeMap == this.nodeMap) {
+        //     nodeMap = nodeMap["skins.MyComponent1"]
+        // }
+        //console.log(12343, nodeMap)
+        if (nodeMap.attributes) {
+            for (let child of nodeMap.attributes) {
+                // if (child.classname) {
+                //console.log(child.type)
+                if (child.type == 'skinName') {
+
+                    //this.nodeMap[child.value.fullname] = child
+                    this.otherNodeMap.push(child)
+
+                    const value = child.value.fullname
+                    nodeMap.attributes = [
+                        {
+                            'type': 'skinName',
+                            'key': 'skinName',
+                            'value': value,
+                            'attributes': []
+                        }
+                    ]
+                    break;
+                }
+            }
+        }
+        if (nodeMap.children) {
+            for (let child of nodeMap.children) {
+                this.catchClass(child)
+            }
+        }
+    }
+
+    createClass() {
+        for (let child of this.otherNodeMap) {
+            const emitter = new JSONEmitter()
+            //console.log()
+            const filename = ''
+            console.log(88888, child.value)
+            emitter.emitSkinNode(filename, child.value)
+            const result = emitter.getResult()
+            //console.log('result', result)
+            this.createClassResult.push(JSON.parse(result))
+        }
+    }
 }
+
