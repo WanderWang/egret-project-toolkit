@@ -85,20 +85,14 @@ export class JSONEmitter extends BaseEmitter {
         json[key] = item;
         this.nodeMap[key] = skinNode;
 
-
-        //fs.writeFileSync('222.log', JSON.stringify(this.nodeMap, null, ' '), 'utf-8')
-
         if (this.otherNodeMap.length == 0) {
             for (const key of Object.keys(this.nodeMap)) {
                 this.catchClass(this.nodeMap[key]);
             }
 
         }
-        if (this.otherNodeMap.length > 0) {
-            this.createClass();
-        }
-        this.setBaseState(skinNode, item);
 
+        this.setBaseState(skinNode, item);
 
         Object.assign(item, this.elementContents);
 
@@ -108,14 +102,16 @@ export class JSONEmitter extends BaseEmitter {
 
         this.setStates(skinNode, item);
 
-        if (this.createClassResult.length > 0) {
-            for (let item of this.createClassResult) {
-                const key = Object.keys(item)[0];
-                delete item[key].$path;
-                delete item[key].$s;
-                Object.assign(json, item);
+        if (this.otherNodeMap.length > 0) {
+            for (const child of this.otherNodeMap) {
+                const result = this.createClass(child)
+                const key = Object.keys(result)[0];
+                delete result[key].$path;
+                delete result[key].$s;
+                Object.assign(json, result);
             }
         }
+
         this.jsonContent = JSON.stringify(json, null, 4);
     }
 
@@ -270,14 +266,11 @@ export class JSONEmitter extends BaseEmitter {
         }
     }
 
-    createClass() {
-        for (let child of this.otherNodeMap) {
-            const emitter = new JSONEmitter();
-            const filename = '';
-            emitter.emitSkinNode(filename, child.value);
-            const result = emitter.getResult();
-            this.createClassResult.push(JSON.parse(result));
-        }
+    createClass(child: any) {
+        const emitter = new JSONEmitter();
+        emitter.emitSkinNode('', child.value);
+        const result = emitter.getResult();
+        return JSON.parse(result);
     }
 }
 
