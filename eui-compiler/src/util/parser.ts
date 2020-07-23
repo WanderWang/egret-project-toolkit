@@ -46,8 +46,6 @@ class EuiParser {
             bindings: []//[{ target: 'a1', templates: ["hostComponent.data.data"], chainIndex: [0], property: 'text' }]
         }
 
-
-
         for (let key in rootExmlElement.attributes) {
             if (key === 'class' || key.indexOf("xmlns") >= 0) {
                 continue;
@@ -62,15 +60,32 @@ class EuiParser {
             if (!type) {
                 continue;
             }
-
             const attribute = createAttribute(key, type, value);
             this.currentSkinNode.attributes.push(attribute);
         }
-
         for (let childElement of childrenExmlElement) {
+
+            const string = JSON.stringify(childElement.attributes, null, ' ').replace(/{\w*}/, 'thisATarget');
             const child = createAST_Node(childElement);
             if (child) {
                 this.currentSkinNode.children.push(child);
+                if (string.indexOf('thisATarget') >= 0) {
+                    const key = Object.keys(childElement.attributes as object)[0];
+                    const text = (childElement.attributes as object)[key];
+                    const value = text.replace("{", "").replace("}", "").trim();
+                    const array: string[] = [];
+                    for (const item of formatBinding("{" + value + "}").templates) {
+                        let newItem = item.replace(/\"/g, "");
+                        array.push(newItem);
+                    }
+                    this.currentSkinNode.bindings.push({
+                        target: 'a' + child.varIndex,
+                        templates: array,
+                        chainIndex: formatBinding(value).chainIndex,
+                        property: value
+                    })
+                    child.attributes = [];
+                }
             }
         }
         return this.currentSkinNode;
@@ -96,6 +111,7 @@ class EuiParser {
             }
 
             createAST_Attributes(node, nodeExmlElement);
+
             const attributeIdIndex = node.attributes.findIndex(item => item.key === 'id');
             if (attributeIdIndex >= 0) {
                 let attributeId = node.attributes[attributeIdIndex];
@@ -169,7 +185,48 @@ class EuiParser {
 }
 
 
+function formatBinding(value: any) {
 
+    let jsKeyWords: string[] = ["null", "NaN", "undefined", "true", "false"];
+    let HOST_COMPONENT = "hostComponent";
+    let skinParts: string[] = [];
+
+    value = value.substring(1, value.length - 1).trim();
+    let templates = [value];
+    let chainIndex: number[] = [];
+    let length = templates.length;
+    for (let i = 0; i < length; i++) {
+        let item = templates[i].trim();
+        if (!item) {
+            templates.splice(i, 1);
+            i--;
+            length--;
+            continue;
+        }
+        let first = item.charAt(0);
+        if (first == "'" || first == "\"" || first >= "0" && first <= "9" || first == "-") {
+            continue;
+        }
+        if (item.indexOf(".") == -1 && jsKeyWords.indexOf(item) != -1) {
+            continue;
+        }
+        if (item.indexOf("this.") == 0) {
+            item = item.substring(5);
+        }
+        let firstKey = item.split(".")[0];
+        if (firstKey != HOST_COMPONENT && skinParts.indexOf(firstKey) == -1) {
+            item = HOST_COMPONENT + "." + item;
+        }
+        templates[i] = "\"" + item + "\"";
+        chainIndex.push(i);
+    }
+    // console.log('templates---', templates)
+    // console.log('chainIndex---', chainIndex)
+    return {
+        templates: templates,
+        chainIndex: chainIndex
+    }
+}
 
 
 

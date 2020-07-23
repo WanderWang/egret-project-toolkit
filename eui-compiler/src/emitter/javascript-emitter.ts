@@ -88,10 +88,20 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         const context = createIdentifier('_this');
         this.emitAttributes(context, skinNode, host)
         this.emitChildren(context, skinNode, host);
+
+
+        
+
+
         for (let binding of skinNode.bindings) {
             const result = this.emitBinding(binding)
             this.writeToBody(result);
         }
+
+
+
+
+
         if (skinNode.states.length > 0) {
             this.writeToBody(
                 createExpressionStatment(
@@ -251,9 +261,9 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         }
         const result = createExpressionStatment(createCallExpression(
             createMemberExpression(
-            { type: 'Identifier', name: 'eui.Binding' },
-            { type: 'Identifier', name: '$bindProperties' }
-        ), [
+                { type: 'Identifier', name: 'eui.Binding' },
+                { type: 'Identifier', name: '$bindProperties' }
+            ), [
             createThis(),
             createArray(elements),
             createArray(index),
