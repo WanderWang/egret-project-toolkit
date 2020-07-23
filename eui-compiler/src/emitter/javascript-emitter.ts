@@ -1,6 +1,6 @@
 import * as codegen from 'escodegen';
 import { BaseEmitter } from '.';
-import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE } from "../exml-ast";
+import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE, AST_Binding } from "../exml-ast";
 import { EmitterHost } from './host';
 
 
@@ -50,7 +50,6 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
     generateJavaScriptAST(skinNode: AST_Skin) {
 
         const code = this.createSkinNodeAst(skinNode);
-
         return createProgram([code]);
     }
 
@@ -89,6 +88,10 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         const context = createIdentifier('_this');
         this.emitAttributes(context, skinNode, host)
         this.emitChildren(context, skinNode, host);
+        for (let binding of skinNode.bindings) {
+            const result = this.emitBinding(binding)
+            this.writeToBody(result);
+        }
         if (skinNode.states.length > 0) {
             this.writeToBody(
                 createExpressionStatment(
@@ -232,6 +235,33 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
                 )
             )
         }
+    }
+
+    private emitBinding(binding: AST_Binding) {
+
+        const words = binding.templates;
+        const keys = binding.chainIndex;
+        let elements: any[] = [];
+        let index: any[] = [];
+        for (const word of words) {
+            elements.push(createStringLiteral(word))
+        }
+        for (const key of keys) {
+            index.push(createNumberOrBooleanLiteral(key))
+        }
+        const result = createExpressionStatment(createCallExpression(
+            createMemberExpression(
+            { type: 'Identifier', name: 'eui.Binding' },
+            { type: 'Identifier', name: '$bindProperties' }
+        ), [
+            createThis(),
+            createArray(elements),
+            createArray(index),
+            createIdentifier(binding.target),
+            createStringLiteral(binding.property)
+        ]))
+        return result;
+
     }
 }
 
@@ -395,8 +425,6 @@ function createNewExpression(callee: JS_AST.Node, args: JS_AST.Node[]) {
     }
 }
 
-
-
 function createExpressionStatment(expression: JS_AST.Node) {
     return {
         "type": "ExpressionStatement",
@@ -553,6 +581,13 @@ function createClass(className: JS_AST.Identifier, constractorBody: any[], host:
     }
 }
 
+function createCallExpression(callee: JS_AST.Node, args: JS_AST.Node[]) {
+    return {
+        type: "CallExpression",
+        callee: callee,
+        arguments: args
+    }
+}
 
 
 const extendsHelper = `
