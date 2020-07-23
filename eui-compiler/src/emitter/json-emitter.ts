@@ -102,7 +102,7 @@ export class JSONEmitter extends BaseEmitter {
 
         if (this.otherNodeMap.length > 0) {
             for (const child of this.otherNodeMap) {
-                const result = this.createClass(child)
+                const result = this.createSkinName(child)
                 const key = Object.keys(result)[0];
                 delete result[key].$path;
                 delete result[key].$s;
@@ -264,7 +264,7 @@ export class JSONEmitter extends BaseEmitter {
         }
     }
 
-    createClass(child: any) {
+    createSkinName(child: any) {
         const emitter = new JSONEmitter();
         emitter.emitSkinNode('', child.value);
         const result = emitter.getResult();
