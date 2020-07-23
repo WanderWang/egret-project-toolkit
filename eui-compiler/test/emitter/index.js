@@ -15,10 +15,10 @@ describe('emitter', () => {
 
 
     const baselineDir = path.join(__dirname, 'baselines')
-    const dirs = fs.readdirSync(baselineDir)
+    // const dirs = fs.readdirSync(baselineDir)
     //const ignoreList = ['animation', 'button', 'data-binding', 'ignore', 'layout', 'negative-number', 'scroller', 'simple', 'states'];
-    const ignoreList = ['animation', 'button', 'data-binding', 'ignore'];
-    // const dirs = ['simple']
+    const ignoreList = [];//['animation', 'button', 'data-binding', 'ignore'];
+    const dirs = ['data-binding']
     const cwd = process.cwd();
     afterEach(function () {
         process.chdir(cwd);
@@ -57,7 +57,7 @@ describe('emitter', () => {
             outputDeclaration = outputDeclaration.split('\r').join('');
             assert.equal(outputDeclaration, result);
         })
-        // continue;
+        continue;
         it(`json-emitter-${dir}`, () => {
             process.chdir(path.join(baselineDir, dir));
             const content = fs.readFileSync('input.exml', 'utf-8');

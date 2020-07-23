@@ -42,7 +42,8 @@ class EuiParser {
             classname,
             children: [],
             attributes: [],
-            states: []
+            states: [],
+            bindings: []//[{ target: 'a1', templates: ["hostComponent.data.data"], chainIndex: [0], property: 'text' }]
         }
 
 

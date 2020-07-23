@@ -8,6 +8,31 @@ export interface AST_NodeBase {
 
 }
 
+export interface AST_Binding {
+
+    /**
+  * @private
+  * 目标实例名
+  */
+    target: string;
+    /**
+     * @private
+     * 目标属性名
+     */
+    property: string;
+    /**
+     * @private
+     * 绑定的模板列表
+     */
+    templates: string[];
+
+    /**
+     * @private
+     * chainIndex是一个索引列表，每个索引指向templates中的一个值，该值是代表属性链。
+     */
+    chainIndex: number[];
+}
+
 
 export interface AST_Skin extends AST_NodeBase {
 
@@ -18,6 +43,8 @@ export interface AST_Skin extends AST_NodeBase {
     fullname: string
 
     states: string[]
+
+    bindings: AST_Binding[]
 
 }
 
