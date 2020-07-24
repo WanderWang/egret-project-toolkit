@@ -65,15 +65,13 @@ class EuiParser {
         }
         for (let childElement of childrenExmlElement) {
             let string = JSON.stringify(childElement.attributes, null, ' ')
-            console.log(string)
-            if (string !== undefined) {
-                string = JSON.stringify(childElement.attributes, null, ' ').replace(/{\w*}/, 'thisATarget');
+            if (string) {
+                string = string.replace(/{\w*}/, 'thisATarget');
             }
-
             const child = createAST_Node(childElement);
             if (child) {
                 this.currentSkinNode.children.push(child);
-                if (string.indexOf('thisATarget') >= 0) {
+                if (string && string.indexOf('thisATarget') >= 0) {
                     const key = Object.keys(childElement.attributes as object)[0];
                     const text = (childElement.attributes as object)[key];
                     const value = text.replace("{", "").replace("}", "").trim();
