@@ -17,7 +17,7 @@ describe('emitter', () => {
     const baselineDir = path.join(__dirname, 'baselines')
     const dirs = fs.readdirSync(baselineDir)
     //const ignoreList = ['animation', 'button', 'data-binding', 'ignore', 'layout', 'negative-number', 'scroller', 'simple', 'states'];
-    const ignoreList = ['animation', 'data-binding'];//['animation', 'button', 'data-binding', 'ignore'];
+    const ignoreList = ['animation', 'ignore'];//['animation', 'button', 'data-binding', 'ignore'];
     //const dirs = ['data-binding']
     const cwd = process.cwd();
     afterEach(function () {
@@ -34,13 +34,13 @@ describe('emitter', () => {
             const skinNode = parser.generateAST(content)
             const emitter = new JavaScriptEmitter();
             const result = emitter.generateJavaScriptAST(skinNode);
-            fs.writeFileSync('1.log', JSON.stringify(skinNode, null, '\t'), 'utf-8');
+
 
             const outputJavaScript = fs.readFileSync('expected-output-js.txt', 'utf-8')
             const outputJavaScriptAst = esprima.parseScript(outputJavaScript);
             const formattedOutput = codegen.generate(outputJavaScriptAst);
             const formattedResult = codegen.generate(result);
-            fs.writeFileSync('2.log', codegen.generate(result), 'utf-8');
+
             assert.deepEqual(formattedOutput, formattedResult)
 
         })
@@ -57,7 +57,7 @@ describe('emitter', () => {
             outputDeclaration = outputDeclaration.split('\r').join('');
             assert.equal(outputDeclaration, result);
         })
-        continue;
+        //continue;
         it(`json-emitter-${dir}`, () => {
             process.chdir(path.join(baselineDir, dir));
             const content = fs.readFileSync('input.exml', 'utf-8');
@@ -66,7 +66,7 @@ describe('emitter', () => {
             emitter.emitSkinNode('input.exml', skinNode);
             const result = emitter.getResult();
             const outputDeclaration = fs.readFileSync("expected-output-json.txt", 'utf-8');
-            fs.writeFileSync('111.log', result, 'utf-8')
+
             assert.deepEqual(JSON.parse(outputDeclaration), JSON.parse(result));
         })
     }

@@ -1,5 +1,6 @@
 import { BaseEmitter } from ".";
 import { AST_Node, AST_NodeBase, AST_Skin } from "../exml-ast";
+import fs = require('fs');
 
 type OutputDataFormat_State = {
     $ssP?: { target: string, name: string, value: any }[],
@@ -22,6 +23,9 @@ type OutputDataFormat = {
 
 export class JSONEmitter extends BaseEmitter {
     private jsonContent: string = '';
+    private addBingdingJson: {
+        $b: object[]
+    } = { $b: [] };
 
     private euiNormalizeNames = {
         "$eBL": "eui.BitmapLabel",
@@ -70,7 +74,7 @@ export class JSONEmitter extends BaseEmitter {
     emitHeader(themeData: any): void {
     }
     emitSkinNode(filename: string, skinNode: AST_Skin): void {
-        const json = {};
+        let json = {};
         this.elementContents = {};
         this.elementIds = [];
         this.skinParts = [];
@@ -90,8 +94,11 @@ export class JSONEmitter extends BaseEmitter {
 
         }
 
-        this.setBaseState(skinNode, item);
-
+        this.setBaseState(skinNode, item, undefined, skinNode);
+        //console.log(this.elementContents)
+        // for (const key in this.elementContents) {
+        //     this.elementContents[key].lable = "";
+        // }
         Object.assign(item, this.elementContents);
 
         if (this.skinParts.length > 0) {
@@ -110,15 +117,18 @@ export class JSONEmitter extends BaseEmitter {
             }
         }
 
+        if (this.addBingdingJson.$b.length > 0) {
+            json[skinNode.fullname] = Object.assign(json[skinNode.fullname], this.addBingdingJson)
+        }
         this.jsonContent = JSON.stringify(json, null, 4);
     }
 
 
-    setBaseState(node: AST_NodeBase, json: any, key: string = '$bs') {
+    setBaseState(node: AST_NodeBase, json: any, key: string = '$bs', skinNode: AST_NodeBase) {
         const base = {};
         json[key] = base;
         for (const attr of node.attributes) {
-            base[attr.key] = this.parseValue(attr.value);
+            base[attr.key] = this.parseValue(attr.value, skinNode);
         }
         if (node["type"]) {
             base['$t'] = this.convertType(node["type"]);
@@ -126,10 +136,25 @@ export class JSONEmitter extends BaseEmitter {
         const elementContents: string[] = [];
         const sIds: string[] = [];
 
+        for (let binding of (skinNode as AST_Skin).bindings) {
+            if (node['type']) {
+                const type = node['type'].replace("eui.", "_");
+                const keyWord = key.replace(type, "a");
+                if (keyWord === binding.target) {
+                    this.addBingdingJson.$b.push({
+                        "$bd": binding.templates,
+                        "$bt": key,
+                        "$bp": "label"
+                    });
+                    json[key].label = "";
+                }
+            }
+        }
+
         for (const child of node.children) {
             const id = this.parseNode(child);
             this.hasAddType(child) ? sIds.push(id) : elementContents.push(id);
-            this.setBaseState(child, this.elementContents, id);
+            this.setBaseState(child, this.elementContents, id, skinNode);
         }
         elementContents.length > 0 && (base['$eleC'] = elementContents);
         sIds.length > 0 && (base['$sId'] = sIds);
@@ -218,13 +243,13 @@ export class JSONEmitter extends BaseEmitter {
         return id;
     }
 
-    parseValue(value: string | number | boolean | AST_Node | AST_Skin) {
+    parseValue(value: string | number | boolean | AST_Node | AST_Skin, skinNode: AST_NodeBase) {
         if (!value["attributes"] && !value["children"]) {
             return value;
         }
         if (value["type"]) {
             const id = this.parseNode(value as AST_Node);
-            this.setBaseState(value as AST_Node, this.elementContents, id);
+            this.setBaseState(value as AST_Node, this.elementContents, id, skinNode);
             return id;
         }
         return value;
