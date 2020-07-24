@@ -297,12 +297,11 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skin
         }
         if (value.search(/{\w*}/) > -1) {
             const targetName = value.replace("{", "").replace("}", "").trim();
-            const array: string[] = [];
             const result = formatBinding(value)
-            for (const item of result.templates) {
-                let newItem = item.replace(/\"/g, "");
-                array.push(newItem);
-            }
+            const array = result.templates.map(item => {
+                item = item.replace(/\"/g, "");
+                return item;
+            })
             skinNode.bindings.push({
                 target: 'a' + varIndex,
                 templates: array,
