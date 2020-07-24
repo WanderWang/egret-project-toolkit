@@ -1,6 +1,6 @@
 {
     "skins.MyComponent1": {
-        "$path": "resource/eui_skins/TestSkin.exml",
+        "$path": "input.exml",
         "$bs": {
             "width": 400,
             "$eleC": [

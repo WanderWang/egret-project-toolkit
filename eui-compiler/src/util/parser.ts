@@ -96,7 +96,7 @@ class EuiParser {
             id: null
         }
 
-        createAST_Attributes(node, nodeExmlElement, this.currentSkinNode);
+        createAST_Attributes(node, nodeExmlElement, this.currentSkinNode, this.varIndex);
 
         for (let element of childrenExmlElement) {
             let nodeType: AST_Node_Name_And_Type;
@@ -196,8 +196,6 @@ function formatBinding(value: any) {
         templates[i] = "\"" + item + "\"";
         chainIndex.push(i);
     }
-    // console.log('templates---', templates)
-    // console.log('chainIndex---', chainIndex)
     return {
         templates: templates,
         chainIndex: chainIndex
@@ -260,7 +258,7 @@ function parseStateAttribute(className: string, originKey: string, value: string
  * 将NodeElement的 attribute节点转化为Node的Attribute
  * @param nodeElement 
  */
-function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skinNode: AST_Skin) {
+function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skinNode: AST_Skin, varIndex: number) {
     const attributes: AST_Attribute[] = [];
     const className = getClassNameFromEXMLElement(nodeElement)
     for (let key in nodeElement.attributes) {
@@ -295,6 +293,21 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skin
         }
         if (key === 'id') {
             node.id = value;
+            continue;
+        }
+        if (value.search(/{\w*}/) > -1) {
+            const targetName = value.replace("{", "").replace("}", "").trim();
+            const array: string[] = [];
+            for (const item of formatBinding(value).templates) {
+                let newItem = item.replace(/\"/g, "");
+                array.push(newItem);
+            }
+            skinNode.bindings.push({
+                target: 'a' + varIndex,
+                templates: array,
+                chainIndex: formatBinding(value).chainIndex,
+                property: targetName
+            })
             continue;
         }
         const type = getTypings(className, key);
