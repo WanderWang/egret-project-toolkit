@@ -3,7 +3,9 @@
     xmlns:e="http://ns.egret.com/eui"
     xmlns:w="http://ns.egret.com/wing">
     <w:Config id="1732d07cdf2"/>
-    <e:Button label="{test}"/>
+    <e:Button height='0' label="{test}"/>
+    <e:Button height='0' label="{test}" width='0'/>
+    <e:Button height='0'/>
     <!-- <e:List> -->
     <!-- <e:itemRendererSkinName>
             <e:Skin states="up,down,disabled" minHeight="50" minWidth="100">

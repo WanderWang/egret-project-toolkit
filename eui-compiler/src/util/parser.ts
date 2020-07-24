@@ -68,40 +68,9 @@ class EuiParser {
 
 
         for (let childElement of childrenExmlElement) {
-            let keys: string[] = [];
-            if (childElement.attributes) {
-                keys = Object.keys(childElement.attributes as object);
-            }
-            // const child = createAST_Node(childElement);
-            for (const key of keys) {
-                const childAttribute = (childElement.attributes as object)[key];
-                let string = JSON.stringify(childAttribute, null, ' ')
-                if (string) {
-                    string = string.replace(/{\w*}/, 'thisATarget');
-                    if (string.indexOf('thisATarget') >= 0) {
-                        const value = childAttribute.replace("{", "").replace("}", "").trim();
-                        const array: string[] = [];
-                        for (const item of formatBinding("{" + value + "}").templates) {
-                            let newItem = item.replace(/\"/g, "");
-                            array.push(newItem);
-                        }
-                        this.currentSkinNode.bindings.push({
-                            target: 'a' + (varIndex + 1),
-                            templates: array,
-                            chainIndex: formatBinding(value).chainIndex,
-                            property: value
-                        })
-                        delete (childElement.attributes as object)[key];
-                        // for (let i = 0; i < (child?.attributes as object[]).length; i++) {
-                        //     const obj = (child?.attributes as object[])[i]
-                        //     if ((obj as any).key === key) {
-                        //         (child?.attributes as object[]).splice(i, 1);
-                        //     }
-                        // }
-                    }
-                }
-            }
+   
             const child = createAST_Node(childElement);
+            console.log(child)
             if (child) {
                 this.currentSkinNode.children.push(child);
             }
