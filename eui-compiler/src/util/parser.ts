@@ -64,8 +64,9 @@ class EuiParser {
             this.currentSkinNode.attributes.push(attribute);
         }
         for (let childElement of childrenExmlElement) {
-            let string = ''
-            if (JSON.stringify(childElement.attributes, null, ' ')) {
+            let string = JSON.stringify(childElement.attributes, null, ' ')
+            console.log(string)
+            if (string !== undefined) {
                 string = JSON.stringify(childElement.attributes, null, ' ').replace(/{\w*}/, 'thisATarget');
             }
 
