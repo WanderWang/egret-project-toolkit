@@ -11,6 +11,7 @@ class EuiParser {
 
     private currentSkinNode!: AST_Skin;
     private skinNameIndex = 1;
+    private varIndex = 0;
 
     parseText(filecontent: string): AST_Skin {
         const data = convert.xml2js(filecontent) as convert.Element;
@@ -21,8 +22,7 @@ class EuiParser {
 
 
     createSkinNode(rootExmlElement: convert.Element) {
-
-        let varIndex = 0;
+        this.varIndex = 0;
         const childrenExmlElement = getExmlChildren(rootExmlElement);
 
         const isRootSkin = rootExmlElement
@@ -61,113 +61,101 @@ class EuiParser {
             if (!type) {
                 continue;
             }
-
             const attribute = createAttribute(key, type, value);
             this.currentSkinNode.attributes.push(attribute);
         }
 
 
         for (let childElement of childrenExmlElement) {
-   
-            const child = createAST_Node(childElement);
-            console.log(child)
+
+            const child = this.createAST_Node(childElement);
             if (child) {
                 this.currentSkinNode.children.push(child);
             }
 
         }
         return this.currentSkinNode;
+    }
 
+    private createAST_Node(nodeExmlElement: convert.Element): AST_Node | null {
 
-        function createAST_Node(nodeExmlElement: convert.Element): AST_Node | null {
-
-            if (nodeExmlElement.name === 'w:Config') {
-                return null;
-            }
-
-            const childrenExmlElement = getExmlChildren(nodeExmlElement);
-
-            const type = getClassNameFromEXMLElement(nodeExmlElement)
-            varIndex++;
-            const node: AST_Node = {
-                type,
-                children: [],
-                attributes: [],
-                stateAttributes: [],
-                varIndex,
-                id: null
-            }
-
-            createAST_Attributes(node, nodeExmlElement);
-            //console.log(node.attributes)
-            const attributeIdIndex = node.attributes.findIndex(item => item.key === 'id');
-            if (attributeIdIndex >= 0) {
-                let attributeId = node.attributes[attributeIdIndex];
-                const id = attributeId.value as string
-                node.attributes.splice(attributeIdIndex, 1);
-                node.id = id;
-            }
-
-
-            for (let element of childrenExmlElement) {
-                let nodeType: AST_Node_Name_And_Type;
-                if (type === 'eui.Scroller' && element.name === 'e:List') {
-                    nodeType = {
-                        namespace: 'e',
-                        name: "viewport",
-                        type: AST_FullName_Type.ATTRIBUTE
-                    }
-                }
-                else {
-                    nodeType = getNodeType(element.name!);
-                }
-                // NodeElement的children中
-                // 不一定全是 node.children
-                // 也有可能是 attribute
-                if (nodeType.type === AST_FullName_Type.ELEMENT) {
-                    const child = createAST_Node(element);
-                    if (child) {
-                        node.children.push(child);
-                    }
-                }
-                else {
-                    const key = nodeType.name;
-                    if (key === 'skinName' || key === 'itemRendererSkinName') {
-                        const parser = new EuiParser();
-                        const value = parser.createSkinNode(element.elements![0]);
-                        const attribute: AST_Attribute = {
-                            type: key,
-                            key,
-                            value
-                        }
-                        node.attributes.push(attribute)
-                    }
-                    else if (key === 'viewport') {
-                        const attribute: AST_Attribute = {
-                            type: 'object',
-                            key: key,
-                            value: createAST_Node(element)!
-                        }
-                        node.attributes.push(attribute);
-                    }
-                    else if (key === 'layout') {
-                        const attribute: AST_Attribute = {
-                            type: 'object',
-                            key: key,
-                            value: createAST_Node(element.elements![0])!
-                        }
-                        node.attributes.push(attribute);
-
-                    }
-                    else {
-                        throw new Error(`missing ${key}`)
-                    }
-
-
-                }
-            }
-            return node;
+        if (nodeExmlElement.name === 'w:Config') {
+            return null;
         }
+
+        const childrenExmlElement = getExmlChildren(nodeExmlElement);
+
+        const type = getClassNameFromEXMLElement(nodeExmlElement)
+        this.varIndex++;
+        const node: AST_Node = {
+            type,
+            children: [],
+            attributes: [],
+            stateAttributes: [],
+            varIndex: this.varIndex,
+            id: null
+        }
+
+        createAST_Attributes(node, nodeExmlElement, this.currentSkinNode);
+
+        for (let element of childrenExmlElement) {
+            let nodeType: AST_Node_Name_And_Type;
+            if (type === 'eui.Scroller' && element.name === 'e:List') {
+                nodeType = {
+                    namespace: 'e',
+                    name: "viewport",
+                    type: AST_FullName_Type.ATTRIBUTE
+                }
+            }
+            else {
+                nodeType = getNodeType(element.name!);
+            }
+            // NodeElement的children中
+            // 不一定全是 node.children
+            // 也有可能是 attribute
+            if (nodeType.type === AST_FullName_Type.ELEMENT) {
+                const child = this.createAST_Node(element);
+                if (child) {
+                    node.children.push(child);
+                }
+            }
+            else {
+                const key = nodeType.name;
+                if (key === 'skinName' || key === 'itemRendererSkinName') {
+                    const parser = new EuiParser();
+                    const value = parser.createSkinNode(element.elements![0]);
+                    const attribute: AST_Attribute = {
+                        type: key,
+                        key,
+                        value
+                    }
+                    node.attributes.push(attribute)
+                }
+                else if (key === 'viewport') {
+                    const attribute: AST_Attribute = {
+                        type: 'object',
+                        key: key,
+                        value: this.createAST_Node(element)!
+                    }
+                    node.attributes.push(attribute);
+                }
+                else if (key === 'layout') {
+                    const attribute: AST_Attribute = {
+                        type: 'object',
+                        key: key,
+                        value: this.createAST_Node(element.elements![0])!
+                    }
+                    node.attributes.push(attribute);
+
+                }
+                else {
+                    throw new Error(`missing ${key}`)
+                }
+
+
+            }
+        }
+        return node;
     }
 }
 
@@ -272,7 +260,7 @@ function parseStateAttribute(className: string, originKey: string, value: string
  * 将NodeElement的 attribute节点转化为Node的Attribute
  * @param nodeElement 
  */
-function createAST_Attributes(node: AST_Node, nodeElement: convert.Element) {
+function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skinNode: AST_Skin) {
     const attributes: AST_Attribute[] = [];
     const className = getClassNameFromEXMLElement(nodeElement)
     for (let key in nodeElement.attributes) {
@@ -303,6 +291,10 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element) {
                 }
             })
             node.stateAttributes = node.stateAttributes.concat(includeStates);
+            continue;
+        }
+        if (key === 'id') {
+            node.id = value;
             continue;
         }
         const type = getTypings(className, key);
