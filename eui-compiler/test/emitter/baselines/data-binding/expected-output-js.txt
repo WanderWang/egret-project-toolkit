@@ -7,9 +7,10 @@ skins.MyComponent1 = (function (_super) {
         _this.width = 400;
         _this.height = 300;
         var a1 = new eui.Button();
-        //    a1.label = '{test}';
+        a1.button = 0;
+        
+        //a1.label = '{test}';
         _this.elementsContent = [a1];
-        // eui.Binding.$bindProperties(this, ["hostComponent.data.data"], [0], a1, "text");
        eui.Binding.$bindProperties(this, ["hostComponent.test"], [0], a1, "test");
         return _this;
     }

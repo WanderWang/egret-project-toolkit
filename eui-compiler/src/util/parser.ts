@@ -47,6 +47,7 @@ class EuiParser {
         }
 
         for (let key in rootExmlElement.attributes) {
+
             if (key === 'class' || key.indexOf("xmlns") >= 0) {
                 continue;
             }
@@ -60,35 +61,51 @@ class EuiParser {
             if (!type) {
                 continue;
             }
+
             const attribute = createAttribute(key, type, value);
             this.currentSkinNode.attributes.push(attribute);
         }
+
+
         for (let childElement of childrenExmlElement) {
-            let string = JSON.stringify(childElement.attributes, null, ' ')
-            if (string) {
-                string = string.replace(/{\w*}/, 'thisATarget');
+            let keys: string[] = [];
+            if (childElement.attributes) {
+                keys = Object.keys(childElement.attributes as object);
+            }
+            // const child = createAST_Node(childElement);
+            for (const key of keys) {
+                const childAttribute = (childElement.attributes as object)[key];
+                let string = JSON.stringify(childAttribute, null, ' ')
+                if (string) {
+                    string = string.replace(/{\w*}/, 'thisATarget');
+                    if (string.indexOf('thisATarget') >= 0) {
+                        const value = childAttribute.replace("{", "").replace("}", "").trim();
+                        const array: string[] = [];
+                        for (const item of formatBinding("{" + value + "}").templates) {
+                            let newItem = item.replace(/\"/g, "");
+                            array.push(newItem);
+                        }
+                        this.currentSkinNode.bindings.push({
+                            target: 'a' + (varIndex + 1),
+                            templates: array,
+                            chainIndex: formatBinding(value).chainIndex,
+                            property: value
+                        })
+                        delete (childElement.attributes as object)[key];
+                        // for (let i = 0; i < (child?.attributes as object[]).length; i++) {
+                        //     const obj = (child?.attributes as object[])[i]
+                        //     if ((obj as any).key === key) {
+                        //         (child?.attributes as object[]).splice(i, 1);
+                        //     }
+                        // }
+                    }
+                }
             }
             const child = createAST_Node(childElement);
             if (child) {
                 this.currentSkinNode.children.push(child);
-                if (string && string.indexOf('thisATarget') >= 0) {
-                    const key = Object.keys(childElement.attributes as object)[0];
-                    const text = (childElement.attributes as object)[key];
-                    const value = text.replace("{", "").replace("}", "").trim();
-                    const array: string[] = [];
-                    for (const item of formatBinding("{" + value + "}").templates) {
-                        let newItem = item.replace(/\"/g, "");
-                        array.push(newItem);
-                    }
-                    this.currentSkinNode.bindings.push({
-                        target: 'a' + child.varIndex,
-                        templates: array,
-                        chainIndex: formatBinding(value).chainIndex,
-                        property: value
-                    })
-                    child.attributes = [];
-                }
             }
+
         }
         return this.currentSkinNode;
 
@@ -113,7 +130,7 @@ class EuiParser {
             }
 
             createAST_Attributes(node, nodeExmlElement);
-
+            //console.log(node.attributes)
             const attributeIdIndex = node.attributes.findIndex(item => item.key === 'id');
             if (attributeIdIndex >= 0) {
                 let attributeId = node.attributes[attributeIdIndex];
@@ -143,7 +160,6 @@ class EuiParser {
                     if (child) {
                         node.children.push(child);
                     }
-
                 }
                 else {
                     const key = nodeType.name;
@@ -185,6 +201,7 @@ class EuiParser {
         }
     }
 }
+
 
 
 function formatBinding(value: any) {
