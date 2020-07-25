@@ -33,7 +33,7 @@ export default class SrcLoaderPlugin {
   options: SrcLoaderPluginOptions;
   constructor(options: SrcLoaderPluginOptions = {}) {
     this.options = {
-      dirs: [ 'src' ],
+      dirs: ['src'],
       ...options,
     };
   }
@@ -53,7 +53,7 @@ export default class SrcLoaderPlugin {
     const beforeRun = async (_compiler: any, callback: any) => {
       if (!this.nsLoaderContext.factory) {
         this.nsLoaderContext.factory = new Factory({
-          dirs: this.dirs,
+          context: compiler.context,
           fs: compiler.inputFileSystem as typeof _fs,
         });
       }
@@ -76,13 +76,13 @@ export default class SrcLoaderPlugin {
 
     // 接收thm信息
     // compiler.hooks.themePluginResult.tap(pluginName, ({ skins, deps }) => {
-      // this.nsLoaderContext.skins = skins;
-      // addDeps(deps);
+    // this.nsLoaderContext.skins = skins;
+    // addDeps(deps);
     // });
 
     // 接收res信息
     // compiler.hooks.resourcePluginResult.tap(pluginName, ({ deps }) => {
-      // addDeps(deps);
+    // addDeps(deps);
     // });
 
     compiler.hooks.compilation.tap(pluginName, compilation => {

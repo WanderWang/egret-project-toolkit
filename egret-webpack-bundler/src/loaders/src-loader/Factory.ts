@@ -1,170 +1,220 @@
 import * as _fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
-import parse, { Dependencies, Defines } from './parse';
+import * as ts from 'typescript';
+import parse, { Defines, Dependencies } from './parse';
 
 interface FactoryOptions {
-  dirs: string[];
-  fs?: typeof _fs;
+	context: string,
+	fs: typeof _fs;
 }
 
 export default class Factory {
-  private dirs: string[];
 
-  private fs: typeof _fs;
+	public files: {
+		[name: string]: {
+			mtime: number;
+			isModule: boolean;
+			dependencies: Dependencies;
+			defines: Defines;
+		};
+	};
 
-  public files: {
-    [name: string]: {
-      mtime: number;
-      isModule: boolean;
-      dependencies: Dependencies;
-      defines: Defines;
-    };
-  };
+	public identifiers: {
+		[name: string]: Set<string>;
+	};
 
-  public identifiers: {
-    [name: string]: Set<string>;
-  };
+	constructor(private options: FactoryOptions) {
+		options.fs = options.fs || _fs;
+		this.files = {}; // 文件分析缓存
+		this.identifiers = {}; // 全部全局变量分布
+	}
 
-  constructor({ dirs, fs }: FactoryOptions) {
-    this.dirs = dirs;
-    this.fs = fs || _fs;
-    this.files = {}; // 文件分析缓存
-    this.identifiers = {}; // 全部全局变量分布
-  }
+	public get(fileName: string) {
+		return this.files[fileName] || null;
+	}
 
-  public get(fileName: string) {
-    return this.files[fileName] || null;
-  }
+	public update() {
+		const files: any = {};
+		[path.join(this.options.context, 'src')].forEach(dir => {
+			glob.sync('**/*.ts', {
+				cwd: dir,
+			})
+				.filter(item => !item.endsWith('.d.ts')) // ignore .d.ts
+				.forEach(item => {
+					files[path.join(dir, item)] = true;
+				});
+		});
 
-  public update() {
-    const files: any = {};
+		Object.keys(files).forEach(item => {
+			this.add(item);
+		});
 
-    this.dirs.forEach(dir => {
-      glob.sync('**/*.ts', {
-        cwd: dir,
-      })
-        .filter(item => !item.endsWith('.d.ts')) // ignore .d.ts
-        .forEach(item => {
-          files[path.join(dir, item)] = true;
-        });
-    });
+		Object.keys(this.files).forEach(item => {
+			if (!files[item]) {
+				// remove file
+				this.remove(item);
+			}
+		});
+	}
 
-    Object.keys(files).forEach(item => {
-      this.add(item);
-    });
+	private remove(fileName: string) {
+		if (this.files[fileName]) {
+			const oldDefines = this.files[fileName].defines;
 
-    Object.keys(this.files).forEach(item => {
-      if (!files[item]) {
-        // remove file
-        this.remove(item);
-      }
-    });
-  }
+			// remove identifier
+			Object.keys(oldDefines).forEach(name => {
+				if (this.identifiers[name]) {
+					this.identifiers[name].delete(fileName);
 
-  private remove(fileName: string) {
-    if (this.files[fileName]) {
-      const oldDefines = this.files[fileName].defines;
+					if (!this.identifiers[name].size) {
+						delete this.identifiers[name];
+					}
+				}
+			});
 
-      // remove identifier
-      Object.keys(oldDefines).forEach(name => {
-        if (this.identifiers[name]) {
-          this.identifiers[name].delete(fileName);
+			delete this.files[fileName];
+		}
+	}
 
-          if (!this.identifiers[name].size) {
-            delete this.identifiers[name];
-          }
-        }
-      });
+	private add(fileName: string) {
+		const fs = this.options.fs;
+		const mtime = +fs.statSync(fileName).mtime;
 
-      delete this.files[fileName];
-    }
-  }
+		const { files } = this;
 
-  private add(fileName: string) {
-    const mtime = +this.fs.statSync(fileName).mtime;
+		if (files[fileName] && files[fileName].mtime === mtime) {
+			return;
+		}
 
-    const { files } = this;
+		this.remove(fileName);
 
-    if (files[fileName] && files[fileName].mtime === mtime) {
-      return;
-    }
+		const content = fs.readFileSync(fileName).toString();
 
-    this.remove(fileName);
+		const { defines, dependencies, isModule } = parse(fileName, content);
 
-    const content = this.fs.readFileSync(fileName).toString();
+		// update identifiers
+		Object.keys(defines).forEach(name => {
+			if (!this.identifiers[name]) {
+				this.identifiers[name] = new Set();
+			}
+			this.identifiers[name].add(fileName);
+		});
 
-    const { defines, dependencies, isModule } = parse(fileName, content);
+		files[fileName] = {
+			mtime,
+			isModule,
+			dependencies,
+			defines,
+		};
+	}
 
-    // update identifiers
-    Object.keys(defines).forEach(name => {
-      if (!this.identifiers[name]) {
-        this.identifiers[name] = new Set();
-      }
-      this.identifiers[name].add(fileName);
-    });
+	private findDependencyFiles(dependencies: Dependencies): string[] {
+		const files: Set<string> = new Set();
+		Object.keys(dependencies).forEach(key => {
+			let thisFiles: Set<string> | null = null;
+			const tmp = key.split('@');
+			const names = tmp[0].split('.');
+			const namspaces = tmp[1] ? tmp[1].split('.') : [];
+			for (let i = namspaces.length; i >= 0; i--) { // 插入一个空的空间
+				const ns = namspaces.slice(0, i).join('.');
+				for (let j = names.length; j > 0; j--) {
+					const name = names.slice(0, j).join('.');
+					const fullName = (ns ? ns + '.' : '') + name;
+					if (this.identifiers[fullName]) {
+						thisFiles = this.identifiers[fullName];
+						break;
+					}
+				}
+				if (thisFiles) {
+					break;
+				}
+			}
+			if (thisFiles) {
+				thisFiles.forEach(item => {
+					files.add(item)
+				})
+			}
+		});
+		return Array.from(files);
+	}
 
-    files[fileName] = {
-      mtime,
-      isModule,
-      dependencies,
-      defines,
-    };
-  }
+	// 排序非模块化文件
+	public sortUnmodules() {
+		let list = Object.keys(this.files)
+			.filter(file => !this.files[file].isModule)
+			.sort();
 
-  private findDependencyFiles(dependencies: Dependencies): string[] {
-    const files: Set<string> = new Set();
-    Object.keys(dependencies).forEach(key => {
-      let thisFiles: Set<string> | null = null;
-      const tmp = key.split('@');
-      const names = tmp[0].split('.');
-      const namspaces = tmp[1] ? tmp[1].split('.') : [];
-      for (let i = namspaces.length; i >= 0; i--) { // 插入一个空的空间
-        const ns = namspaces.slice(0, i).join('.');
-        for (let j = names.length; j > 0; j--) {
-          const name = names.slice(0, j).join('.');
-          const fullName = (ns ? ns + '.' : '') + name;
-          if (this.identifiers[fullName]) {
-            thisFiles = this.identifiers[fullName];
-            break;
-          }
-        }
-        if (thisFiles) {
-          break;
-        }
-      }
-      if (thisFiles) {
-        thisFiles.forEach(item => {
-          files.add(item)
-        })
-      }
-    });
-    return Array.from(files);
-  }
+		// 冒泡排序
+		list.forEach(fileName => {
+			let dependencyFiles = this.findDependencyFiles(this.files[fileName].dependencies);
 
-  // 排序非模块化文件
-  public sortUnmodules() {
-    let list = Object.keys(this.files)
-      .filter(file => !this.files[file].isModule)
-      .sort();
+			const index = list.findIndex(item => item === fileName);
 
-    // 冒泡排序
-    list.forEach(fileName => {
-      let dependencyFiles = this.findDependencyFiles(this.files[fileName].dependencies);
+			// 筛选在自己后面的文件
+			dependencyFiles = dependencyFiles.filter(dep => {
+				return list.findIndex(item => item === dep) > index;
+			});
 
-      const index = list.findIndex(item => item === fileName);
+			if (dependencyFiles.length) {
+				list = list.filter(item => !dependencyFiles.includes(item));
+				list.splice(index, 0, ...dependencyFiles);
+			}
+		});
 
-      // 筛选在自己后面的文件
-      dependencyFiles = dependencyFiles.filter(dep => {
-        return list.findIndex(item => item === dep) > index;
-      });
+		return list;
+	}
+}
 
-      if (dependencyFiles.length) {
-        list = list.filter(item => !dependencyFiles.includes(item));
-        list.splice(index, 0, ...dependencyFiles);
-      }
-    });
 
-    return list;
-  }
+function getIncludes(root: string) {
+	const jsonPath = findConfigFile(root, 'tsconfig.json')!;
+	const data = ts.readConfigFile(jsonPath, ts.sys.readFile);
+
+	const configParseResult = ts.parseJsonConfigFileContent(
+		data.config,
+		{
+			...ts.sys,
+			useCaseSensitiveFileNames: true,
+		},
+		path.dirname(jsonPath),
+	);
+	const result: { filesSpecs: string[] | undefined, includeSpecs: string[] | undefined, excludeSpecs: string[] | undefined } = (configParseResult as any).configFileSpecs;
+	return result;
+
+	// console.log(configParseResult)
+}
+
+function findConfigFile(
+	requestDirPath: string,
+	configFile: string
+): string | undefined {
+	// If `configFile` is an absolute path, return it right away
+	if (path.isAbsolute(configFile)) {
+		return ts.sys.fileExists(configFile) ? configFile : undefined;
+	}
+
+	// If `configFile` is a relative path, resolve it.
+	// We define a relative path as: starts wit
+	// one or two dots + a common directory delimiter
+	if (configFile.match(/^\.\.?(\/|\\)/) !== null) {
+		const resolvedPath = path.resolve(requestDirPath, configFile);
+		return ts.sys.fileExists(resolvedPath) ? resolvedPath : undefined;
+
+		// If `configFile` is a file name, find it in the directory tree
+	} else {
+		while (true) {
+			const fileName = path.join(requestDirPath, configFile);
+			if (ts.sys.fileExists(fileName)) {
+				return fileName;
+			}
+			const parentPath = path.dirname(requestDirPath);
+			if (parentPath === requestDirPath) {
+				break;
+			}
+			requestDirPath = parentPath;
+		}
+
+		return undefined;
+	}
 }
