@@ -81,7 +81,8 @@ function getEgretCompilerPath() {
     const compilerFolder = path.join(getAppDataPath(process.platform), "EgretLauncher/download/EgretCompiler");
 
     if (!fs.existsSync(path.join(compilerFolder, "@egret"))) {
-        throw new Error("Egret Compiler 未安装,请访问 https://docs.egret.com/engine/ 了解更多")
+        const docsUrl = `https://docs.egret.com/engine/docs/build/install-and-upgrade`;
+        throw new Error(`Egret Compiler 未安装,请访问 ${docsUrl} 了解更多`);
     }
     return compilerFolder
 }
