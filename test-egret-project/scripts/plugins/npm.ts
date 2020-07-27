@@ -1,7 +1,7 @@
 import * as cp from 'child_process';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
-
 
 
 export function installDependencies(dependencies: string[]) {
@@ -10,8 +10,8 @@ export function installDependencies(dependencies: string[]) {
 }
 
 export function installFromLauncher(packageName: string) {
-    const launcherRoot = getLauncherRoot();
-    // installFromCustomPath(launcherRoot,packageName)
+    const launcherRoot = getEgretCompilerPath();
+    installFromCustomPath(launcherRoot, packageName)
 }
 
 export function installFromCustomPath(root: string, packageName: string) {
@@ -66,44 +66,20 @@ function install(cwd: string, dependencies: string[]) {
     }
 }
 
-
-function getLauncherRoot() {
-    let egretEngine;
-    if (process.platform === "win32") {
-        egretEngine = path.join(process.env.APPDATA!, "npm/node_modules/egret/EgretEngine");
-    } else {
-        egretEngine = "/usr/local/lib/node_modules/egret/egretEngine";
-        if (!fs.existsSync(egretEngine)) {
-            egretEngine = "/usr/lib/node_modules/egret/egretEngine";
-        }
+function getAppDataPath(platform) {
+    switch (platform) {
+        case 'win32': return process.env['APPDATA'] || path.join(process.env.USERPROFILE!, 'AppData', 'Roaming');
+        case 'darwin': return path.join(os.homedir(), 'Library', 'Application Support');
+        case 'linux': return process.env['XDG_CONFIG_HOME'] || path.join(os.homedir(), '.config');
+        default: throw new Error('Platform not supported');
     }
+}
 
-    let LauncherExe;
+function getEgretCompilerPath() {
+    const compilerFolder = path.join(getAppDataPath(process.platform), "EgretLauncher/download/EgretCompiler");
 
-    try {
-        // egretEngine文件中保存了launcher内置node所在的文件夹路径
-        // mac: /xxx/EgretLauncher.app/Contents/Resources/app/engine/mac
-        // windows: xxx\EgretLauncher\resources\app\engine\win
-        const launcher = fs.readFileSync(egretEngine, { encoding: 'utf8' });
-        if (process.platform === "win32") {
-            LauncherExe = path.join(launcher, "../../../../EgretLauncher.exe");
-        } else {
-            LauncherExe = path.join(launcher, "../../../../MacOS/EgretLauncher");
-        }
-    } catch (error) {
-        // launcher 未安装
-        console.log("Launcher 未安装");
+    if (!fs.existsSync(path.join(compilerFolder, "@egret"))) {
+        throw new Error("Egret Compiler 未安装,请访问 https://docs.egret.com/engine/ 了解更多")
     }
-
-    // exe路径, 可以直接启动Launcher
-    // mac: /xxx/EgretLauncher.app/Contents/MacOS/EgretLauncher
-    // windows: xxx\EgretLauncher\EgretLauncher.exe
-    if (LauncherExe) {
-        if (fs.existsSync(LauncherExe)) {
-            console.log(LauncherExe);
-        } else {
-            console.log("Launcher 未安装");
-        }
-    }
-    return LauncherExe;
+    return compilerFolder
 }
