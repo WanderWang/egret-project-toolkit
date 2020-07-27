@@ -8,13 +8,15 @@ const target = path.resolve(__dirname, '__bundle');
 const root = path.resolve(__dirname, '../../../');
 
 
-async function run() {
-    await publishPackage('egret-webpack-bundler')
-    await installDependency('egret-webpack-bundler')
-    await clear('egret-webpack-bundler')
+async function run(packageName) {
+    await publishPackage(packageName)
+    await installDependency(packageName)
+    await clear(packageName)
 }
 
-run();
+run('egret-webpack-bundler').then(() => {
+    run('eui-compiler')
+})
 
 async function clear(packagePath) {
     const sourcePackagePath = path.join(target, packagePath);
