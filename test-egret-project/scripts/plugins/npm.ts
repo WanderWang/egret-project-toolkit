@@ -9,9 +9,11 @@ export function installDependencies(dependencies: string[]) {
     install("./scripts/plugins", dependencies)
 }
 
-export function installFromLauncher(packageName: string) {
-    const launcherRoot = getEgretCompilerPath();
-    installFromCustomPath(launcherRoot, packageName)
+export function installFromLauncher(packageNames: string[]) {
+    for (const packageName of packageNames) {
+        const launcherRoot = getEgretCompilerPath();
+        installFromCustomPath(launcherRoot, packageName)
+    }
 }
 
 export function installFromCustomPath(root: string, packageName: string) {
