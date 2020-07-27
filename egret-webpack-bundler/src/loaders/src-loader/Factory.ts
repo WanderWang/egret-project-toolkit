@@ -1,9 +1,7 @@
 import * as _fs from 'fs';
-import * as glob from 'glob';
 import * as path from 'path';
 import * as ts from 'typescript';
 import parse, { Defines, Dependencies } from './parse';
-
 interface FactoryOptions {
 	context: string,
 	fs: typeof _fs;
@@ -35,24 +33,24 @@ export default class Factory {
 	}
 
 	public update() {
-		const files: any = {};
-		[path.join(this.options.context, 'src')].forEach(dir => {
-			glob.sync('**/*.ts', {
-				cwd: dir,
-			})
-				.filter(item => !item.endsWith('.d.ts')) // ignore .d.ts
-				.forEach(item => {
-					files[path.join(dir, item)] = true;
-				});
-		});
 
-		Object.keys(files).forEach(item => {
+		const files = getFilesFromTypesciptCompiler(this.options.context).filter(item => !item.endsWith('.d.ts'))
+		// let files: string[] = [];
+		// [path.join(this.options.context, 'src')].forEach(dir => {
+		// 	const items = glob.sync('**/*.ts', {
+		// 		cwd: dir,
+		// 	}).map(item => {
+		// 		return path.join(dir, item)
+		// 	});
+		// 	files = files.concat(items);
+		// }).filter(item => !item.endsWith('.d.ts'));
+
+		for (let item of files) {
 			this.add(item);
-		});
+		}
 
 		Object.keys(this.files).forEach(item => {
-			if (!files[item]) {
-				// remove file
+			if (!files.includes(item)) {
 				this.remove(item);
 			}
 		});
@@ -167,22 +165,18 @@ export default class Factory {
 }
 
 
-function getIncludes(root: string) {
+function getFilesFromTypesciptCompiler(root: string) {
 	const jsonPath = findConfigFile(root, 'tsconfig.json')!;
 	const data = ts.readConfigFile(jsonPath, ts.sys.readFile);
-
 	const configParseResult = ts.parseJsonConfigFileContent(
 		data.config,
 		{
 			...ts.sys,
 			useCaseSensitiveFileNames: true,
 		},
-		path.dirname(jsonPath),
+		root,
 	);
-	const result: { filesSpecs: string[] | undefined, includeSpecs: string[] | undefined, excludeSpecs: string[] | undefined } = (configParseResult as any).configFileSpecs;
-	return result;
-
-	// console.log(configParseResult)
+	return configParseResult.fileNames;
 }
 
 function findConfigFile(

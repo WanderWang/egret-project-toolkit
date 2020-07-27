@@ -1,6 +1,13 @@
 # Change Log - @egret/egret-webpack-bundler
 
-This log was last generated on Tue, 21 Jul 2020 06:20:28 GMT and should not be manually modified.
+This log was last generated on Mon, 27 Jul 2020 02:50:03 GMT and should not be manually modified.
+
+## 1.2.10
+Mon, 27 Jul 2020 02:50:03 GMT
+
+### Patches
+
+- 修改 legacy 模式下的 .ts 文件匹配规则
 
 ## 1.2.9
 Tue, 21 Jul 2020 06:20:28 GMT

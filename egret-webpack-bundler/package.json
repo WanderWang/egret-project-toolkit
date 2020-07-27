@@ -1,6 +1,6 @@
 {
   "name": "@egret/egret-webpack-bundler",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -10,7 +10,7 @@
     "test": "mocha -t 5000"
   },
   "dependencies": {
-    "@egret/eui-compiler": "1.4.7",
+    "@egret/eui-compiler": "1.4.6",
     "@egret/ts-minify-transformer": "1.0.0",
     "copy-webpack-plugin": "^5.1.1",
     "express": "~4.17.1",
