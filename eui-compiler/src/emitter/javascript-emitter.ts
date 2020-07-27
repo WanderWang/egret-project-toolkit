@@ -2,6 +2,7 @@ import * as codegen from 'escodegen';
 import { BaseEmitter } from '.';
 import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE, AST_Binding } from "../exml-ast";
 import { EmitterHost } from './host';
+import fs = require('fs');
 
 
 
@@ -60,6 +61,8 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
 
         const states: { name: string, items: (AST_STATE & { context: number })[] }[] = [];
 
+
+
         if (skinNode.states) {
             for (const stateName of skinNode.states) {
                 states.push({ name: stateName, items: [] })
@@ -90,17 +93,12 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         this.emitChildren(context, skinNode, host);
 
 
-        
-
-
         for (let binding of skinNode.bindings) {
             const result = this.emitBinding(binding)
             this.writeToBody(result);
         }
 
-
-
-
+        fs.writeFileSync('fs-ast.log', JSON.stringify(skinNode, null, ' '), 'utf-8')
 
         if (skinNode.states.length > 0) {
             this.writeToBody(
@@ -168,6 +166,11 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
 
     private emitNode(node: AST_Node, host: EmitterHost) {
         const context = createVarIndexIdentifier(node)
+        // if (node.type.indexOf('w.') > -1) {
+        //     this.emitAttributes(context, node, host)
+        //     this.emitChildren(context, node, host);
+        //     return;
+        // }
         this.writeToBody(
             emitCreateNode(
                 context,
@@ -203,15 +206,50 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
             return;
         }
         for (let child of node.children) {
-            this.emitNode(child, host)
+            if (child.type.indexOf('w.') == -1) {
+
+                this.emitNode(child, host)
+            }
+            else {
+                for (let _child of child.children) {
+                    const context = createVarIndexIdentifier(_child)
+                    //this.emitChildren(context, _child, host)
+                    this.emitNode(_child, host)
+                }
+            }
         }
-        this.writeToBody(emitElementsContent(context.name, node.children.map(createVarIndexIdentifier)))
+
+        let children = node.children.map(node => {
+            if (node.type.indexOf('w.') == -1) {
+                console.log(node)
+                return createVarIndexIdentifier(node)
+            }
+            else {
+                return null;
+            }
+        })
+        children = children.filter(function (s) {
+            return s;
+        });
+        //console.log(children)
+        //node.children.map(createVarIndexIdentifier)
+        this.writeToBody(emitElementsContent(context.name, children as JS_AST.Identifier[]))
     }
 
     private emitAttributes(context: JS_AST.Identifier, node: AST_NodeBase, host: EmitterHost) {
-        for (const attribute of node.attributes) {
-            this.writeToBody(this.emitAttribute(context, attribute, host))
-        };
+        if ((node as any).type) {
+            if ((node as any).type.indexOf('w.') == -1) {
+
+                for (const attribute of node.attributes) {
+                    this.writeToBody(this.emitAttribute(context, attribute, host))
+                };
+            }
+        }
+        else {
+            for (const attribute of node.attributes) {
+                this.writeToBody(this.emitAttribute(context, attribute, host))
+            };
+        }
     }
 
     private createNewObject(value: AST_Node, host: EmitterHost): JS_AST.Node {
@@ -249,12 +287,20 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
 
     private emitBinding(binding: AST_Binding) {
 
-        const words = binding.templates;
+        const words = binding.templates.map(item => {
+            const result = Number(item);
+            if (isNaN(result)) {
+                return item;
+            }
+            else {
+                return result;
+            }
+        });
         const keys = binding.chainIndex;
         let elements: any[] = [];
         let index: any[] = [];
         for (const word of words) {
-            elements.push(createStringLiteral(word))
+            elements.push(createStringLiteral(word as string))
         }
         for (const key of keys) {
             index.push(createNumberOrBooleanLiteral(key))

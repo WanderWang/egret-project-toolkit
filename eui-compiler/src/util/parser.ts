@@ -1,9 +1,9 @@
 import * as convert from 'xml-js';
 import { AST_Attribute, AST_FullName_Type, AST_Node, AST_Node_Name_And_Type, AST_Skin, AST_STATE, AST_STATE_ADD } from '../exml-ast';
 import { getTypings } from './typings';
+import fs = require('fs');
 
-
-
+let skinParts: string[] = [];
 
 
 class EuiParser {
@@ -22,6 +22,7 @@ class EuiParser {
 
 
     createSkinNode(rootExmlElement: convert.Element) {
+        //fs.writeFileSync('fs-ast.log', JSON.stringify(rootExmlElement, null, ' '), 'utf-8')
         this.varIndex = 0;
         const childrenExmlElement = getExmlChildren(rootExmlElement);
 
@@ -46,6 +47,7 @@ class EuiParser {
             bindings: []//[{ target: 'a1', templates: ["hostComponent.data.data"], chainIndex: [0], property: 'text' }]
         }
 
+        this.walkAST_Node(rootExmlElement);
         for (let key in rootExmlElement.attributes) {
 
             if (key === 'class' || key.indexOf("xmlns") >= 0) {
@@ -74,14 +76,33 @@ class EuiParser {
             }
 
         }
+        fs.writeFileSync('js222.log', JSON.stringify(this.currentSkinNode, null, ' '), 'utf-8')
         return this.currentSkinNode;
     }
 
-    private createAST_Node(nodeExmlElement: convert.Element): AST_Node | null {
+    private walkAST_Node(nodeExmlElement: convert.Element) {
+        const type = getClassNameFromEXMLElement(nodeExmlElement)
+        if (skinParts.indexOf(type) == -1) {
+            skinParts.push(type.toUpperCase());
+        }
+        const childrenExmlElement = getExmlChildren(nodeExmlElement);
+        for (const element of childrenExmlElement) {
+            this.walkAST_Node(element)
+        }
+    }
 
+    private createAST_Node(nodeExmlElement: convert.Element): AST_Node | null {
+        //console.log(nodeExmlElement.name)
         if (nodeExmlElement.name === 'w:Config') {
             return null;
         }
+        // let flag = true
+        // if (nodeExmlElement.name) {
+        //     if (nodeExmlElement.name.indexOf('w:') > -1) {
+        //         //return null;
+        //         //flag = false
+        //     }
+        // }
 
         const childrenExmlElement = getExmlChildren(nodeExmlElement);
 
@@ -96,7 +117,13 @@ class EuiParser {
             id: null
         }
 
+
         createAST_Attributes(node, nodeExmlElement, this.currentSkinNode, this.varIndex);
+
+        // console.log(node.type)
+        // if (skinParts.indexOf(node.type) == -1) {
+        //     skinParts.push(node.type.toUpperCase());
+        // }
 
         for (let element of childrenExmlElement) {
             let nodeType: AST_Node_Name_And_Type;
@@ -148,6 +175,17 @@ class EuiParser {
                     node.attributes.push(attribute);
 
                 }
+                else if (key === 'props') {
+                    for (const obj of element.elements as any) {
+                        let value = this.createAST_Node(obj)
+                        const attribute: AST_Attribute = {
+                            type: 'object',
+                            key: key,
+                            value: value!
+                        }
+                        node.attributes.push(attribute);
+                    }
+                }
                 else {
                     throw new Error(`missing ${key}`)
                 }
@@ -157,15 +195,16 @@ class EuiParser {
         }
         return node;
     }
+
 }
 
 
 
-function formatBinding(value: any) {
+function formatBinding(value: any, node: any) {
 
     let jsKeyWords: string[] = ["null", "NaN", "undefined", "true", "false"];
     let HOST_COMPONENT = "hostComponent";
-    let skinParts: string[] = [];
+
 
     value = value.substring(1, value.length - 1).trim();
     let templates = [value];
@@ -189,12 +228,22 @@ function formatBinding(value: any) {
         if (item.indexOf("this.") == 0) {
             item = item.substring(5);
         }
+
         let firstKey = item.split(".")[0];
-        if (firstKey != HOST_COMPONENT && skinParts.indexOf(firstKey) == -1) {
+
+        let flag = true;
+        for (const item of skinParts) {
+            if (item.indexOf(firstKey.toUpperCase()) > -1) {
+                flag = false;
+            }
+        }
+        if (firstKey != HOST_COMPONENT && flag) {
             item = HOST_COMPONENT + "." + item;
         }
+
         templates[i] = "\"" + item + "\"";
         chainIndex.push(i);
+
     }
     return {
         templates: templates,
@@ -212,7 +261,19 @@ export function generateAST(filecontent: string): AST_Skin {
 }
 
 function getClassNameFromEXMLElement(element: convert.Element) {
-    return element.name!.replace("e:", "eui.").replace("ns1:", "");
+    let result = element.name!.replace(/:/g, '.');
+    const firstWord = result.split('.')[0];
+    switch (firstWord) {
+        case 'e':
+            result = result.replace('e', 'eui');
+            break;
+        case 'ns1':
+            result = result.replace('ns1:', '');
+            break;
+        default:
+            break;
+    }
+    return result;
 }
 
 
@@ -295,9 +356,10 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skin
             node.id = value;
             continue;
         }
+        //console.log(value)
         if (value.search(/{\w*}/) > -1) {
-            const targetName = value.replace("{", "").replace("}", "").trim();
-            const result = formatBinding(value)
+            //const targetName = value.replace("{", "").replace("}", "").trim();
+            const result = formatBinding(value, node)
             const array = result.templates.map(item => {
                 item = item.replace(/\"/g, "");
                 return item;
@@ -306,7 +368,7 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skin
                 target: 'a' + varIndex,
                 templates: array,
                 chainIndex: result.chainIndex,
-                property: targetName
+                property: key,
             })
             continue;
         }
@@ -314,6 +376,7 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skin
         if (!type) {
             continue
         }
+        fs.writeFileSync('2.log', JSON.stringify(skinNode, null, ' '), 'utf-8')
         const attribute = createAttribute(key, type, value);
         attributes.push(attribute);
     }
@@ -324,10 +387,16 @@ function createAttribute(key: string, type: string, attributeValue: any): AST_At
 
     let value: AST_Attribute['value'] = attributeValue;
     if (type == 'number') {
-        value = Number(attributeValue)
+        value = Number(attributeValue);
     }
     else if (type === 'boolean') {
-        value = attributeValue === 'true'
+        value = attributeValue === 'true';
+    }
+    else if (type === 'any') {
+        const temp = Number(attributeValue);
+        if (!isNaN(temp)) {
+            value = temp;
+        }
     }
     else if (['top', 'bottom', 'left', 'right'].indexOf(key) >= 0) {
         if (!isNaN(parseFloat(attributeValue))) {
