@@ -2,6 +2,23 @@
   "name": "@egret/egret-webpack-bundler",
   "entries": [
     {
+      "version": "1.2.10",
+      "tag": "@egret/egret-webpack-bundler_v1.2.10",
+      "date": "Mon, 27 Jul 2020 02:50:03 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "修改 legacy 模式下的 .ts 文件匹配规则"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@egret/eui-compiler\" from `1.4.7` to `1.4.8`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.9",
       "tag": "@egret/egret-webpack-bundler_v1.2.9",
       "date": "Tue, 21 Jul 2020 06:20:28 GMT",
