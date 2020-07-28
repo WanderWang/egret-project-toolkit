@@ -18,8 +18,8 @@ skins.MyComponent1 = (function (_super) {
             a2,
             a3
         ];
-        eui.Binding.$bindProperties(this, ['hostComponent.test'], [0], a1, 'test');
-        eui.Binding.$bindProperties(this, ['hostComponent.test'], [0], a2, 'test');
+        eui.Binding.$bindProperties(this, ['hostComponent.test'], [0], a1, 'label');
+        eui.Binding.$bindProperties(this, ['hostComponent.test'], [0], a2, 'label');
         return _this;
     }
     return MyComponent1;

@@ -2,7 +2,6 @@ import * as codegen from 'escodegen';
 import { BaseEmitter } from '.';
 import { AST_Attribute, AST_Node, AST_NodeBase, AST_Skin, AST_STATE, AST_Binding } from "../exml-ast";
 import { EmitterHost } from './host';
-import fs = require('fs');
 
 
 
@@ -98,7 +97,6 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
             this.writeToBody(result);
         }
 
-        fs.writeFileSync('fs-ast.log', JSON.stringify(skinNode, null, ' '), 'utf-8')
 
         if (skinNode.states.length > 0) {
             this.writeToBody(
@@ -221,7 +219,6 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
 
         let children = node.children.map(node => {
             if (node.type.indexOf('w.') == -1) {
-                console.log(node)
                 return createVarIndexIdentifier(node)
             }
             else {
@@ -231,9 +228,17 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         children = children.filter(function (s) {
             return s;
         });
-        //console.log(children)
-        //node.children.map(createVarIndexIdentifier)
-        this.writeToBody(emitElementsContent(context.name, children as JS_AST.Identifier[]))
+        const type = (node as any).type;
+        let propertyKey = 'elementsContent';
+        if (type) {
+            if (type.indexOf('TweenGroup') > -1) {
+                propertyKey = 'items';
+            }
+            else if (type.indexOf('TweenItem') > -1) {
+                propertyKey = 'paths';
+            }
+        }
+        this.writeToBody(emitElementsContent(context.name, children as JS_AST.Identifier[], propertyKey))
     }
 
     private emitAttributes(context: JS_AST.Identifier, node: AST_NodeBase, host: EmitterHost) {
@@ -333,11 +338,11 @@ function emitComponentName(type: string) {
     )
 }
 
-function emitElementsContent(context: string, ids: JS_AST.Identifier[]) {
+function emitElementsContent(context: string, ids: JS_AST.Identifier[], propertyKey: string) {
     return createExpressionStatment(
         createAssignmentExpression(
             createMemberExpression(createIdentifier(context),
-                createIdentifier("elementsContent")),
+                createIdentifier(propertyKey)),
             createArray(
                 ids
             )

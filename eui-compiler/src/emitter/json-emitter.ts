@@ -95,10 +95,7 @@ export class JSONEmitter extends BaseEmitter {
         }
 
         this.setBaseState(skinNode, item, undefined, skinNode);
-        //console.log(this.elementContents)
-        // for (const key in this.elementContents) {
-        //     this.elementContents[key].lable = "";
-        // }
+
         Object.assign(item, this.elementContents);
 
         if (this.skinParts.length > 0) {
@@ -121,42 +118,80 @@ export class JSONEmitter extends BaseEmitter {
             json[skinNode.fullname] = Object.assign(json[skinNode.fullname], this.addBingdingJson)
         }
         this.jsonContent = JSON.stringify(json, null, 4);
+
     }
 
 
     setBaseState(node: AST_NodeBase, json: any, key: string = '$bs', skinNode: AST_NodeBase) {
         const base = {};
-        json[key] = base;
-        for (const attr of node.attributes) {
-            base[attr.key] = this.parseValue(attr.value, skinNode);
-        }
-        if (node["type"]) {
-            base['$t'] = this.convertType(node["type"]);
-        }
-        const elementContents: string[] = [];
-        const sIds: string[] = [];
-
-        for (let binding of (skinNode as AST_Skin).bindings) {
-            if (node['type']) {
-                const type = node['type'].replace("eui.", "_");
-                const keyWord = key.replace(type, "a");
-                if (keyWord === binding.target) {
-                    this.addBingdingJson.$b.push({
-                        "$bd": binding.templates,
-                        "$bt": key,
-                        "$bp": "label"
-                    });
-                    json[key].label = "";
+        if (key.indexOf('w.') < 0) {
+            json[key] = base;
+            for (const attr of node.attributes) {
+                base[attr.key] = this.parseValue(attr.value, skinNode);
+            }
+            if (node["type"]) {
+                base['$t'] = this.convertType(node["type"]);
+            }
+            for (let binding of (skinNode as AST_Skin).bindings) {
+                if (node['type']) {
+                    // const type = node['type'].replace("eui.", "_");
+                    // const keyWord = key.replace(type, "a");
+                    //if (keyWord === binding.target) {
+                    if ((node as any).varIndex == binding.target.replace('a', '')) {
+                        const array = binding.templates.map(item => {
+                            const result = Number(item);
+                            if (isNaN(result)) {
+                                return item;
+                            }
+                            else {
+                                return result;
+                            }
+                        })
+                        if (binding.templates.length == 1 && binding.chainIndex.length == 1) {
+                            this.addBingdingJson.$b.push({
+                                "$bd": array,
+                                "$bt": key,
+                                "$bp": binding.property
+                            });
+                        }
+                        else {
+                            this.addBingdingJson.$b.push({
+                                "$bd": array,
+                                "$bt": key,
+                                "$bp": binding.property,
+                                "$bc": binding.chainIndex
+                            });
+                        }
+                        json[key][binding.property] = "";
+                    }
                 }
             }
         }
 
+        const elementContents: string[] = [];
+        const sIds: string[] = [];
+
+
         for (const child of node.children) {
             const id = this.parseNode(child);
-            this.hasAddType(child) ? sIds.push(id) : elementContents.push(id);
+            if (id.indexOf('w.') < 0) {
+                this.hasAddType(child) ? sIds.push(id) : elementContents.push(id);
+
+            }
             this.setBaseState(child, this.elementContents, id, skinNode);
         }
-        elementContents.length > 0 && (base['$eleC'] = elementContents);
+
+        const type = (node as any).type;
+        let prop = '$eleC';
+        if (type) {
+            if (type.indexOf('TweenGroup') > -1) {
+                prop = 'items';
+            }
+            else if (type.indexOf('TweenItem') > -1) {
+                prop = 'paths';
+            }
+        }
+        elementContents.length > 0 && (base[prop] = elementContents);
         sIds.length > 0 && (base['$sId'] = sIds);
     }
 
@@ -233,7 +268,10 @@ export class JSONEmitter extends BaseEmitter {
         }
         else {
             let i = 1;
-            const type = node.type.split('.').pop()!;
+            let type = node.type;
+            if (node.type.indexOf('w.') < 0) {
+                type = node.type.split('.').pop()!;
+            }
             do {
                 id = `_${type}${i++}`;
             } while (this.elementIds.indexOf(id) !== -1);
@@ -261,7 +299,15 @@ export class JSONEmitter extends BaseEmitter {
                 return key;
             }
         }
-        return "$eSk";
+        if (type.indexOf("Object") >= 0) {
+            return "Object"
+        }
+        else if (type.indexOf("tween") >= 0) {
+            return "egret." + type.replace(":", ".");
+        }
+        else {
+            return "$eSk";
+        }
     }
 
     catchClass(nodeMap: any) {
@@ -295,5 +341,6 @@ export class JSONEmitter extends BaseEmitter {
         const result = emitter.getResult();
         return JSON.parse(result);
     }
+
 }
 
