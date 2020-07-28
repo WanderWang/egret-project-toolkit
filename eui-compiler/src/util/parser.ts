@@ -1,7 +1,6 @@
 import * as convert from 'xml-js';
 import { AST_Attribute, AST_FullName_Type, AST_Node, AST_Node_Name_And_Type, AST_Skin, AST_STATE, AST_STATE_ADD } from '../exml-ast';
 import { getTypings } from './typings';
-import fs = require('fs');
 
 let skinParts: string[] = [];
 
@@ -57,15 +56,14 @@ class EuiParser {
                 this.currentSkinNode.states = value.split(',');
                 continue;
             }
-
             const type = getTypings('eui.Skin', key);
             if (!type) {
                 continue;
             }
             const attribute = createAttribute(key, type, value);
             this.currentSkinNode.attributes.push(attribute);
-        }
 
+        }
 
         for (let childElement of childrenExmlElement) {
 
