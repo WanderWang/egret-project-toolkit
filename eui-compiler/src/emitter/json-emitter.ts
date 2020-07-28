@@ -272,14 +272,8 @@ export class JSONEmitter extends BaseEmitter {
             if (node.type.indexOf('w.') < 0) {
                 type = node.type.split('.').pop()!;
             }
-            const newType = /(?<=:)\w+/.exec(type)
             do {
-                if (newType) {
-                    id = `_${newType[0]}${i++}`;
-                }
-                else {
-                    id = `_${type}${i++}`;
-                }
+                id = `_${type}${i++}`;
             } while (this.elementIds.indexOf(id) !== -1);
         }
         this.elementIds.push(id);
