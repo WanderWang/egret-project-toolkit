@@ -22,7 +22,6 @@ class EuiParser {
 
 
     createSkinNode(rootExmlElement: convert.Element) {
-        //fs.writeFileSync('fs-ast.log', JSON.stringify(rootExmlElement, null, ' '), 'utf-8')
         this.varIndex = 0;
         const childrenExmlElement = getExmlChildren(rootExmlElement);
 
@@ -76,7 +75,6 @@ class EuiParser {
             }
 
         }
-        fs.writeFileSync('js222.log', JSON.stringify(this.currentSkinNode, null, ' '), 'utf-8')
         return this.currentSkinNode;
     }
 
@@ -92,17 +90,10 @@ class EuiParser {
     }
 
     private createAST_Node(nodeExmlElement: convert.Element): AST_Node | null {
-        //console.log(nodeExmlElement.name)
+
         if (nodeExmlElement.name === 'w:Config') {
             return null;
         }
-        // let flag = true
-        // if (nodeExmlElement.name) {
-        //     if (nodeExmlElement.name.indexOf('w:') > -1) {
-        //         //return null;
-        //         //flag = false
-        //     }
-        // }
 
         const childrenExmlElement = getExmlChildren(nodeExmlElement);
 
@@ -119,11 +110,6 @@ class EuiParser {
 
 
         createAST_Attributes(node, nodeExmlElement, this.currentSkinNode, this.varIndex);
-
-        // console.log(node.type)
-        // if (skinParts.indexOf(node.type) == -1) {
-        //     skinParts.push(node.type.toUpperCase());
-        // }
 
         for (let element of childrenExmlElement) {
             let nodeType: AST_Node_Name_And_Type;
@@ -356,9 +342,8 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skin
             node.id = value;
             continue;
         }
-        //console.log(value)
+
         if (value.search(/{\w*}/) > -1) {
-            //const targetName = value.replace("{", "").replace("}", "").trim();
             const result = formatBinding(value, node)
             const array = result.templates.map(item => {
                 item = item.replace(/\"/g, "");
@@ -376,7 +361,6 @@ function createAST_Attributes(node: AST_Node, nodeElement: convert.Element, skin
         if (!type) {
             continue
         }
-        fs.writeFileSync('2.log', JSON.stringify(skinNode, null, ' '), 'utf-8')
         const attribute = createAttribute(key, type, value);
         attributes.push(attribute);
     }

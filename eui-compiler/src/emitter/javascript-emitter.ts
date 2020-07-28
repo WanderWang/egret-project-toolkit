@@ -98,7 +98,6 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
             this.writeToBody(result);
         }
 
-        fs.writeFileSync('fs-ast.log', JSON.stringify(skinNode, null, ' '), 'utf-8')
 
         if (skinNode.states.length > 0) {
             this.writeToBody(
@@ -221,7 +220,6 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
 
         let children = node.children.map(node => {
             if (node.type.indexOf('w.') == -1) {
-                console.log(node)
                 return createVarIndexIdentifier(node)
             }
             else {
@@ -231,8 +229,6 @@ generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
         children = children.filter(function (s) {
             return s;
         });
-        //console.log(children)
-        //node.children.map(createVarIndexIdentifier)
         this.writeToBody(emitElementsContent(context.name, children as JS_AST.Identifier[]))
     }
 
