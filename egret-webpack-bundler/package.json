@@ -19,7 +19,6 @@
     "html-webpack-plugin": "^4.3.0",
     "source-map": "^0.6.1",
     "ts-loader": "^7.0.2",
-    "tslib": "~2.0.0",
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
     "webpack-dev-middleware": "~3.7.2",

@@ -100,11 +100,13 @@ export const minifyTransformer = (program: ts.Program, options: TransformOptions
             function validateField(node: ts.ClassDeclaration): any {
                 for (let child of node.members) {
                     if (ts.isPropertyDeclaration(child) || ts.isMethodDeclaration(child)) {
-                        const replaceWord = (child.name as ts.Identifier).escapedText.toString().replace(/^a\d*$/, '')
-                        if (replaceWord !== (child.name as ts.Identifier).escapedText.toString()) {
-                            const message = `class ${node.name?.getText(sf)} 中存在名为a{number}的变量名，请重命名该变量`
-                            throw new Error(message);
-                        }
+                        // const replaceWord = (child.name as ts.Identifier).escapedText.toString().replace(/^a\d*$/, '')
+                        // if (replaceWord !== (child.name as ts.Identifier).escapedText.toString()) {
+                        //     console.log(replaceWord);
+                        //     console.log(child.getText());
+                        //     const message = `class ${node.name?.getText(sf)} 中存在名为a{number}的变量名，请重命名该变量`
+                        //     throw new Error(message);
+                        // }
                     }
                 }
             }

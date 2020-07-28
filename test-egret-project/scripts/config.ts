@@ -33,7 +33,11 @@ const config: ResourceManagerConfig = {
                     new WebpackDevServerPlugin({
                         libraryType: "debug",
                         defines: { DEBUG: true, RELEASE: false },
-                        typescript: { mode: 'legacy', tsconfigPath: 'tsconfig.debug.json', minify: { mode: 'debug' } },
+                        typescript: {
+                            mode: 'legacy',
+                            // tsconfigPath: 'tsconfig.debug.json',
+                            minify: { mode: 'debug' }
+                        },
                         open: true
                     })
                 ]
@@ -49,7 +53,11 @@ const config: ResourceManagerConfig = {
                     new WebpackBundlePlugin({
                         libraryType: "debug",
                         defines: { DEBUG: false, RELEASE: true },
-                        typescript: { mode: 'legacy' }
+                        typescript: {
+                            mode: 'legacy',
+                            //  tsconfigPath: 'tsconfig.debug.json', 
+                            minify: { mode: "release" }
+                        }
                     }),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
                     // new EuiCompilerPlugin('commonjs'),
