@@ -9,7 +9,7 @@ import ThemePlugin from './loaders/theme';
 import { emitClassName } from './loaders/ts-loader/ts-transformer';
 import { openUrl } from './open';
 import * as ts from 'typescript';
-import { myTransformer } from '@egret/ts-minify-transformer';
+import { minifyTransformer } from '@egret/ts-minify-transformer';
 const middleware = require("webpack-dev-middleware");
 const ForkTsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -283,7 +283,7 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
                     return ({
                         before: [
                             emitClassName(),
-                            myTransformer(program, options.typescript.minify)
+                            minifyTransformer(program, options.typescript.minify)
                         ]
                     });
                 }
