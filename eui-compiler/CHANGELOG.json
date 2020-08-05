@@ -2,6 +2,18 @@
   "name": "@egret/eui-compiler",
   "entries": [
     {
+      "version": "1.4.9",
+      "tag": "@egret/eui-compiler_v1.4.9",
+      "date": "Wed, 05 Aug 2020 06:34:17 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update version"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.4.8",
       "tag": "@egret/eui-compiler_v1.4.8",
       "date": "Mon, 27 Jul 2020 02:50:03 GMT",

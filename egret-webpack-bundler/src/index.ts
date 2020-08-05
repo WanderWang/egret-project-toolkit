@@ -54,7 +54,7 @@ export type WebpackBundleOptions = {
          */
         tsconfigPath?: string
 
-        minify?: import("@egret/ts-minify-transformer").TransformOptions
+        // minify?: import("@egret/ts-minify-transformer").TransformOptions
 
     }
 
@@ -279,21 +279,26 @@ function generateWebpackConfig_typescript(config: webpack.Configuration, options
             configFile: options.typescript?.tsconfigPath || 'tsconfig.json',
             compilerOptions,
             getCustomTransformers: function (program: ts.Program) {
-                if (options.typescript?.minify) {
-                    return ({
-                        before: [
-                            emitClassName(),
-                            minifyTransformer(program, options.typescript.minify)
-                        ]
-                    });
-                }
-                else {
-                    return ({
-                        before: [
-                            emitClassName(),
-                        ]
-                    });
-                }
+                return {
+                    before: [
+                        emitClassName(),
+                    ]
+                };
+                // if (options.typescript?.minify) {
+                //     return ({
+                //         before: [
+                //             emitClassName(),
+                //             minifyTransformer(program, options.typescript.minify)
+                //         ]
+                //     });
+                // }
+                // else {
+                //     return ({
+                //         before: [
+                //             emitClassName(),
+                //         ]
+                //     });
+                // }
 
             }
         }

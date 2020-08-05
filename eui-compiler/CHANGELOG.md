@@ -1,6 +1,13 @@
 # Change Log - @egret/eui-compiler
 
-This log was last generated on Mon, 27 Jul 2020 02:50:03 GMT and should not be manually modified.
+This log was last generated on Wed, 05 Aug 2020 06:34:17 GMT and should not be manually modified.
+
+## 1.4.9
+Wed, 05 Aug 2020 06:34:17 GMT
+
+### Patches
+
+- update version
 
 ## 1.4.8
 Mon, 27 Jul 2020 02:50:03 GMT

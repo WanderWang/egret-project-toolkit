@@ -8,6 +8,6 @@
 		"build": "echo helloworld"
 	},
 	"dependencies": {
-		"@egret/egret-webpack-bundler": "1.2.10"
+		"@egret/egret-webpack-bundler": "1.2.11"
 	}
 }
