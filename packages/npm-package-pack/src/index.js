@@ -14,8 +14,8 @@ async function run(packageName) {
     await clear(packageName)
 }
 
-run('egret-webpack-bundler').then(() => {
-    run('eui-compiler')
+run('@egret/egret-webpack-bundler').then(() => {
+    run('@egret/eui-compiler')
 })
 
 async function clear(packagePath) {
@@ -68,8 +68,10 @@ async function installDependency(packagePath) {
     const sourcePackagePath = path.join(target, packagePath);
     const cp = core.Executable.spawnSync('npm', ['install', '--production',
         '--registry=https://registry.npmjs.org/'
-        //  '--registry=https://registry.npm.taobao.org/'
+        // '--registry=https://registry.npm.taobao.org/'
     ], { currentWorkingDirectory: sourcePackagePath });
+    console.log(cp.stdout);
+    console.log(cp.stderr)
     if (cp.error) {
         return Promise.reject(cp.stderr);
     }
@@ -80,7 +82,7 @@ async function installDependency(packagePath) {
 
 
 async function publishPackage(packagePath) {
-    const sourcePackagePath = path.join(root, packagePath);
+    const sourcePackagePath = path.join(root, packagePath.replace("@egret/", ''));
     if (!fs.existsSync(path.join(sourcePackagePath, ".npmignore"))) {
         throw new Error("no .npmignore---->" + sourcePackagePath);
     }

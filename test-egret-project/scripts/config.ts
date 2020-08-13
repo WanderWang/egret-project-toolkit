@@ -56,8 +56,11 @@ const config: ResourceManagerConfig = {
                         typescript: {
                             mode: 'legacy',
                             //  tsconfigPath: 'tsconfig.debug.json', 
-                            minify: { mode: "release" }
+                        },
+                        html: {
+                            templateFilePath: "templates/web/index.html"
                         }
+
                     }),
                     // new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
                     // new EuiCompilerPlugin('commonjs'),
