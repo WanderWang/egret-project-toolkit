@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/eui-compiler",
+      "comment": "修复 default.thm.json 排序错误的问题",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@egret/eui-compiler",
+  "email": "185713114@qq.com"
+}
