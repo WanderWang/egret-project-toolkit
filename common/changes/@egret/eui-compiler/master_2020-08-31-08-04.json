@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@egret/eui-compiler",
+      "comment": "JavaScriptEmitter添加错误处理",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@egret/eui-compiler",
+  "email": "185713114@qq.com"
+}
