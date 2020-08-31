@@ -53,9 +53,6 @@ export default class ThemePlugin {
         this.compiler = compiler;
         this.dirs = this.options.dirs.map(dir => path.join(compiler.context, dir));
         const pluginName = this.constructor.name;
-
-
-
         const euiCompiler = new EuiCompiler(compiler.context);
         const theme = euiCompiler.getThemes()[0]
         const outputFilename = theme.filePath.replace(".thm.json", ".thm.js");
@@ -94,6 +91,14 @@ export default class ThemePlugin {
 
 
         const beforeRun = async (_compiler: webpack.Compiler, callback: Function) => {
+
+            const euiCompiler = new EuiCompiler(compiler.context, 'debug');
+            const result = euiCompiler.emit();
+            // console.log(result)
+            const filename = path.join(this.compiler.context, result[0].filename)
+            this.compiler.outputFileSystem.writeFile(filename, result[0].content, function () {
+
+            });
             // if (this.needRebuild(compiler.contextTimestamps)) {
             //     this.ret = await this.make(); // cached ret
 

@@ -45,7 +45,7 @@ export class ThemeFile {
         this._preloads = exmls.filter((value) => value.preload).map((value) => value.filename);
         this.getDependence(exmls);
         theme.exmls.sort((a, b) => a.localeCompare(b));
-        theme.exmls = this.sortExmls(theme.exmls);
+        theme.exmls = this.sortExmls(exmls.map(item => item.filename));
     }
 
     private getDependence(exmls: any[]) {
@@ -74,12 +74,12 @@ export class ThemeFile {
     private sortExmls(exmls: string[]) {
         const result: string[] = []
         const preloads = this._preloads
-        for (const filename of exmls!) {
+        for (const filename of exmls) {
             if (preloads.indexOf(filename) > -1) {
                 this.sortFileName(filename, result);
             }
         }
-        for (const filename of exmls!) {
+        for (const filename of exmls) {
             this.sortFileName(filename, result);
         }
         return result;
