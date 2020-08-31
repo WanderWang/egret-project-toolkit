@@ -38,13 +38,19 @@ export class JavaScriptEmitter extends BaseEmitter {
 
     emitSkinNode(filename: string, skinNode: AST_Skin) {
         let ast = this.generateJavaScriptAST(skinNode);
-        const text = codegen.generate(
-            ast
-        )
-        this.javascript += text + "\n";
-        this.javascript += `
-generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
-        `;
+        try {
+            const text = codegen.generate(
+                ast
+            )
+            this.javascript += text + "\n";
+            this.javascript += `
+    generateEUI.paths['${filename}'] = ${skinNode.namespace}.${skinNode.classname};
+            `;
+        }
+        catch (e) {
+            console.log(`${filename}编译失败`);
+            console.log(e.stack);
+        }
     }
 
     generateJavaScriptAST(skinNode: AST_Skin) {
