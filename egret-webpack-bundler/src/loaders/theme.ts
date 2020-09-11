@@ -75,7 +75,7 @@ export default class ThemePlugin {
 
 
         const requires = theme.data.exmls.map(exml => `require("./${path.relative(path.dirname(theme.filePath), exml).split("\\").join("/")}");`);
-        const content = `window.skins = window.skins || {};
+        const themeJsContent = `window.skins = window.skins || {};
     window.generateEUI = window.generateEUI || {
       paths: {},
       styles: undefined,
@@ -89,32 +89,16 @@ export default class ThemePlugin {
         //     content += '\nif (module.hot) { module.hot.accept(); }';
         //   }
 
-
         const beforeRun = async (_compiler: webpack.Compiler, callback: Function) => {
-
             const euiCompiler = new EuiCompiler(compiler.context, 'debug');
             const result = euiCompiler.emit();
-            // console.log(result)
-            const filename = path.join(this.compiler.context, result[0].filename)
-            this.compiler.outputFileSystem.writeFile(filename, result[0].content, function () {
 
-            });
-            // if (this.needRebuild(compiler.contextTimestamps)) {
-            //     this.ret = await this.make(); // cached ret
+            const fs = require('fs');
+            const filename = path.join(this.compiler.context, result[0].filename);
+            const content = result[0].content;
 
-            //     this.generateThmJS(this.ret);
-            //     this.thmJSON && this.generateThmJSON(this.ret);
-            //     this.exmlDeclare && this.generateExmlDeclare(this.ret);
-
-            //     this.buildTimestamp = Date.now();
-            // }
-
-            // // invoke themePluginResult
-            // compiler.hooks.themePluginResult.call(this.ret);
-            // callback();
-
-            this.thmJS.update(utils.generateContent(content));
-
+            fs.writeFileSync(filename, content, 'utf-8')
+            this.thmJS.update(utils.generateContent(themeJsContent));
             // 更新文件系统缓存状态
             utils.updateFileTimestamps(this.compiler, this.thmJS.filePath);
             callback();

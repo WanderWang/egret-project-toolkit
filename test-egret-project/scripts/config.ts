@@ -36,9 +36,10 @@ const config: ResourceManagerConfig = {
                         typescript: {
                             mode: 'legacy',
                             // tsconfigPath: 'tsconfig.debug.json',
-                            minify: { mode: 'debug' }
+                            // minify: { mode: 'debug' }
                         },
-                        open: true
+                        open: true,
+                        port: 3000
                     })
                 ]
             }
